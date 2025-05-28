@@ -1,12 +1,56 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from 'react';
+import { Sidebar } from '@/components/Sidebar';
+import { AgentsModule } from '@/components/modules/AgentsModule';
+import { CampaignsModule } from '@/components/modules/CampaignsModule';
+import { ConversationStudioModule } from '@/components/modules/ConversationStudioModule';
+import { VoiceStudioModule } from '@/components/modules/VoiceStudioModule';
+import { AnalyticsModule } from '@/components/modules/AnalyticsModule';
+import { ChannelsModule } from '@/components/modules/ChannelsModule';
+import { SecurityModule } from '@/components/modules/SecurityModule';
+import { DeploymentModule } from '@/components/modules/DeploymentModule';
+import { SettingsModule } from '@/components/modules/SettingsModule';
 
 const Index = () => {
+  const [activeModule, setActiveModule] = useState('agents');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const renderActiveModule = () => {
+    switch (activeModule) {
+      case 'agents':
+        return <AgentsModule />;
+      case 'campaigns':
+        return <CampaignsModule />;
+      case 'conversation-studio':
+        return <ConversationStudioModule />;
+      case 'voice-studio':
+        return <VoiceStudioModule />;
+      case 'analytics':
+        return <AnalyticsModule />;
+      case 'channels':
+        return <ChannelsModule />;
+      case 'security':
+        return <SecurityModule />;
+      case 'deployment':
+        return <DeploymentModule />;
+      case 'settings':
+        return <SettingsModule />;
+      default:
+        return <AgentsModule />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gray-950 text-white flex w-full">
+      <Sidebar
+        activeModule={activeModule}
+        setActiveModule={setActiveModule}
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
+      />
+      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        {renderActiveModule()}
+      </main>
     </div>
   );
 };
