@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Sidebar } from '@/components/Sidebar';
+import { DashboardModule } from '@/components/modules/DashboardModule';
 import { AgentsModule } from '@/components/modules/AgentsModule';
 import { CampaignsModule } from '@/components/modules/CampaignsModule';
 import { ConversationStudioModule } from '@/components/modules/ConversationStudioModule';
@@ -12,11 +13,13 @@ import { DeploymentModule } from '@/components/modules/DeploymentModule';
 import { SettingsModule } from '@/components/modules/SettingsModule';
 
 const Index = () => {
-  const [activeModule, setActiveModule] = useState('agents');
+  const [activeModule, setActiveModule] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const renderActiveModule = () => {
     switch (activeModule) {
+      case 'dashboard':
+        return <DashboardModule />;
       case 'agents':
         return <AgentsModule />;
       case 'campaigns':
@@ -36,7 +39,7 @@ const Index = () => {
       case 'settings':
         return <SettingsModule />;
       default:
-        return <AgentsModule />;
+        return <DashboardModule />;
     }
   };
 
