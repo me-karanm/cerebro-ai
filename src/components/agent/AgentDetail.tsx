@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter } from 'lucide-react';
+import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface Agent {
   id: string;
@@ -29,9 +30,39 @@ interface AgentDetailProps {
 
 // Mock data for campaigns and conversations
 const mockCampaigns = [
-  { id: 'c1', name: 'Lead Generation Q4', status: 'active', sessions: 45 },
-  { id: 'c2', name: 'Customer Support', status: 'active', sessions: 123 },
-  { id: 'c3', name: 'Product Demo Calls', status: 'paused', sessions: 28 },
+  { 
+    id: 'c1', 
+    name: 'Lead Generation Q4', 
+    status: 'active', 
+    sessions: 45,
+    startDate: '2024-01-01',
+    endDate: '2024-03-31',
+    phoneNumber: '+1(555)123-4567'
+  },
+  { 
+    id: 'c2', 
+    name: 'Customer Support', 
+    status: 'active', 
+    sessions: 123,
+    startDate: '2024-01-15',
+    endDate: 'Ongoing',
+    phoneNumber: '+1(555)987-6543'
+  },
+  { 
+    id: 'c3', 
+    name: 'Product Demo Calls', 
+    status: 'paused', 
+    sessions: 28,
+    startDate: '2024-02-01',
+    endDate: '2024-02-28',
+    phoneNumber: '+1(555)456-7890'
+  },
+];
+
+const mockPhoneNumbers = [
+  { number: '+1(555)123-4567', status: 'active', assigned: true },
+  { number: '+1(555)987-6543', status: 'active', assigned: true },
+  { number: '+1(555)456-7890', status: 'inactive', assigned: false },
 ];
 
 const mockConversations = [
@@ -80,12 +111,26 @@ const getDispositionColor = (disposition: string) => {
   }
 };
 
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'active': return 'bg-green-600';
+    case 'paused': return 'bg-yellow-600';
+    case 'inactive': return 'bg-gray-600';
+    default: return 'bg-gray-600';
+  }
+};
+
 export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const handleAnalytics = () => {
     console.log('Navigate to analytics for agent:', agent.id);
     // TODO: Implement navigation to analytics page
+  };
+
+  const handleTestAgent = () => {
+    console.log('Test agent:', agent.id);
+    // TODO: Implement agent testing functionality
   };
 
   const handleEditConfiguration = () => {
@@ -96,6 +141,11 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const handleArchiveAgent = () => {
     console.log('Archive agent:', agent.id);
     // TODO: Show confirmation modal
+  };
+
+  const handleCampaignClick = (campaignId: string) => {
+    console.log('Navigate to campaign:', campaignId);
+    // TODO: Navigate to campaign detail page
   };
 
   return (
@@ -119,6 +169,13 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
           </div>
         </div>
         <div className="flex space-x-2">
+          <Button 
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            onClick={handleTestAgent}
+          >
+            <Play className="w-4 h-4 mr-2" />
+            Test Agent
+          </Button>
           <Button 
             variant="outline" 
             className="border-gray-700 text-gray-300 hover:bg-gray-800"
@@ -225,16 +282,6 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                   <p className="text-sm text-gray-400 mb-1">Description</p>
                   <p className="text-white">{agent.description}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-400 mb-2">Associated Campaigns</p>
-                  <div className="flex flex-wrap gap-2">
-                    {mockCampaigns.map(campaign => (
-                      <Badge key={campaign.id} variant="secondary">
-                        {campaign.name}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-700">
                   <div>
                     <p className="text-sm text-gray-400">Total Sessions</p>
@@ -249,33 +296,67 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
               </CardContent>
             </Card>
 
-            {/* Active Integrations */}
+            {/* Phone Numbers Associated */}
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">Active Integrations</CardTitle>
+                <CardTitle className="text-white flex items-center justify-between">
+                  Phone Numbers Associated
+                  <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Manage
+                  </Button>
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Email</span>
-                    <Badge variant="default" className="bg-green-600">Active</Badge>
+              <CardContent className="space-y-3">
+                {mockPhoneNumbers.map((phone, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <Phone className="w-4 h-4 text-gray-400" />
+                      <span className="text-white">{phone.number}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant={phone.status === 'active' ? 'default' : 'secondary'}>
+                        {phone.status}
+                      </Badge>
+                      <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white">
+                        {phone.assigned ? 'Disable' : 'Assign'}
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">WhatsApp</span>
-                    <Badge variant="default" className="bg-green-600">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Voice Calls</span>
-                    <Badge variant="default" className="bg-green-600">Active</Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-300">Telegram</span>
-                    <Badge variant="secondary">Inactive</Badge>
-                  </div>
-                </div>
+                ))}
+                <Button size="sm" variant="outline" className="w-full border-gray-700 text-gray-300 hover:bg-gray-800">
+                  + Add Phone Number
+                </Button>
               </CardContent>
             </Card>
           </div>
+
+          {/* Active Integrations */}
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">Active Integrations</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Email</span>
+                  <Badge variant="default" className="bg-green-600">Active</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">WhatsApp</span>
+                  <Badge variant="default" className="bg-green-600">Active</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Voice Calls</span>
+                  <Badge variant="default" className="bg-green-600">Active</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Telegram</span>
+                  <Badge variant="secondary">Inactive</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Performance Overview */}
           <Card className="bg-gray-800 border-gray-700">
@@ -309,34 +390,62 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
             </CardContent>
           </Card>
 
-          {/* Quick Actions */}
+          {/* Linked Campaigns Table */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Quick Actions</CardTitle>
+              <CardTitle className="text-white flex items-center justify-between">
+                Linked Campaigns
+                <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Manage
+                </Button>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex space-x-4">
-                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                  <Play className="w-4 h-4 mr-2" />
-                  Test Agent
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
-                  onClick={handleEditConfiguration}
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Configuration
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="border-gray-700 text-red-400 hover:bg-red-900/20"
-                  onClick={handleArchiveAgent}
-                >
-                  <Archive className="w-4 h-4 mr-2" />
-                  Archive Agent
-                </Button>
-              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-gray-700">
+                    <TableHead className="text-gray-400">Campaign Name</TableHead>
+                    <TableHead className="text-gray-400">Status</TableHead>
+                    <TableHead className="text-gray-400">Start Date</TableHead>
+                    <TableHead className="text-gray-400">End Date</TableHead>
+                    <TableHead className="text-gray-400">Phone Number</TableHead>
+                    <TableHead className="text-gray-400">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {mockCampaigns.map((campaign) => (
+                    <TableRow key={campaign.id} className="border-gray-700 hover:bg-gray-850">
+                      <TableCell>
+                        <button
+                          onClick={() => handleCampaignClick(campaign.id)}
+                          className="text-blue-400 hover:text-blue-300 hover:underline text-left"
+                        >
+                          {campaign.name}
+                        </button>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={`${getStatusColor(campaign.status)} text-white`}>
+                          {campaign.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-gray-300">{campaign.startDate}</TableCell>
+                      <TableCell className="text-gray-300">{campaign.endDate}</TableCell>
+                      <TableCell className="text-cyan-400">{campaign.phoneNumber}</TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button size="sm" variant="ghost" className="text-gray-400 hover:text-blue-400">
+                            Edit
+                          </Button>
+                          <Button size="sm" variant="ghost" className="text-gray-400 hover:text-red-400">
+                            Remove
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>

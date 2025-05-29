@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Phone, Megaphone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -67,6 +68,7 @@ interface AgentCarouselProps {
 }
 
 export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [agents, setAgents] = useState(mockAgents);
 
@@ -82,6 +84,10 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
     setAgents(prev => prev.map(agent => 
       agent.id === agentId ? { ...agent, [field]: value } : agent
     ));
+  };
+
+  const handleAgentClick = () => {
+    navigate('/agents');
   };
 
   const currentAgent = agents[currentIndex];
@@ -101,11 +107,17 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
 
         <div className="relative">
           <div className="overflow-hidden">
-            <div className="bg-gray-800 rounded-lg p-4 relative">
+            <div 
+              className="bg-gray-800 rounded-lg p-4 relative cursor-pointer hover:bg-gray-750 transition-colors"
+              onClick={handleAgentClick}
+            >
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={prevAgent}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevAgent();
+                }}
                 className="absolute left-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -114,7 +126,10 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={nextAgent}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextAgent();
+                }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-gray-700 hover:bg-gray-600 text-white"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -188,6 +203,7 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
                       max={100}
                       step={1}
                       className="w-full"
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
 
@@ -202,6 +218,7 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
                       max={100}
                       step={1}
                       className="w-full"
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
 
@@ -216,6 +233,7 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
                       max={100}
                       step={1}
                       className="w-full"
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
                 </div>
