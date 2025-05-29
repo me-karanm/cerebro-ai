@@ -190,6 +190,84 @@ export const IntegrationSetupForm = ({ data, onChange, onSubmit, onCancel, isSub
           </div>
         );
 
+      case 'sms':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="smsProvider">SMS Provider</Label>
+              <Select value={data.smsProvider || ''} onValueChange={(value) => updateData('smsProvider', value)}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue placeholder="Select SMS provider" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectItem value="twilio">Twilio</SelectItem>
+                  <SelectItem value="plivo">Plivo</SelectItem>
+                  <SelectItem value="messagebird">MessageBird</SelectItem>
+                  <SelectItem value="nexmo">Nexmo/Vonage</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="smsPhoneNumber">SMS-enabled Phone Number</Label>
+              <Input
+                id="smsPhoneNumber"
+                value={data.smsPhoneNumber || ''}
+                onChange={(e) => updateData('smsPhoneNumber', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="+1234567890"
+              />
+            </div>
+            <div>
+              <Label htmlFor="smsAccountSid">Account SID</Label>
+              <Input
+                id="smsAccountSid"
+                value={data.smsAccountSid || ''}
+                onChange={(e) => updateData('smsAccountSid', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+              />
+            </div>
+            <div>
+              <Label htmlFor="smsAuthToken">Auth Token</Label>
+              <div className="relative">
+                <Input
+                  id="smsAuthToken"
+                  type={showPasswords.smsAuthToken ? 'text' : 'password'}
+                  value={data.smsAuthToken || ''}
+                  onChange={(e) => updateData('smsAuthToken', e.target.value)}
+                  className="bg-gray-800 border-gray-700 pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3"
+                  onClick={() => togglePasswordVisibility('smsAuthToken')}
+                >
+                  {showPasswords.smsAuthToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="smsWebhookUrl">Webhook URL</Label>
+              <Input
+                id="smsWebhookUrl"
+                value={data.smsWebhookUrl || ''}
+                onChange={(e) => updateData('smsWebhookUrl', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="https://your-app.com/webhooks/sms"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="smsOptInManagement"
+                checked={data.smsOptInManagement || false}
+                onCheckedChange={(checked) => updateData('smsOptInManagement', checked)}
+              />
+              <Label htmlFor="smsOptInManagement">Enable Opt-in/Opt-out Management</Label>
+            </div>
+          </div>
+        );
+
       case 'email':
         return (
           <div className="space-y-4">
@@ -366,6 +444,325 @@ export const IntegrationSetupForm = ({ data, onChange, onSubmit, onCancel, isSub
                   {showPasswords.appSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
+            </div>
+          </div>
+        );
+
+      case 'messenger':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="facebookPageId">Facebook Page ID</Label>
+              <Input
+                id="facebookPageId"
+                value={data.facebookPageId || ''}
+                onChange={(e) => updateData('facebookPageId', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="123456789012345"
+              />
+            </div>
+            <div>
+              <Label htmlFor="pageAccessToken">Page Access Token</Label>
+              <div className="relative">
+                <Input
+                  id="pageAccessToken"
+                  type={showPasswords.pageAccessToken ? 'text' : 'password'}
+                  value={data.pageAccessToken || ''}
+                  onChange={(e) => updateData('pageAccessToken', e.target.value)}
+                  className="bg-gray-800 border-gray-700 pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3"
+                  onClick={() => togglePasswordVisibility('pageAccessToken')}
+                >
+                  {showPasswords.pageAccessToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="appSecret">App Secret</Label>
+              <div className="relative">
+                <Input
+                  id="appSecret"
+                  type={showPasswords.appSecret ? 'text' : 'password'}
+                  value={data.appSecret || ''}
+                  onChange={(e) => updateData('appSecret', e.target.value)}
+                  className="bg-gray-800 border-gray-700 pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3"
+                  onClick={() => togglePasswordVisibility('appSecret')}
+                >
+                  {showPasswords.appSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="messengerWebhookUrl">Webhook URL</Label>
+              <Input
+                id="messengerWebhookUrl"
+                value={data.messengerWebhookUrl || ''}
+                onChange={(e) => updateData('messengerWebhookUrl', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="https://your-app.com/webhooks/messenger"
+              />
+            </div>
+            <div>
+              <Label htmlFor="webhookEvents">Webhook Events</Label>
+              <div className="space-y-2 mt-2">
+                {['messages', 'messaging_postbacks', 'messaging_optins', 'messaging_deliveries'].map(event => (
+                  <label key={event} className="flex items-center space-x-2">
+                    <input 
+                      type="checkbox" 
+                      className="rounded"
+                      checked={data.webhookEvents?.includes(event) || false}
+                      onChange={(e) => {
+                        const events = data.webhookEvents || [];
+                        if (e.target.checked) {
+                          updateData('webhookEvents', [...events, event]);
+                        } else {
+                          updateData('webhookEvents', events.filter((e: string) => e !== event));
+                        }
+                      }}
+                    />
+                    <span className="text-gray-300">{event}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'webchat':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="widgetName">Widget Name</Label>
+              <Input
+                id="widgetName"
+                value={data.widgetName || ''}
+                onChange={(e) => updateData('widgetName', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="Customer Support Chat"
+              />
+            </div>
+            <div>
+              <Label htmlFor="apiEndpoint">API Endpoint</Label>
+              <Input
+                id="apiEndpoint"
+                value={data.apiEndpoint || ''}
+                onChange={(e) => updateData('apiEndpoint', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="https://your-app.com/api/chat"
+              />
+            </div>
+            <div>
+              <Label htmlFor="authToken">Authentication Token (Optional)</Label>
+              <div className="relative">
+                <Input
+                  id="authToken"
+                  type={showPasswords.authToken ? 'text' : 'password'}
+                  value={data.authToken || ''}
+                  onChange={(e) => updateData('authToken', e.target.value)}
+                  className="bg-gray-800 border-gray-700 pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3"
+                  onClick={() => togglePasswordVisibility('authToken')}
+                >
+                  {showPasswords.authToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="allowedDomains">Allowed Domains</Label>
+              <Textarea
+                id="allowedDomains"
+                value={data.allowedDomains || ''}
+                onChange={(e) => updateData('allowedDomains', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="example.com&#10;subdomain.example.com"
+                rows={3}
+              />
+            </div>
+            <div>
+              <Label className="text-sm font-medium">Widget Appearance</Label>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div>
+                  <Label htmlFor="primaryColor">Primary Color</Label>
+                  <Input
+                    id="primaryColor"
+                    type="color"
+                    value={data.primaryColor || '#6366f1'}
+                    onChange={(e) => updateData('primaryColor', e.target.value)}
+                    className="bg-gray-800 border-gray-700 h-10"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="position">Position</Label>
+                  <Select value={data.position || 'bottom-right'} onValueChange={(value) => updateData('position', value)}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-700">
+                      <SelectItem value="bottom-right">Bottom Right</SelectItem>
+                      <SelectItem value="bottom-left">Bottom Left</SelectItem>
+                      <SelectItem value="top-right">Top Right</SelectItem>
+                      <SelectItem value="top-left">Top Left</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="fileUpload"
+                  checked={data.fileUpload || false}
+                  onCheckedChange={(checked) => updateData('fileUpload', checked)}
+                />
+                <Label htmlFor="fileUpload">Enable File Upload</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="notifications"
+                  checked={data.notifications || false}
+                  onCheckedChange={(checked) => updateData('notifications', checked)}
+                />
+                <Label htmlFor="notifications">Enable Notifications</Label>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 'crm':
+        return (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="crmPlatform">CRM/Helpdesk Platform</Label>
+              <Select value={data.crmPlatform || ''} onValueChange={(value) => updateData('crmPlatform', value)}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue placeholder="Select platform" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectItem value="salesforce">Salesforce</SelectItem>
+                  <SelectItem value="hubspot">HubSpot</SelectItem>
+                  <SelectItem value="zendesk">Zendesk</SelectItem>
+                  <SelectItem value="freshworks">Freshworks</SelectItem>
+                  <SelectItem value="pipedrive">Pipedrive</SelectItem>
+                  <SelectItem value="zoho">Zoho CRM</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="crmApiEndpoint">API Endpoint</Label>
+              <Input
+                id="crmApiEndpoint"
+                value={data.crmApiEndpoint || ''}
+                onChange={(e) => updateData('crmApiEndpoint', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="https://api.salesforce.com/services/data/v54.0/"
+              />
+            </div>
+            <div>
+              <Label htmlFor="crmAuthMethod">Authentication Method</Label>
+              <Select value={data.crmAuthMethod || ''} onValueChange={(value) => updateData('crmAuthMethod', value)}>
+                <SelectTrigger className="bg-gray-800 border-gray-700">
+                  <SelectValue placeholder="Select auth method" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectItem value="oauth">OAuth 2.0</SelectItem>
+                  <SelectItem value="apikey">API Key</SelectItem>
+                  <SelectItem value="basic">Basic Auth</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {data.crmAuthMethod === 'oauth' && (
+              <>
+                <div>
+                  <Label htmlFor="clientId">Client ID</Label>
+                  <Input
+                    id="clientId"
+                    value={data.clientId || ''}
+                    onChange={(e) => updateData('clientId', e.target.value)}
+                    className="bg-gray-800 border-gray-700"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="clientSecret">Client Secret</Label>
+                  <div className="relative">
+                    <Input
+                      id="clientSecret"
+                      type={showPasswords.clientSecret ? 'text' : 'password'}
+                      value={data.clientSecret || ''}
+                      onChange={(e) => updateData('clientSecret', e.target.value)}
+                      className="bg-gray-800 border-gray-700 pr-10"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3"
+                      onClick={() => togglePasswordVisibility('clientSecret')}
+                    >
+                      {showPasswords.clientSecret ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              </>
+            )}
+            {data.crmAuthMethod === 'apikey' && (
+              <div>
+                <Label htmlFor="crmApiKey">API Key</Label>
+                <div className="relative">
+                  <Input
+                    id="crmApiKey"
+                    type={showPasswords.crmApiKey ? 'text' : 'password'}
+                    value={data.crmApiKey || ''}
+                    onChange={(e) => updateData('crmApiKey', e.target.value)}
+                    className="bg-gray-800 border-gray-700 pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => togglePasswordVisibility('crmApiKey')}
+                  >
+                    {showPasswords.crmApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
+              </div>
+            )}
+            <div>
+              <Label htmlFor="fieldMapping">Field Mapping (JSON)</Label>
+              <Textarea
+                id="fieldMapping"
+                value={data.fieldMapping || ''}
+                onChange={(e) => updateData('fieldMapping', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder='{"customer_name": "Name", "customer_email": "Email", "conversation_summary": "Description"}'
+                rows={4}
+              />
+            </div>
+            <div>
+              <Label htmlFor="crmWebhookUrl">Webhook URL (Optional)</Label>
+              <Input
+                id="crmWebhookUrl"
+                value={data.crmWebhookUrl || ''}
+                onChange={(e) => updateData('crmWebhookUrl', e.target.value)}
+                className="bg-gray-800 border-gray-700"
+                placeholder="https://your-app.com/webhooks/crm"
+              />
             </div>
           </div>
         );
