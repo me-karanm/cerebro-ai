@@ -14,11 +14,17 @@ interface Contact {
   email: string;
   phone: string;
   assignedAgent: string;
+  campaign?: string;
   tags: string[];
   createdOn: string;
 }
 
 interface Agent {
+  id: string;
+  name: string;
+}
+
+interface Campaign {
   id: string;
   name: string;
 }
@@ -29,16 +35,18 @@ interface ContactModalProps {
   onSave: (contact: Omit<Contact, 'id' | 'createdOn'> | Contact) => void;
   contact?: Contact;
   agents: Agent[];
+  campaigns: Campaign[];
 }
 
 const availableTags = ['Lead', 'Customer', 'VIP', 'Prospect', 'Cold', 'Warm', 'Hot'];
 
-export const ContactModal = ({ isOpen, onClose, onSave, contact, agents }: ContactModalProps) => {
+export const ContactModal = ({ isOpen, onClose, onSave, contact, agents, campaigns }: ContactModalProps) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     assignedAgent: '',
+    campaign: '',
     tags: [] as string[]
   });
 
@@ -49,6 +57,7 @@ export const ContactModal = ({ isOpen, onClose, onSave, contact, agents }: Conta
         email: contact.email,
         phone: contact.phone,
         assignedAgent: contact.assignedAgent,
+        campaign: contact.campaign || '',
         tags: contact.tags
       });
     } else {
@@ -57,6 +66,7 @@ export const ContactModal = ({ isOpen, onClose, onSave, contact, agents }: Conta
         email: '',
         phone: '',
         assignedAgent: '',
+        campaign: '',
         tags: []
       });
     }
@@ -137,6 +147,22 @@ export const ContactModal = ({ isOpen, onClose, onSave, contact, agents }: Conta
                 {agents.map((agent) => (
                   <SelectItem key={agent.id} value={agent.id} className="text-white hover:bg-gray-700">
                     {agent.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="campaign" className="text-gray-300">Campaign</Label>
+            <Select value={formData.campaign} onValueChange={(value) => setFormData({ ...formData, campaign: value })}>
+              <SelectTrigger className="bg-gray-900 border-gray-700 text-white">
+                <SelectValue placeholder="Select a campaign" />
+              </SelectTrigger>
+              <SelectContent className="bg-gray-800 border-gray-700">
+                {campaigns.map((campaign) => (
+                  <SelectItem key={campaign.id} value={campaign.id} className="text-white hover:bg-gray-700">
+                    {campaign.name}
                   </SelectItem>
                 ))}
               </SelectContent>

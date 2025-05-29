@@ -12,6 +12,7 @@ interface Contact {
   email: string;
   phone: string;
   assignedAgent: string;
+  campaign?: string;
   tags: string[];
   createdOn: string;
 }
@@ -21,19 +22,31 @@ interface Agent {
   name: string;
 }
 
+interface Campaign {
+  id: string;
+  name: string;
+}
+
 interface ContactTableProps {
   contacts: Contact[];
   agents: Agent[];
+  campaigns: Campaign[];
   onEdit: (contact: Contact) => void;
   onDelete: (contactId: string) => void;
+  onContactClick: (contact: Contact) => void;
 }
 
-export const ContactTable = ({ contacts, agents, onEdit, onDelete }: ContactTableProps) => {
+export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, onContactClick }: ContactTableProps) => {
   const navigate = useNavigate();
 
   const getAgentName = (agentId: string) => {
     const agent = agents.find(a => a.id === agentId);
     return agent ? agent.name : 'Unassigned';
+  };
+
+  const getCampaignName = (campaignId: string) => {
+    const campaign = campaigns.find(c => c.id === campaignId);
+    return campaign ? campaign.name : 'No Campaign';
   };
 
   const formatDate = (dateString: string) => {
@@ -47,6 +60,12 @@ export const ContactTable = ({ contacts, agents, onEdit, onDelete }: ContactTabl
   const handleAgentClick = (agentId: string) => {
     if (agentId && agentId !== 'unassigned') {
       navigate(`/agents/${agentId}`);
+    }
+  };
+
+  const handleCampaignClick = (campaignId: string) => {
+    if (campaignId) {
+      navigate(`/campaigns/${campaignId}`);
     }
   };
 
@@ -73,6 +92,7 @@ export const ContactTable = ({ contacts, agents, onEdit, onDelete }: ContactTabl
             <TableHead className="text-gray-300 font-semibold">Email</TableHead>
             <TableHead className="text-gray-300 font-semibold">Phone</TableHead>
             <TableHead className="text-gray-300 font-semibold">Assigned Agent</TableHead>
+            <TableHead className="text-gray-300 font-semibold">Campaign</TableHead>
             <TableHead className="text-gray-300 font-semibold">Tags</TableHead>
             <TableHead className="text-gray-300 font-semibold">Created On</TableHead>
             <TableHead className="text-gray-300 font-semibold">Actions</TableHead>
@@ -81,7 +101,14 @@ export const ContactTable = ({ contacts, agents, onEdit, onDelete }: ContactTabl
         <TableBody>
           {contacts.map((contact) => (
             <TableRow key={contact.id} className="border-gray-700 hover:bg-gray-700/50">
-              <TableCell className="text-white font-medium">{contact.name}</TableCell>
+              <TableCell>
+                <button
+                  onClick={() => onContactClick(contact)}
+                  className="text-blue-400 hover:text-blue-300 font-medium transition-colors text-left"
+                >
+                  {contact.name}
+                </button>
+              </TableCell>
               <TableCell className="text-gray-300">{contact.email}</TableCell>
               <TableCell className="text-gray-300">{contact.phone}</TableCell>
               <TableCell>
@@ -95,6 +122,19 @@ export const ContactTable = ({ contacts, agents, onEdit, onDelete }: ContactTabl
                   </button>
                 ) : (
                   <span className="text-gray-500">Unassigned</span>
+                )}
+              </TableCell>
+              <TableCell>
+                {contact.campaign ? (
+                  <button
+                    onClick={() => handleCampaignClick(contact.campaign)}
+                    className="text-purple-400 hover:text-purple-300 flex items-center space-x-1 transition-colors"
+                  >
+                    <span>{getCampaignName(contact.campaign)}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </button>
+                ) : (
+                  <span className="text-gray-500">No Campaign</span>
                 )}
               </TableCell>
               <TableCell>
