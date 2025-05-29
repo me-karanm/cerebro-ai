@@ -54,6 +54,12 @@ export interface AgentWizardData {
       username: string;
       password: string;
     };
+    wechat?: {
+      enabled: boolean;
+      accountId: string;
+      appId: string;
+      appSecret: string;
+    }
   };
 
   // Step 4: Integrations & Webhooks
@@ -126,6 +132,12 @@ const initialData: AgentWizardData = {
       username: '',
       password: '',
     },
+    wechat: {
+      enabled: false,
+      accountId: '',
+      appId: '',
+      appSecret: '',
+    }
   },
   integrations: {
     slack: false,
