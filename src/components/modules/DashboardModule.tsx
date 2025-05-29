@@ -4,7 +4,6 @@ import { Phone, MessageSquare, TrendingUp, Users, Bot, ChevronLeft, ChevronRight
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { TopHeader } from '@/components/layout/TopHeader';
 
 const agents = [
   {
@@ -13,8 +12,6 @@ const agents = [
     status: 'active',
     conversations: 1247,
     successRate: 94,
-    phoneNumbers: ['+1 (555) 123-4567', '+1 (555) 987-6543'],
-    campaigns: ['Support Campaign', 'Holiday Support']
   },
   {
     id: '2',
@@ -22,8 +19,6 @@ const agents = [
     status: 'active',
     conversations: 856,
     successRate: 87,
-    phoneNumbers: ['+1 (555) 111-2222'],
-    campaigns: ['Q4 Sales Push', 'Lead Generation']
   },
   {
     id: '3',
@@ -31,8 +26,6 @@ const agents = [
     status: 'draft',
     conversations: 0,
     successRate: 0,
-    phoneNumbers: [],
-    campaigns: []
   }
 ];
 
@@ -58,209 +51,175 @@ export const DashboardModule = () => {
     }
   };
 
-  const handlePhoneNumberClick = (phoneNumber: any) => {
-    console.log('Navigate to phone number details:', phoneNumber);
-    // Add navigation logic here
-  };
-
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <TopHeader />
-      
-      {/* Main content with top padding to account for fixed header */}
-      <div className="pt-16 p-6 space-y-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-400">Total Agents</p>
-                  <p className="text-2xl font-bold text-white">12</p>
-                </div>
-                <Bot className="w-8 h-8 text-purple-400" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-400">Active Calls</p>
-                  <p className="text-2xl font-bold text-green-400">47</p>
-                </div>
-                <Phone className="w-8 h-8 text-green-400" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-400">Conversations Today</p>
-                  <p className="text-2xl font-bold text-blue-400">1,284</p>
-                </div>
-                <MessageSquare className="w-8 h-8 text-blue-400" />
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-400">Success Rate</p>
-                  <p className="text-2xl font-bold text-purple-400">92%</p>
-                </div>
-                <TrendingUp className="w-8 h-8 text-purple-400" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Agents Section */}
+    <div className="p-6 space-y-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center">
-              <Bot className="w-5 h-5 mr-2" />
-              Active Agents
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {agents.map((agent) => (
-                <div key={agent.id} className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">{agent.name}</h3>
-                      <Badge variant={agent.status === 'active' ? 'default' : 'secondary'} className="mt-1">
-                        {agent.status}
-                      </Badge>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-400">Success Rate</p>
-                      <p className="text-xl font-bold text-green-400">{agent.successRate}%</p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <p className="text-gray-400">Conversations</p>
-                      <p className="text-white font-medium">{agent.conversations.toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Phone Numbers</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {agent.phoneNumbers.length > 0 ? (
-                          agent.phoneNumbers.map((number, index) => (
-                            <Badge key={index} variant="outline" className="text-xs border-blue-500 text-blue-400">
-                              {number}
-                            </Badge>
-                          ))
-                        ) : (
-                          <span className="text-gray-500">None assigned</span>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-gray-400">Campaigns</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {agent.campaigns.length > 0 ? (
-                          agent.campaigns.map((campaign, index) => (
-                            <Badge key={index} variant="outline" className="text-xs border-purple-500 text-purple-400">
-                              {campaign}
-                            </Badge>
-                          ))
-                        ) : (
-                          <span className="text-gray-500">No campaigns</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Total Agents</p>
+                <p className="text-2xl font-bold text-white">12</p>
+              </div>
+              <Bot className="w-8 h-8 text-purple-400" />
             </div>
           </CardContent>
         </Card>
-
-        {/* Phone Numbers Section */}
+        
         <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
+          <CardContent className="p-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-white flex items-center">
-                <Phone className="w-5 h-5 mr-2" />
-                Phone Numbers
-              </CardTitle>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => scrollPhoneNumbers('left')}
-                  disabled={phoneNumbersScrollPosition === 0}
-                  className="border-gray-600"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => scrollPhoneNumbers('right')}
-                  disabled={phoneNumbersScrollPosition >= (phoneNumbers.length - 3) * 320}
-                  className="border-gray-600"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
+              <div>
+                <p className="text-sm text-gray-400">Active Calls</p>
+                <p className="text-2xl font-bold text-green-400">47</p>
               </div>
+              <Phone className="w-8 h-8 text-green-400" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="relative overflow-hidden">
-              <div 
-                className="flex space-x-4 transition-transform duration-300 ease-in-out"
-                style={{ transform: `translateX(-${phoneNumbersScrollPosition}px)` }}
-              >
-                {phoneNumbers.map((number) => (
-                  <Card 
-                    key={number.id} 
-                    className="flex-shrink-0 w-80 bg-gray-900 border-gray-700 hover:border-purple-500/50 transition-all duration-200 cursor-pointer"
-                    onClick={() => handlePhoneNumberClick(number)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <p className="font-mono text-white font-medium">{number.number}</p>
-                          <p className="text-sm text-gray-400">{number.location}</p>
-                        </div>
-                        <Badge 
-                          variant={number.status === 'active' ? 'default' : 'secondary'}
-                          className={number.status === 'active' ? 'bg-green-600' : ''}
-                        >
-                          {number.status}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <Badge 
-                          variant="outline" 
-                          className={
-                            number.type === 'Local' ? 'border-blue-500 text-blue-400' :
-                            number.type === 'Toll-Free' ? 'border-green-500 text-green-400' :
-                            'border-purple-500 text-purple-400'
-                          }
-                        >
-                          {number.type}
-                        </Badge>
-                        <p className="text-sm text-gray-400">Click to configure</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-gray-800 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Conversations Today</p>
+                <p className="text-2xl font-bold text-blue-400">1,284</p>
               </div>
+              <MessageSquare className="w-8 h-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-gray-800 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Success Rate</p>
+                <p className="text-2xl font-bold text-purple-400">92%</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-purple-400" />
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Agents Section */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center">
+            <Bot className="w-5 h-5 mr-2" />
+            Active Agents
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {agents.map((agent) => (
+              <div key={agent.id} className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">{agent.name}</h3>
+                    <Badge variant={agent.status === 'active' ? 'default' : 'secondary'} className="mt-1">
+                      {agent.status}
+                    </Badge>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-400">Success Rate</p>
+                    <p className="text-xl font-bold text-green-400">{agent.successRate}%</p>
+                  </div>
+                </div>
+                
+                <div className="text-sm">
+                  <p className="text-gray-400">Conversations</p>
+                  <p className="text-white font-medium">{agent.conversations.toLocaleString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Phone Numbers Section */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-white flex items-center">
+              <Phone className="w-5 h-5 mr-2" />
+              Phone Numbers
+            </CardTitle>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => scrollPhoneNumbers('left')}
+                disabled={phoneNumbersScrollPosition === 0}
+                className="border-gray-600"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => scrollPhoneNumbers('right')}
+                disabled={phoneNumbersScrollPosition >= (phoneNumbers.length - 3) * 320}
+                className="border-gray-600"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="relative overflow-hidden">
+            <div 
+              className="flex space-x-4 transition-transform duration-300 ease-in-out"
+              style={{ transform: `translateX(-${phoneNumbersScrollPosition}px)` }}
+            >
+              {phoneNumbers.map((number) => (
+                <Card 
+                  key={number.id} 
+                  className="flex-shrink-0 w-80 bg-gray-900 border-gray-700"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="font-mono text-white font-medium">{number.number}</p>
+                        <p className="text-sm text-gray-400">{number.location}</p>
+                      </div>
+                      <Badge 
+                        variant={number.status === 'active' ? 'default' : 'secondary'}
+                        className={number.status === 'active' ? 'bg-green-600' : ''}
+                      >
+                        {number.status}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Badge 
+                        variant="outline" 
+                        className={
+                          number.type === 'Local' ? 'border-blue-500 text-blue-400' :
+                          number.type === 'Toll-Free' ? 'border-green-500 text-green-400' :
+                          'border-purple-500 text-purple-400'
+                        }
+                      >
+                        {number.type}
+                      </Badge>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm">
+                          Configure
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          Stats
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
