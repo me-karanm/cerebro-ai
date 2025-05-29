@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Users, MessageCircle, DollarSign, Zap, Bell, ChevronDown } from 'lucide-react';
+import { Users, MessageCircle, DollarSign, Zap, Bell, ChevronDown, Phone, Target, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,51 +15,58 @@ import { AgentCarousel } from '@/components/dashboard/AgentCarousel';
 import { PhoneNumbersSection } from '@/components/dashboard/PhoneNumbersSection';
 import { SentimentAnalysis } from '@/components/dashboard/SentimentAnalysis';
 import { ConversationQuality } from '@/components/dashboard/ConversationQuality';
-
-const statsData = [
-  {
-    icon: Users,
-    label: 'Total Agents',
-    value: '05',
-    tooltip: 'Total number of AI agents in your account'
-  },
-  {
-    icon: MessageCircle,
-    label: 'Total Conversations',
-    value: '1,248',
-    tooltip: 'Total conversations across all agents'
-  },
-  {
-    icon: DollarSign,
-    label: 'Total Cost',
-    value: '$205.99',
-    tooltip: 'Total cost for this billing period'
-  },
-  {
-    icon: Zap,
-    label: 'Total Channels',
-    value: '350',
-    tooltip: 'Total active communication channels'
-  },
-  {
-    icon: Users,
-    label: 'Active Users',
-    value: '127',
-    tooltip: 'Currently active users across all channels'
-  },
-  {
-    icon: MessageCircle,
-    label: 'Success Rate',
-    value: '68.2%',
-    tooltip: 'Overall success rate across all conversations'
-  }
-];
+import { useIntegrationsStore } from '@/store/integrationsStore';
 
 const billingFilters = ['Current Billing Cycle', 'Last Billing Cycle', 'Last 3 Months', 'This Year'];
 
 export const DashboardModule = () => {
   const navigate = useNavigate();
   const [selectedBilling, setSelectedBilling] = useState('Current Billing Cycle');
+  const { phoneNumbers, whatsappAccounts, emailAccounts, telegramBots, wechatAccounts } = useIntegrationsStore();
+
+  // Calculate dynamic values
+  const totalPhoneNumbers = phoneNumbers.length;
+  const totalChannels = phoneNumbers.length + whatsappAccounts.length + emailAccounts.length + telegramBots.length + wechatAccounts.length;
+  const totalCost = (phoneNumbers.length * 4.99 + whatsappAccounts.length * 15 + emailAccounts.length * 8 + telegramBots.length * 5 + wechatAccounts.length * 12).toFixed(2);
+
+  const statsData = [
+    {
+      icon: Users,
+      label: 'Total Agents',
+      value: '05',
+      tooltip: 'Count of all AI agents configured'
+    },
+    {
+      icon: Target,
+      label: 'Total Campaigns',
+      value: '05',
+      tooltip: 'Number of active or configured campaigns'
+    },
+    {
+      icon: Phone,
+      label: 'Total Phone Numbers',
+      value: totalPhoneNumbers.toString().padStart(2, '0'),
+      tooltip: 'Total phone numbers purchased and available'
+    },
+    {
+      icon: Zap,
+      label: 'Total Channels',
+      value: totalChannels.toString().padStart(2, '0'),
+      tooltip: 'Number of communication channels enabled (e.g., WhatsApp, Email, SMS, Voice)'
+    },
+    {
+      icon: DollarSign,
+      label: 'Total Cost',
+      value: `$${totalCost}`,
+      tooltip: 'Current billing or expense for the period'
+    },
+    {
+      icon: CreditCard,
+      label: 'Credits Used',
+      value: '200 / 1000',
+      tooltip: 'Credits consumed vs. total allocated'
+    }
+  ];
 
   const handleCreateAgent = () => {
     navigate('/agents/create');
