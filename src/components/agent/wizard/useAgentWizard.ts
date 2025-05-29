@@ -20,12 +20,7 @@ export interface AgentWizardData {
   enableLongTermMemory: boolean;
 
   // Step 3: Voice & Calling + Connections
-  enableVoice: boolean;
-  selectedVoice: string;
-  ttsEngine: string;
-  pitch: number;
-  speed: number;
-  emphasis: number;
+  selectedVoice: string; // Only keep the selected voice, remove other voice settings
   callRouting: string;
   
   // Connections - now using integration IDs instead of direct config
@@ -90,12 +85,7 @@ const initialData: AgentWizardData = {
   functions: [],
   memoryLength: 10,
   enableLongTermMemory: false,
-  enableVoice: false,
-  selectedVoice: 'sarah',
-  ttsEngine: 'elevenlabs',
-  pitch: 0.5,
-  speed: 0.5,
-  emphasis: 0.5,
+  selectedVoice: '', // Only keep selected voice
   callRouting: 'direct',
   connections: {
     call: {

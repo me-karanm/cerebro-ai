@@ -16,7 +16,7 @@ import { useAgentWizard } from './wizard/useAgentWizard';
 const steps = [
   { title: 'Agent Basics', component: AgentBasicsStep },
   { title: 'Knowledge & Functions', component: KnowledgeFunctionsStep },
-  { title: 'Voice & Calling', component: VoiceCallingStep },
+  { title: 'Communication Channels', component: VoiceCallingStep },
   { title: 'Integrations & Webhooks', component: IntegrationsWebhooksStep },
   { title: 'Widget & Retention', component: WidgetRetentionStep },
   { title: 'Review & Create', component: ReviewCreateStep },
