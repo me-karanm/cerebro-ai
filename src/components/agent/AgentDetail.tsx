@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useNavigate } from 'react-router-dom';
 
 interface Agent {
   id: string;
@@ -121,6 +122,7 @@ const getStatusColor = (status: string) => {
 };
 
 export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
 
   const handleAnalytics = () => {
@@ -135,7 +137,8 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
 
   const handleEditConfiguration = () => {
     console.log('Navigate to edit configuration for agent:', agent.id);
-    // TODO: Navigate to creation wizard with pre-filled data
+    // Navigate to Create Agent page with agent data for editing
+    navigate(`/agents/create?edit=${agent.id}`);
   };
 
   const handleArchiveAgent = () => {
@@ -358,38 +361,6 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
             </CardContent>
           </Card>
 
-          {/* Performance Overview */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">Performance Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-400">Success Rate</span>
-                    <span className="text-green-400">{agent.successRate}%</span>
-                  </div>
-                  <Progress value={agent.successRate} className="mb-4" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-400">Uptime</span>
-                    <span className="text-blue-400">99.2%</span>
-                  </div>
-                  <Progress value={99.2} className="mb-4" />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-gray-400">User Satisfaction</span>
-                    <span className="text-purple-400">4.7/5</span>
-                  </div>
-                  <Progress value={94} className="mb-4" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Linked Campaigns Table */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
@@ -407,6 +378,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                   <TableRow className="border-gray-700">
                     <TableHead className="text-gray-400">Campaign Name</TableHead>
                     <TableHead className="text-gray-400">Status</TableHead>
+                    <TableHead className="text-gray-400">Sessions</TableHead>
                     <TableHead className="text-gray-400">Start Date</TableHead>
                     <TableHead className="text-gray-400">End Date</TableHead>
                     <TableHead className="text-gray-400">Phone Number</TableHead>
@@ -429,6 +401,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                           {campaign.status}
                         </Badge>
                       </TableCell>
+                      <TableCell className="text-gray-300">{campaign.sessions}</TableCell>
                       <TableCell className="text-gray-300">{campaign.startDate}</TableCell>
                       <TableCell className="text-gray-300">{campaign.endDate}</TableCell>
                       <TableCell className="text-cyan-400">{campaign.phoneNumber}</TableCell>

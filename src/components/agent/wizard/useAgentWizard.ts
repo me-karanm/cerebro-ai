@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export interface AgentWizardData {
   // Step 1: Agent Basics
@@ -137,6 +136,14 @@ export const useAgentWizard = () => {
     }));
   };
 
+  const loadExistingAgent = useCallback((existingData: Partial<AgentWizardData>) => {
+    setAgentData(prev => ({
+      ...prev,
+      ...existingData,
+      updatedAt: new Date().toISOString(),
+    }));
+  }, []);
+
   const validateStep = async (stepIndex: number): Promise<boolean> => {
     switch (stepIndex) {
       case 0: // Agent Basics
@@ -162,17 +169,17 @@ export const useAgentWizard = () => {
     return new Promise(resolve => setTimeout(resolve, 1000));
   };
 
-  const createAgent = async (): Promise<boolean> => {
+  const createAgent = async (isEditing: boolean = false): Promise<boolean> => {
     try {
-      // Simulate API call to create agent
-      console.log('Creating agent...', {
+      // Simulate API call to create or update agent
+      console.log(isEditing ? 'Updating agent...' : 'Creating agent...', {
         ...agentData,
         status: 'active',
-        createdAt: new Date().toISOString(),
+        [isEditing ? 'updatedAt' : 'createdAt']: new Date().toISOString(),
       });
       return new Promise(resolve => setTimeout(() => resolve(true), 2000));
     } catch (error) {
-      console.error('Failed to create agent:', error);
+      console.error(`Failed to ${isEditing ? 'update' : 'create'} agent:`, error);
       return false;
     }
   };
@@ -180,6 +187,7 @@ export const useAgentWizard = () => {
   return {
     agentData,
     updateAgentData,
+    loadExistingAgent,
     validateStep,
     saveDraft,
     createAgent,

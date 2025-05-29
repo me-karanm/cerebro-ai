@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -22,13 +22,63 @@ const steps = [
   { title: 'Review & Create', component: ReviewCreateStep },
 ];
 
+// Mock function to load agent data for editing
+const loadAgentData = (agentId: string) => {
+  // In a real app, this would fetch data from an API
+  console.log('Loading agent data for editing:', agentId);
+  return {
+    name: 'SalesBot Pro',
+    initialMessage: 'Hello! I\'m here to help you with your sales inquiries.',
+    systemPrompt: 'You are a professional sales assistant...',
+    llmModel: 'gpt-4',
+    temperature: 0.7,
+    useRAG: true,
+    selectedVoice: 'professional-female',
+    callRouting: 'direct',
+    connections: {
+      call: { enabled: true, selectedPhoneNumberId: 'phone1' },
+      whatsapp: { enabled: true, selectedAccountId: 'wa1' },
+      telegram: { enabled: false, selectedBotId: '' },
+      email: { enabled: true, selectedAccountId: 'email1' },
+      wechat: { enabled: false, selectedAccountId: '' },
+    },
+    integrations: {
+      slack: true,
+      teams: false,
+      hubspot: true,
+      zendesk: false,
+    },
+    webhookUrl: 'https://api.example.com/webhook',
+    authHeaders: [{ key: 'Authorization', value: 'Bearer token123' }],
+    maxRetries: 3,
+    retryDelay: 2,
+    dataRetentionDays: 30,
+    enableWidget: true,
+    widgetColor: '#7C3AED',
+    widgetPosition: 'bottom-right',
+    status: 'active' as const,
+  };
+};
+
 export const CreateAgentWizard = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editAgentId = searchParams.get('edit');
+  const isEditing = !!editAgentId;
+  
   const [currentStep, setCurrentStep] = useState(0);
-  const { agentData, updateAgentData, validateStep, saveDraft, createAgent } = useAgentWizard();
+  const { agentData, updateAgentData, validateStep, saveDraft, createAgent, loadExistingAgent } = useAgentWizard();
 
   const CurrentStepComponent = steps[currentStep].component;
   const progressPercentage = ((currentStep + 1) / steps.length) * 100;
+
+  useEffect(() => {
+    if (isEditing && editAgentId) {
+      // Load existing agent data for editing
+      const existingData = loadAgentData(editAgentId);
+      loadExistingAgent(existingData);
+    }
+  }, [isEditing, editAgentId, loadExistingAgent]);
 
   const handleNext = async () => {
     const isValid = await validateStep(currentStep);
@@ -48,7 +98,7 @@ export const CreateAgentWizard = () => {
   };
 
   const handleCreateAgent = async () => {
-    const success = await createAgent();
+    const success = await createAgent(isEditing);
     if (success) {
       navigate('/agents');
     }
@@ -74,7 +124,9 @@ export const CreateAgentWizard = () => {
             Back to Agents
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-white">Create New Agent</h1>
+            <h1 className="text-2xl font-bold text-white">
+              {isEditing ? 'Edit Agent' : 'Create New Agent'}
+            </h1>
             <p className="text-gray-400">Step {currentStep + 1} of {steps.length}: {steps[currentStep].title}</p>
           </div>
         </div>
@@ -151,7 +203,7 @@ export const CreateAgentWizard = () => {
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               disabled={!canProceed()}
             >
-              Create Agent
+              {isEditing ? 'Update Agent' : 'Create Agent'}
             </Button>
           ) : (
             <Button
