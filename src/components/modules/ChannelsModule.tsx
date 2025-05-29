@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, Settings, Check, X, ExternalLink, Key, Webhook } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { AddIntegrationModal } from './AddIntegrationModal';
 
 const integrations = [
   {
@@ -67,6 +67,7 @@ const integrations = [
 export const ChannelsModule = () => {
   const [selectedIntegration, setSelectedIntegration] = useState<string | null>(null);
   const [showWebhooks, setShowWebhooks] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -111,7 +112,10 @@ export const ChannelsModule = () => {
             <Webhook className="w-4 h-4 mr-2" />
             Webhooks
           </Button>
-          <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+          <Button 
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            onClick={() => setShowAddModal(true)}
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add Integration
           </Button>
@@ -346,6 +350,12 @@ export const ChannelsModule = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Add Integration Modal */}
+      <AddIntegrationModal 
+        open={showAddModal}
+        onOpenChange={setShowAddModal}
+      />
     </div>
   );
 };
