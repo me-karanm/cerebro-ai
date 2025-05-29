@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -438,21 +437,36 @@ export const IntegrationSetupForm = ({ data, onChange, onSubmit, onCancel, isSub
       {/* Integration Type Selection */}
       <div>
         <Label className="text-base font-medium">Integration Type</Label>
-        <RadioGroup
-          value={data.integrationType || ''}
-          onValueChange={(value) => updateData('integrationType', value)}
-          className="grid grid-cols-2 gap-4 mt-3"
-        >
+        <div className="grid grid-cols-2 gap-4 mt-3">
           {integrationTypes.map((type) => (
-            <div key={type.value} className="flex items-center space-x-2 p-3 border border-gray-700 rounded-lg hover:border-gray-600">
-              <RadioGroupItem value={type.value} id={type.value} />
-              <Label htmlFor={type.value} className="flex items-center space-x-2 cursor-pointer">
+            <div
+              key={type.value}
+              className={`relative cursor-pointer p-3 border rounded-lg transition-all duration-200 ${
+                data.integrationType === type.value
+                  ? 'border-purple-500 bg-purple-500/10'
+                  : 'border-gray-700 hover:border-gray-600'
+              }`}
+              onClick={() => updateData('integrationType', type.value)}
+            >
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="integrationType"
+                  value={type.value}
+                  checked={data.integrationType === type.value}
+                  onChange={() => updateData('integrationType', type.value)}
+                  className="sr-only"
+                />
                 <span className="text-lg">{type.icon}</span>
-                <span>{type.label}</span>
-              </Label>
+                <span className={`font-medium ${
+                  data.integrationType === type.value ? 'text-purple-300' : 'text-white'
+                }`}>
+                  {type.label}
+                </span>
+              </div>
             </div>
           ))}
-        </RadioGroup>
+        </div>
         {errors.integrationType && <p className="text-red-400 text-sm mt-1">{errors.integrationType}</p>}
       </div>
 
