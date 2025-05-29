@@ -1,17 +1,16 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
-import { AgentBasicsStep } from './wizard/AgentBasicsStep';
-import { KnowledgeFunctionsStep } from './wizard/KnowledgeFunctionsStep';
-import { VoiceCallingStep } from './wizard/VoiceCallingStep';
-import { IntegrationsWebhooksStep } from './wizard/IntegrationsWebhooksStep';
-import { WidgetRetentionStep } from './wizard/WidgetRetentionStep';
-import { ReviewCreateStep } from './wizard/ReviewCreateStep';
-import { useAgentWizard } from './wizard/useAgentWizard';
+import { AgentBasicsStep } from './AgentBasicsStep';
+import { KnowledgeFunctionsStep } from './KnowledgeFunctionsStep';
+import { VoiceCallingStep } from './VoiceCallingStep';
+import { IntegrationsWebhooksStep } from './IntegrationsWebhooksStep';
+import { WidgetRetentionStep } from './WidgetRetentionStep';
+import { ReviewCreateStep } from './ReviewCreateStep';
+import { useAgentWizard } from './useAgentWizard';
 
 const steps = [
   { title: 'Agent Basics', component: AgentBasicsStep },
