@@ -9,7 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Phone, Plus, Mail, Telegram } from 'lucide-react';
+import { Phone, Plus, Mail, MessageSquare } from 'lucide-react';
 import { MessageCircle } from 'lucide-react'; // For WeChat
 import {
   Select,
@@ -758,12 +758,14 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                 <Switch
                   checked={connections.wechat?.enabled || false}
                   onCheckedChange={(checked) => {
-                    // Initialize wechat connection if it doesn't exist
+                    // Initialize wechat connection with all required properties
                     const updatedConnections = {
                       ...connections,
                       wechat: {
-                        ...(connections.wechat || { enabled: false, accountId: '', appId: '', appSecret: '' }),
-                        enabled: checked
+                        enabled: checked,
+                        accountId: connections.wechat?.accountId || '',
+                        appId: connections.wechat?.appId || '',
+                        appSecret: connections.wechat?.appSecret || ''
                       }
                     };
                     onUpdate({ connections: updatedConnections });
@@ -827,8 +829,11 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                           const updatedConnections = {
                             ...connections,
                             wechat: {
-                              ...(connections.wechat || {}),
-                              accountId: value
+                              ...connections.wechat,
+                              enabled: connections.wechat?.enabled || false,
+                              accountId: value,
+                              appId: connections.wechat?.appId || '',
+                              appSecret: connections.wechat?.appSecret || ''
                             }
                           };
                           onUpdate({ connections: updatedConnections });

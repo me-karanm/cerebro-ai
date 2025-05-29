@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Plus, Trash2, Edit, Telegram } from 'lucide-react';
+import { Plus, Trash2, Edit, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { IntegrationCard } from './IntegrationCard';
@@ -76,7 +76,7 @@ export const TelegramSection = () => {
     <IntegrationCard
       title="Telegram"
       description="Connect and manage Telegram bots for automated messaging."
-      icon={Telegram}
+      icon={MessageSquare}
       iconBackground="bg-blue-500"
       footer={
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

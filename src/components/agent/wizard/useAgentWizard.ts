@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 
 export interface AgentWizardData {
@@ -132,12 +131,6 @@ const initialData: AgentWizardData = {
       username: '',
       password: '',
     },
-    wechat: {
-      enabled: false,
-      accountId: '',
-      appId: '',
-      appSecret: '',
-    }
   },
   integrations: {
     slack: false,
