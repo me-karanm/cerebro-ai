@@ -1,10 +1,12 @@
+
 import { useState } from 'react';
-import { Plus, Search, Filter, Bot, Play, Settings, MoreVertical, Edit, Trash2, Copy } from 'lucide-react';
+import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { AgentDetail } from '@/components/agent/AgentDetail';
 
 const sampleAgents = [
@@ -44,21 +46,70 @@ const sampleAgents = [
     lastUpdated: '3 days ago',
     persona: 'Patient and knowledgeable technical expert',
   },
+  // Add more agents to demonstrate pagination
+  {
+    id: '4',
+    name: 'Marketing Assistant',
+    description: 'Helps with marketing campaigns and lead generation',
+    status: 'active',
+    language: 'English',
+    voice: 'Friendly Female',
+    conversations: 523,
+    successRate: 91,
+    lastUpdated: '5 hours ago',
+    persona: 'Creative and enthusiastic marketing specialist',
+  },
+  {
+    id: '5',
+    name: 'HR Assistant',
+    description: 'Assists with HR tasks and employee inquiries',
+    status: 'draft',
+    language: 'English',
+    voice: 'Professional Male',
+    conversations: 0,
+    successRate: 0,
+    lastUpdated: '1 week ago',
+    persona: 'Professional and helpful HR representative',
+  },
+  {
+    id: '6',
+    name: 'Finance Assistant',
+    description: 'Handles financial queries and invoice management',
+    status: 'active',
+    language: 'English',
+    voice: 'Calm Female',
+    conversations: 342,
+    successRate: 96,
+    lastUpdated: '1 day ago',
+    persona: 'Detail-oriented financial expert',
+  },
 ];
+
+const AGENTS_PER_PAGE = 6;
 
 export const AgentsModule = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [agents] = useState(sampleAgents);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredAgents = agents.filter(agent =>
     agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     agent.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredAgents.length / AGENTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * AGENTS_PER_PAGE;
+  const endIndex = startIndex + AGENTS_PER_PAGE;
+  const currentAgents = filteredAgents.slice(startIndex, endIndex);
+
   const handleCreateAgent = () => {
     navigate('/agents/create');
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   if (selectedAgent) {
@@ -159,7 +210,7 @@ export const AgentsModule = () => {
 
       {/* Agents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredAgents.map((agent) => (
+        {currentAgents.map((agent) => (
           <Card key={agent.id} className="bg-gray-800 border-gray-700 hover:border-purple-500/50 transition-all duration-200 group cursor-pointer">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
@@ -173,11 +224,6 @@ export const AgentsModule = () => {
                       {agent.status}
                     </Badge>
                   </div>
-                </div>
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                    <MoreVertical className="w-4 h-4" />
-                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -226,6 +272,41 @@ export const AgentsModule = () => {
           </Card>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer text-gray-300 hover:text-white'}
+                />
+              </PaginationItem>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => handlePageChange(page)}
+                    isActive={currentPage === page}
+                    className="cursor-pointer text-gray-300 hover:text-white"
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer text-gray-300 hover:text-white'}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 };

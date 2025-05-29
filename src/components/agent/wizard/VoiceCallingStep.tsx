@@ -1,438 +1,318 @@
 
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { Phone, MessageCircle, Mail, Plus, Settings } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Phone, Plus, ExternalLink, MessageSquare, Mail, MessageCircle, Play } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { AgentWizardData } from './useAgentWizard';
+import { AddIntegrationModal } from '@/components/modules/AddIntegrationModal';
 import { useIntegrationsStore } from '@/store/integrationsStore';
-import { useNavigate } from 'react-router-dom';
+import { AgentWizardData } from './useAgentWizard';
 
 interface VoiceCallingStepProps {
   data: AgentWizardData;
   onUpdate: (updates: Partial<AgentWizardData>) => void;
 }
 
-// Mock voice studio voices - in a real app, this would come from a Voice Studio API/store
-const voiceStudioVoices = [
-  { id: 'voice-1', name: 'Aria', gender: 'Female', accent: 'American', description: 'Professional and warm' },
-  { id: 'voice-2', name: 'Marcus', gender: 'Male', accent: 'British', description: 'Clear and authoritative' },
-  { id: 'voice-3', name: 'Sofia', gender: 'Female', accent: 'Spanish', description: 'Friendly and energetic' },
-  { id: 'voice-4', name: 'Chen', gender: 'Male', accent: 'Neutral', description: 'Calm and technical' },
+const availableChannels = [
+  {
+    id: 'call',
+    name: 'Phone Calls',
+    icon: Phone,
+    description: 'Handle voice calls with AI agent',
+    category: 'Voice',
+    color: 'bg-blue-500'
+  },
+  {
+    id: 'whatsapp',
+    name: 'WhatsApp Business',
+    icon: MessageCircle,
+    description: 'Connect to WhatsApp Business API',
+    category: 'Messaging',
+    color: 'bg-green-500'
+  },
+  {
+    id: 'telegram',
+    name: 'Telegram Bot',
+    icon: MessageCircle,
+    description: 'Create automated Telegram bot',
+    category: 'Messaging',
+    color: 'bg-blue-400'
+  },
+  {
+    id: 'email',
+    name: 'Email Integration',
+    icon: Mail,
+    description: 'Handle email communications',
+    category: 'Email',
+    color: 'bg-purple-500'
+  },
+  {
+    id: 'wechat',
+    name: 'WeChat',
+    icon: MessageCircle,
+    description: 'Connect to WeChat platform',
+    category: 'Messaging',
+    color: 'bg-emerald-500'
+  },
+  {
+    id: 'facebook',
+    name: 'Facebook Messenger',
+    icon: MessageCircle,
+    description: 'Integrate with Facebook Messenger',
+    category: 'Messaging',
+    color: 'bg-blue-600'
+  },
+  {
+    id: 'slack',
+    name: 'Slack',
+    icon: MessageCircle,
+    description: 'Connect to Slack workspace',
+    category: 'Collaboration',
+    color: 'bg-purple-600'
+  },
+  {
+    id: 'hubspot',
+    name: 'HubSpot CRM',
+    icon: Settings,
+    description: 'Integrate with HubSpot CRM',
+    category: 'CRM',
+    color: 'bg-orange-500'
+  },
+  {
+    id: 'zendesk',
+    name: 'Zendesk',
+    icon: Settings,
+    description: 'Connect to Zendesk helpdesk',
+    category: 'Helpdesk',
+    color: 'bg-green-600'
+  },
+  {
+    id: 'webhook',
+    name: 'Custom Webhook',
+    icon: Settings,
+    description: 'Custom webhook integration',
+    category: 'Custom',
+    color: 'bg-gray-500'
+  }
 ];
 
 export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
-  const navigate = useNavigate();
-  const { 
-    phoneNumbers, 
-    whatsappAccounts, 
-    emailAccounts, 
-    telegramBots, 
-    wechatAccounts 
-  } = useIntegrationsStore();
+  const [showAddModal, setShowAddModal] = useState(false);
+  const { phoneNumbers, whatsappAccounts, telegramBots, emailAccounts, wechatAccounts } = useIntegrationsStore();
 
-  const updateConnection = (connection: string, field: string, value: any) => {
+  const handleConnectionToggle = (channelId: string, enabled: boolean) => {
     onUpdate({
       connections: {
         ...data.connections,
-        [connection]: {
-          ...data.connections[connection as keyof typeof data.connections],
-          [field]: value,
-        },
-      },
+        [channelId]: {
+          ...data.connections[channelId as keyof typeof data.connections],
+          enabled
+        }
+      }
     });
   };
 
-  const handleCreateNewIntegration = () => {
-    // Navigate to integrations page to create new integration
-    window.open('/channels', '_blank');
+  const handleAccountSelect = (channelId: string, accountId: string) => {
+    const connectionKey = channelId === 'call' ? 'selectedPhoneNumberId' : 'selectedAccountId';
+    onUpdate({
+      connections: {
+        ...data.connections,
+        [channelId]: {
+          ...data.connections[channelId as keyof typeof data.connections],
+          [connectionKey]: accountId
+        }
+      }
+    });
   };
 
-  const handlePlayVoice = (voiceId: string) => {
-    // In a real implementation, this would play a preview of the voice
-    console.log('Playing voice preview for:', voiceId);
+  const getAvailableAccounts = (channelId: string) => {
+    switch (channelId) {
+      case 'call':
+        return phoneNumbers;
+      case 'whatsapp':
+        return whatsappAccounts;
+      case 'telegram':
+        return telegramBots;
+      case 'email':
+        return emailAccounts;
+      case 'wechat':
+        return wechatAccounts;
+      default:
+        return [];
+    }
+  };
+
+  const getAccountDisplayName = (channelId: string, account: any) => {
+    switch (channelId) {
+      case 'call':
+        return account.number;
+      case 'whatsapp':
+        return account.phoneNumber;
+      case 'telegram':
+        return account.botName;
+      case 'email':
+        return account.email;
+      case 'wechat':
+        return account.accountName;
+      default:
+        return account.name || account.id;
+    }
+  };
+
+  const isChannelConfigured = (channelId: string) => {
+    const accounts = getAvailableAccounts(channelId);
+    return accounts.length > 0;
   };
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-white mb-4">Communication Channels</h2>
-        <p className="text-sm text-gray-400 mb-6">
-          Select and configure communication channels for your agent.
+        <p className="text-gray-400 mb-6">
+          Configure how your agent will communicate with users across different platforms.
         </p>
       </div>
 
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h3 className="text-lg font-semibold text-white">Available Channels</h3>
-          <p className="text-sm text-gray-400">
-            Enable the channels where your agent will be available.
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate('/channels')}
-          className="border-gray-700 text-gray-300 hover:bg-gray-800"
-        >
-          <ExternalLink className="w-4 h-4 mr-2" />
-          Manage Integrations
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Phone/Call Integration */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-base text-white flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Phone className="w-4 h-4" />
-                <span>Phone Calls</span>
-              </div>
-              <Switch
-                checked={data.connections.call?.enabled || false}
-                onCheckedChange={(checked) => updateConnection('call', 'enabled', checked)}
-              />
-            </CardTitle>
-          </CardHeader>
-          {data.connections.call?.enabled && (
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm text-white">Select Phone Number</Label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCreateNewIntegration}
-                    className="border-gray-600 text-gray-300 hover:bg-gray-700 h-7 px-2 text-xs"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Add New
-                  </Button>
-                </div>
-                
-                {phoneNumbers.length > 0 ? (
-                  <Select
-                    value={data.connections.call?.selectedPhoneNumberId || ''}
-                    onValueChange={(value) => updateConnection('call', 'selectedPhoneNumberId', value)}
-                  >
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                      <SelectValue placeholder="Choose a phone number" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
-                      {phoneNumbers.map((phone) => (
-                        <SelectItem key={phone.id} value={phone.id} className="text-white">
-                          <div className="flex items-center space-x-2">
-                            <span>{phone.number}</span>
-                            <Badge variant={phone.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                              {phone.type}
-                            </Badge>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="text-center py-4 border border-dashed border-gray-600 rounded-lg">
-                    <p className="text-sm text-gray-400 mb-2">No phone numbers available</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCreateNewIntegration}
-                      className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Purchase Phone Number
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          )}
-        </Card>
-
-        {/* WhatsApp Integration */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-base text-white flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <MessageSquare className="w-4 h-4" />
-                <span>WhatsApp</span>
-              </div>
-              <Switch
-                checked={data.connections.whatsapp?.enabled || false}
-                onCheckedChange={(checked) => updateConnection('whatsapp', 'enabled', checked)}
-              />
-            </CardTitle>
-          </CardHeader>
-          {data.connections.whatsapp?.enabled && (
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm text-white">Select WhatsApp Account</Label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCreateNewIntegration}
-                    className="border-gray-600 text-gray-300 hover:bg-gray-700 h-7 px-2 text-xs"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Add New
-                  </Button>
-                </div>
-                
-                {whatsappAccounts.length > 0 ? (
-                  <Select
-                    value={data.connections.whatsapp?.selectedAccountId || ''}
-                    onValueChange={(value) => updateConnection('whatsapp', 'selectedAccountId', value)}
-                  >
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                      <SelectValue placeholder="Choose a WhatsApp account" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
-                      {whatsappAccounts.map((account) => (
-                        <SelectItem key={account.id} value={account.id} className="text-white">
-                          <div>
-                            <div className="text-sm">{account.businessName}</div>
-                            <div className="text-xs text-gray-400">{account.phoneNumber}</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="text-center py-4 border border-dashed border-gray-600 rounded-lg">
-                    <p className="text-sm text-gray-400 mb-2">No WhatsApp accounts available</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCreateNewIntegration}
-                      className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Connect WhatsApp
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          )}
-        </Card>
-
-        {/* Email Integration */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-base text-white flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Mail className="w-4 h-4" />
-                <span>Email</span>
-              </div>
-              <Switch
-                checked={data.connections.email?.enabled || false}
-                onCheckedChange={(checked) => updateConnection('email', 'enabled', checked)}
-              />
-            </CardTitle>
-          </CardHeader>
-          {data.connections.email?.enabled && (
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm text-white">Select Email Account</Label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCreateNewIntegration}
-                    className="border-gray-600 text-gray-300 hover:bg-gray-700 h-7 px-2 text-xs"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Add New
-                  </Button>
-                </div>
-                
-                {emailAccounts.length > 0 ? (
-                  <Select
-                    value={data.connections.email?.selectedAccountId || ''}
-                    onValueChange={(value) => updateConnection('email', 'selectedAccountId', value)}
-                  >
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                      <SelectValue placeholder="Choose an email account" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
-                      {emailAccounts.map((account) => (
-                        <SelectItem key={account.id} value={account.id} className="text-white">
-                          <div>
-                            <div className="text-sm">{account.email}</div>
-                            <div className="text-xs text-gray-400">{account.smtpHost}</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="text-center py-4 border border-dashed border-gray-600 rounded-lg">
-                    <p className="text-sm text-gray-400 mb-2">No email accounts available</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCreateNewIntegration}
-                      className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Connect Email
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          )}
-        </Card>
-
-        {/* Telegram Integration */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-base text-white flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <MessageCircle className="w-4 h-4" />
-                <span>Telegram</span>
-              </div>
-              <Switch
-                checked={data.connections.telegram?.enabled || false}
-                onCheckedChange={(checked) => updateConnection('telegram', 'enabled', checked)}
-              />
-            </CardTitle>
-          </CardHeader>
-          {data.connections.telegram?.enabled && (
-            <CardContent className="space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-sm text-white">Select Telegram Bot</Label>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCreateNewIntegration}
-                    className="border-gray-600 text-gray-300 hover:bg-gray-700 h-7 px-2 text-xs"
-                  >
-                    <Plus className="w-3 h-3 mr-1" />
-                    Add New
-                  </Button>
-                </div>
-                
-                {telegramBots.length > 0 ? (
-                  <Select
-                    value={data.connections.telegram?.selectedBotId || ''}
-                    onValueChange={(value) => updateConnection('telegram', 'selectedBotId', value)}
-                  >
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                      <SelectValue placeholder="Choose a Telegram bot" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
-                      {telegramBots.map((bot) => (
-                        <SelectItem key={bot.id} value={bot.id} className="text-white">
-                          <div>
-                            <div className="text-sm">{bot.botName}</div>
-                            <div className="text-xs text-gray-400">{bot.username}</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="text-center py-4 border border-dashed border-gray-600 rounded-lg">
-                    <p className="text-sm text-gray-400 mb-2">No Telegram bots available</p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCreateNewIntegration}
-                      className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Create Telegram Bot
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          )}
-        </Card>
-      </div>
-
-      {/* Voice Selection Section - Only show if Call is enabled */}
-      {data.connections.call?.enabled && (
-        <div className="mt-8">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-white">Voice Selection</h3>
-            <p className="text-sm text-gray-400">
-              Choose a voice for your agent's phone calls from your Voice Studio.
-            </p>
+      {/* Voice Settings */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white">Voice Settings</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="voice-select" className="text-gray-300">Voice Selection</Label>
+              <Select value={data.selectedVoice} onValueChange={(value) => onUpdate({ selectedVoice: value })}>
+                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                  <SelectValue placeholder="Choose a voice" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-700 border-gray-600">
+                  <SelectItem value="alloy">Alloy</SelectItem>
+                  <SelectItem value="echo">Echo</SelectItem>
+                  <SelectItem value="fable">Fable</SelectItem>
+                  <SelectItem value="onyx">Onyx</SelectItem>
+                  <SelectItem value="nova">Nova</SelectItem>
+                  <SelectItem value="shimmer">Shimmer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="routing-select" className="text-gray-300">Call Routing</Label>
+              <Select value={data.callRouting} onValueChange={(value) => onUpdate({ callRouting: value })}>
+                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                  <SelectValue placeholder="Select routing method" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-700 border-gray-600">
+                  <SelectItem value="direct">Direct to Agent</SelectItem>
+                  <SelectItem value="queue">Queue System</SelectItem>
+                  <SelectItem value="round-robin">Round Robin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-base text-white">Available Voices</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 gap-3">
-                {voiceStudioVoices.map((voice) => (
-                  <div
-                    key={voice.id}
-                    onClick={() => onUpdate({ selectedVoice: voice.id })}
-                    className={`p-4 rounded-lg cursor-pointer transition-all border ${
-                      data.selectedVoice === voice.id
-                        ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 border-purple-500/30'
-                        : 'bg-gray-700 border-gray-600 hover:bg-gray-600'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h4 className="font-medium text-white">{voice.name}</h4>
-                          <Badge variant="secondary" className="text-xs">
-                            {voice.gender}
-                          </Badge>
-                          <Badge variant="outline" className="text-xs">
-                            {voice.accent}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-400">{voice.description}</p>
+      {/* Channel Configuration */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-white">Available Channels</CardTitle>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowAddModal(true)}
+            className="border-purple-600 text-purple-400 hover:bg-purple-600 hover:text-white"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add New Integration
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {availableChannels.map((channel) => {
+              const IconComponent = channel.icon;
+              const isConfigured = isChannelConfigured(channel.id);
+              const connectionData = data.connections[channel.id as keyof typeof data.connections];
+              const isEnabled = connectionData?.enabled || false;
+
+              return (
+                <Card key={channel.id} className="bg-gray-700 border-gray-600">
+                  <CardContent className="p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className={`w-10 h-10 ${channel.color} rounded-lg flex items-center justify-center`}>
+                        <IconComponent className="w-5 h-5 text-white" />
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePlayVoice(voice.id);
-                        }}
-                        className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                      >
-                        <Play className="w-4 h-4" />
-                      </Button>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-white font-medium">{channel.name}</h3>
+                          <div className="flex items-center space-x-2">
+                            <Badge 
+                              variant={isConfigured ? "default" : "secondary"}
+                              className={isConfigured ? "bg-green-600" : ""}
+                            >
+                              {isConfigured ? "Available" : "Not Configured"}
+                            </Badge>
+                            <Switch
+                              checked={isEnabled}
+                              onCheckedChange={(checked) => handleConnectionToggle(channel.id, checked)}
+                              disabled={!isConfigured}
+                            />
+                          </div>
+                        </div>
+                        <p className="text-gray-400 text-sm mb-3">{channel.description}</p>
+                        
+                        {isEnabled && isConfigured && (
+                          <div className="space-y-2">
+                            <Label className="text-gray-300 text-xs">Select Account:</Label>
+                            <Select
+                              value={
+                                channel.id === 'call' 
+                                  ? (connectionData as any)?.selectedPhoneNumberId || ''
+                                  : (connectionData as any)?.selectedAccountId || ''
+                              }
+                              onValueChange={(value) => handleAccountSelect(channel.id, value)}
+                            >
+                              <SelectTrigger className="bg-gray-600 border-gray-500 text-white text-sm h-8">
+                                <SelectValue placeholder="Choose account" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-gray-600 border-gray-500">
+                                {getAvailableAccounts(channel.id).map((account: any) => (
+                                  <SelectItem key={account.id} value={account.id}>
+                                    {getAccountDisplayName(channel.id, account)}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+                        
+                        {!isConfigured && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowAddModal(true)}
+                            className="border-gray-500 text-gray-300 hover:bg-gray-600 text-xs h-8"
+                          >
+                            Setup {channel.name}
+                          </Button>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="text-center pt-4 border-t border-gray-600">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/voice-studio')}
-                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Manage Voices in Voice Studio
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      <AddIntegrationModal 
+        open={showAddModal}
+        onOpenChange={setShowAddModal}
+      />
     </div>
   );
 };

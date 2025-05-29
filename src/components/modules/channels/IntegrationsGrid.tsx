@@ -1,5 +1,5 @@
 
-import { Settings, Check, X, ExternalLink } from 'lucide-react';
+import { Settings, Check, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,6 +18,21 @@ interface IntegrationsGridProps {
   integrations: Integration[];
   onConfigureIntegration: (id: string) => void;
 }
+
+const getCategoryColor = (category: string) => {
+  const colors = {
+    'Messaging': 'bg-green-600 text-white border-green-500',
+    'Voice': 'bg-blue-600 text-white border-blue-500',
+    'Web': 'bg-purple-600 text-white border-purple-500',
+    'Email': 'bg-orange-600 text-white border-orange-500',
+    'CRM': 'bg-indigo-600 text-white border-indigo-500',
+    'Productivity': 'bg-yellow-600 text-white border-yellow-500',
+    'Phone': 'bg-cyan-600 text-white border-cyan-500',
+    'Collaboration': 'bg-pink-600 text-white border-pink-500',
+    'Custom': 'bg-gray-600 text-white border-gray-500',
+  };
+  return colors[category as keyof typeof colors] || 'bg-gray-600 text-white border-gray-500';
+};
 
 export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: IntegrationsGridProps) => {
   const getStatusBadge = (status: string) => {
@@ -109,7 +124,10 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
                 <div className="text-2xl">{integration.icon}</div>
                 <div>
                   <CardTitle className="text-white text-lg">{integration.name}</CardTitle>
-                  <Badge variant="outline" className="mt-1 text-xs">
+                  <Badge 
+                    variant="outline" 
+                    className={`mt-1 text-xs ${getCategoryColor(integration.category)}`}
+                  >
                     {integration.category}
                   </Badge>
                 </div>
@@ -122,22 +140,15 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
             
             <div className="flex items-center justify-between">
               {getStatusBadge(integration.status)}
-              <div className="flex space-x-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
-                  onClick={() => onConfigureIntegration(integration.id)}
-                >
-                  <Settings className="w-3 h-3 mr-1" />
-                  Configure
-                </Button>
-                {integration.status === 'connected' && (
-                  <Button size="sm" variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
-                    <ExternalLink className="w-3 h-3" />
-                  </Button>
-                )}
-              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                onClick={() => onConfigureIntegration(integration.id)}
+              >
+                <Settings className="w-3 h-3 mr-1" />
+                Configure
+              </Button>
             </div>
 
             {renderConfigDetails(integration)}

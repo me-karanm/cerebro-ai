@@ -11,7 +11,7 @@ const integrations = [
     description: 'Connect to WhatsApp Business API for messaging',
     icon: '💬',
     category: 'Messaging',
-    status: 'connected',
+    status: 'connected' as const,
     config: { phone: '+1234567890', verified: true }
   },
   {
@@ -20,7 +20,7 @@ const integrations = [
     description: 'Embed chat widget on your website',
     icon: '💻',
     category: 'Web',
-    status: 'connected',
+    status: 'connected' as const,
     config: { domain: 'example.com', embedded: true }
   },
   {
@@ -29,7 +29,7 @@ const integrations = [
     description: 'Handle support tickets via email',
     icon: '📧',
     category: 'Email',
-    status: 'configured',
+    status: 'configured' as const,
     config: { email: 'support@example.com' }
   },
   {
@@ -38,7 +38,7 @@ const integrations = [
     description: 'Create automated bot for Telegram',
     icon: '📱',
     category: 'Messaging',
-    status: 'disconnected',
+    status: 'disconnected' as const,
     config: {}
   },
   {
@@ -47,7 +47,7 @@ const integrations = [
     description: 'Sync leads and contacts with Salesforce',
     icon: '☁️',
     category: 'CRM',
-    status: 'disconnected',
+    status: 'disconnected' as const,
     config: {}
   },
   {
@@ -56,7 +56,7 @@ const integrations = [
     description: 'Integrate with HubSpot for lead management',
     icon: '🧡',
     category: 'CRM',
-    status: 'connected',
+    status: 'connected' as const,
     config: { apiKey: '***-***-***', syncing: true }
   },
   {
@@ -65,7 +65,7 @@ const integrations = [
     description: 'Connect to Slack workspace for notifications',
     icon: '📢',
     category: 'Productivity',
-    status: 'disconnected',
+    status: 'disconnected' as const,
     config: {}
   },
   {
@@ -74,7 +74,7 @@ const integrations = [
     description: 'Integrate with Facebook Messenger',
     icon: '📘',
     category: 'Messaging',
-    status: 'disconnected',
+    status: 'disconnected' as const,
     config: {}
   },
 ];
