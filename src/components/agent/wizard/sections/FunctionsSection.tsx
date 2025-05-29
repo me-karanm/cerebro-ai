@@ -61,7 +61,7 @@ export const FunctionsSection = ({ data, onUpdate }: FunctionsSectionProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => toggleFunction(func.id)}
-                  className={isEnabled ? 'text-green-400 hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-600'}
+                  className={isEnabled ? 'text-green-400' : 'text-gray-400'}
                 >
                   {isEnabled ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
                 </Button>

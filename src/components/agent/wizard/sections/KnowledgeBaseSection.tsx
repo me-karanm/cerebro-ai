@@ -56,10 +56,9 @@ export const KnowledgeBaseSection = ({ data, onUpdate }: KnowledgeBaseSectionPro
               id="file-upload"
             />
             <Button
-              variant="outline"
+              variant="default"
               size="sm"
               onClick={() => document.getElementById('file-upload')?.click()}
-              className="border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
             >
               Browse Files
             </Button>
@@ -89,9 +88,9 @@ export const KnowledgeBaseSection = ({ data, onUpdate }: KnowledgeBaseSectionPro
             />
             <Button
               onClick={addUrl}
-              variant="outline"
+              variant="secondary"
               size="sm"
-              className="ml-2 border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
+              className="ml-2"
             >
               <Plus className="w-4 h-4" />
             </Button>
@@ -100,12 +99,11 @@ export const KnowledgeBaseSection = ({ data, onUpdate }: KnowledgeBaseSectionPro
             <div className="mt-2 space-y-1">
               {data.knowledgeUrls.map((url, index) => (
                 <div key={index} className="flex items-center justify-between text-sm bg-gray-700 rounded px-2 py-1">
-                  <span className="text-blue-400">{url}</span>
+                  <span className="text-cyan-400">{url}</span>
                   <Button
                     onClick={() => removeUrl(index)}
                     variant="ghost"
                     size="sm"
-                    className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
                   >
                     <Trash2 className="w-3 h-3" />
                   </Button>

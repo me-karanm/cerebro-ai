@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Sidebar } from '@/components/Sidebar';
+import { Button } from '@/components/ui/button';
 
 const NotFound = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -27,9 +28,9 @@ const NotFound = () => {
           <div className="text-center">
             <h1 className="text-4xl font-bold mb-4 text-white">404</h1>
             <p className="text-xl text-gray-300 mb-4">Oops! Page not found</p>
-            <a href="/" className="text-purple-400 hover:text-purple-300 underline">
-              Return to Dashboard
-            </a>
+            <Button asChild variant="default">
+              <a href="/">Return to Dashboard</a>
+            </Button>
           </div>
         </div>
       </main>
