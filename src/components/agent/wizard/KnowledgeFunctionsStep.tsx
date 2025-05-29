@@ -27,6 +27,7 @@ const availableFunctions = [
 export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsStepProps) => {
   const [newUrl, setNewUrl] = useState('');
   const [knowledgeTextInput, setKnowledgeTextInput] = useState(data.knowledgeText);
+  const [customFunctionCode, setCustomFunctionCode] = useState(data.customFunctionCode || '');
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -60,6 +61,8 @@ export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsSte
       }
     }
   };
+
+  const isCustomFunctionEnabled = data.functions.some(f => f.id === 'custom');
 
   return (
     <div className="space-y-6">
@@ -97,7 +100,7 @@ export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsSte
                     variant="outline"
                     size="sm"
                     onClick={() => document.getElementById('file-upload')?.click()}
-                    className="border-gray-600 text-gray-300"
+                    className="border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
                   >
                     Browse Files
                   </Button>
@@ -129,7 +132,7 @@ export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsSte
                     onClick={addUrl}
                     variant="outline"
                     size="sm"
-                    className="ml-2 border-gray-600 text-gray-300"
+                    className="ml-2 border-green-600 text-green-400 hover:bg-green-600 hover:text-white"
                   >
                     <Plus className="w-4 h-4" />
                   </Button>
@@ -143,7 +146,7 @@ export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsSte
                           onClick={() => removeUrl(index)}
                           variant="ghost"
                           size="sm"
-                          className="text-red-400 hover:text-red-300"
+                          className="text-red-400 hover:text-red-300 hover:bg-red-900/20"
                         >
                           <Trash2 className="w-3 h-3" />
                         </Button>
@@ -189,7 +192,7 @@ export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsSte
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleFunction(func.id)}
-                        className={isEnabled ? 'text-green-400' : 'text-gray-400'}
+                        className={isEnabled ? 'text-green-400 hover:bg-green-900/20' : 'text-gray-400 hover:bg-gray-600'}
                       >
                         {isEnabled ? <ToggleRight className="w-5 h-5" /> : <ToggleLeft className="w-5 h-5" />}
                       </Button>
@@ -197,6 +200,30 @@ export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsSte
                   );
                 })}
               </div>
+
+              {/* Custom Function Code Editor */}
+              {isCustomFunctionEnabled && (
+                <div className="mt-4 p-4 bg-gray-900 rounded-lg border border-gray-600">
+                  <Label className="text-white mb-2 block">Custom Function Code</Label>
+                  <Textarea
+                    value={customFunctionCode}
+                    onChange={(e) => {
+                      setCustomFunctionCode(e.target.value);
+                      onUpdate({ customFunctionCode: e.target.value });
+                    }}
+                    placeholder={`// Write your custom JavaScript function here
+function myCustomFunction(params) {
+  // Your code here
+  return result;
+}`}
+                    className="bg-gray-800 border-gray-600 text-white font-mono text-sm"
+                    rows={8}
+                  />
+                  <p className="text-xs text-gray-400 mt-2">
+                    Write JavaScript functions that your agent can call during conversations.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 

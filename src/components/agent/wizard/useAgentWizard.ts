@@ -14,11 +14,12 @@ export interface AgentWizardData {
   knowledgeFiles: File[];
   knowledgeUrls: string[];
   knowledgeText: string;
+  customFunctionCode: string;
   functions: any[];
   memoryLength: number;
   enableLongTermMemory: boolean;
 
-  // Step 3: Voice & Calling
+  // Step 3: Voice & Calling + Connections
   enableVoice: boolean;
   selectedVoice: string;
   ttsEngine: string;
@@ -26,6 +27,33 @@ export interface AgentWizardData {
   speed: number;
   emphasis: number;
   callRouting: string;
+  
+  // Connections
+  connections: {
+    call: {
+      enabled: boolean;
+      apiKey: string;
+      webhookUrl: string;
+    };
+    whatsapp: {
+      enabled: boolean;
+      apiKey: string;
+      phoneNumber: string;
+      webhookUrl: string;
+    };
+    telegram: {
+      enabled: boolean;
+      botToken: string;
+      webhookUrl: string;
+    };
+    email: {
+      enabled: boolean;
+      smtpHost: string;
+      smtpPort: string;
+      username: string;
+      password: string;
+    };
+  };
 
   // Step 4: Integrations & Webhooks
   integrations: {
@@ -61,6 +89,7 @@ const initialData: AgentWizardData = {
   knowledgeFiles: [],
   knowledgeUrls: [],
   knowledgeText: '',
+  customFunctionCode: '',
   functions: [],
   memoryLength: 10,
   enableLongTermMemory: false,
@@ -71,6 +100,31 @@ const initialData: AgentWizardData = {
   speed: 0.5,
   emphasis: 0.5,
   callRouting: 'direct',
+  connections: {
+    call: {
+      enabled: false,
+      apiKey: '',
+      webhookUrl: '',
+    },
+    whatsapp: {
+      enabled: false,
+      apiKey: '',
+      phoneNumber: '',
+      webhookUrl: '',
+    },
+    telegram: {
+      enabled: false,
+      botToken: '',
+      webhookUrl: '',
+    },
+    email: {
+      enabled: false,
+      smtpHost: '',
+      smtpPort: '',
+      username: '',
+      password: '',
+    },
+  },
   integrations: {
     slack: false,
     teams: false,
