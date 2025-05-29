@@ -112,6 +112,10 @@ export const AgentsModule = () => {
     setCurrentPage(page);
   };
 
+  const handleAgentClick = (agentId: string) => {
+    setSelectedAgent(agentId);
+  };
+
   if (selectedAgent) {
     const agent = agents.find(a => a.id === selectedAgent);
     return (
@@ -211,7 +215,11 @@ export const AgentsModule = () => {
       {/* Agents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentAgents.map((agent) => (
-          <Card key={agent.id} className="bg-gray-800 border-gray-700 hover:border-purple-500/50 transition-all duration-200 group cursor-pointer">
+          <Card 
+            key={agent.id} 
+            className="bg-gray-800 border-gray-700 hover:border-purple-500/50 transition-all duration-200 group cursor-pointer"
+            onClick={() => handleAgentClick(agent.id)}
+          >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">
@@ -256,14 +264,27 @@ export const AgentsModule = () => {
                     size="sm"
                     variant="ghost"
                     className="text-gray-400 hover:text-white"
-                    onClick={() => setSelectedAgent(agent.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAgentClick(agent.id);
+                    }}
                   >
                     <Edit className="w-3 h-3" />
                   </Button>
-                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-blue-400">
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    className="text-gray-400 hover:text-blue-400"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Play className="w-3 h-3" />
                   </Button>
-                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-green-400">
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    className="text-gray-400 hover:text-green-400"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Copy className="w-3 h-3" />
                   </Button>
                 </div>
