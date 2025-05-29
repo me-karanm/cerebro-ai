@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Rocket, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard } from 'lucide-react';
+import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Rocket, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
@@ -14,6 +14,7 @@ const modules = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & metrics' },
   { id: 'agents', label: 'Agents', icon: Bot, description: 'Create & manage AI agents' },
   { id: 'campaigns', label: 'Campaigns', icon: Megaphone, description: 'Campaign management' },
+  { id: 'contacts', label: 'Contacts', icon: Users, description: 'Manage contact lists' },
   { id: 'voice-studio', label: 'Voice Studio', icon: Mic, description: 'Configure voice properties' },
   { id: 'analytics', label: 'Analytics', icon: BarChart3, description: 'Performance metrics' },
   { id: 'channels', label: 'Channels & Integrations', icon: Zap, description: 'Connect platforms' },

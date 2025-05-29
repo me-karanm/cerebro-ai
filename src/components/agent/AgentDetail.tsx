@@ -127,7 +127,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
 
   const handleAnalytics = () => {
     console.log('Navigate to analytics for agent:', agent.id);
-    // TODO: Implement navigation to analytics page
+    navigate(`/agents/${agent.id}/analytics`);
   };
 
   const handleTestAgent = () => {
@@ -138,7 +138,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const handleEditConfiguration = () => {
     console.log('Navigate to edit configuration for agent:', agent.id);
     // Navigate to Create Agent page with agent data for editing
-    navigate(`/agents/create?edit=${agent.id}`);
+    navigate(`/agents/${agent.id}`);
   };
 
   const handleArchiveAgent = () => {
@@ -148,7 +148,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
 
   const handleCampaignClick = (campaignId: string) => {
     console.log('Navigate to campaign:', campaignId);
-    // TODO: Navigate to campaign detail page
+    navigate(`/campaigns/${campaignId}`);
   };
 
   return (
@@ -269,7 +269,6 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-gray-800 border-gray-700">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
 
@@ -419,63 +418,6 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                   ))}
                 </TableBody>
               </Table>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="campaigns" className="space-y-6">
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">Linked Campaigns</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {mockCampaigns.map(campaign => (
-                  <div key={campaign.id} className="border border-gray-700 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">{campaign.name}</h3>
-                        <Badge variant={campaign.status === 'active' ? 'default' : 'secondary'}>
-                          {campaign.status}
-                        </Badge>
-                      </div>
-                      <span className="text-gray-400">{campaign.sessions} sessions</span>
-                    </div>
-                    
-                    {/* Campaign conversations */}
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-300">Recent Sessions</h4>
-                      {mockConversations
-                        .filter(conv => conv.campaign === campaign.name)
-                        .slice(0, 3)
-                        .map(conv => (
-                          <div key={conv.id} className="flex items-center justify-between py-2 px-3 bg-gray-900 rounded">
-                            <div className="flex items-center space-x-4">
-                              <span className="text-white text-sm">{conv.leadName}</span>
-                              <span className="text-gray-400 text-xs">{conv.timestamp}</span>
-                              <span className="text-gray-400 text-xs">{conv.duration}</span>
-                              <Badge className={`${getDispositionColor(conv.disposition)} text-white text-xs`}>
-                                {conv.disposition}
-                              </Badge>
-                            </div>
-                            <div className="flex space-x-2">
-                              {conv.hasRecording && (
-                                <>
-                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-blue-400">
-                                    <Play className="w-3 h-3" />
-                                  </Button>
-                                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-green-400">
-                                    <Download className="w-3 h-3" />
-                                  </Button>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
             </CardContent>
           </Card>
         </TabsContent>

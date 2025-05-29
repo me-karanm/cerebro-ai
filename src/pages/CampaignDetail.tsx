@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, Users, Phone, Mail, MessageCircle, Edit, Archive, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Users, Phone, Mail, MessageCircle, Edit, Archive, BarChart3, Bot } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +28,9 @@ const CampaignDetail = () => {
       case 'channels':
         navigate('/channels');
         break;
+      case 'contacts':
+        navigate('/contacts');
+        break;
       default:
         console.log(`Navigation to ${module} not implemented yet`);
         break;
@@ -41,7 +44,7 @@ const CampaignDetail = () => {
     startDate: '2024-01-01',
     endDate: '2024-03-31',
     description: 'Automated lead generation campaign targeting potential customers in the SaaS industry.',
-    agent: { id: '1', name: 'SalesBot Pro' },
+    agent: { id: '1', name: 'SalesBot Pro', status: 'active', conversations: 1234, successRate: 89.5 },
     phoneNumber: '+1 (555) 123-4567',
     metrics: {
       totalContacts: 2450,
@@ -79,6 +82,10 @@ const CampaignDetail = () => {
     }
   };
 
+  const handleAgentClick = () => {
+    navigate(`/agents/${mockCampaignData.agent.id}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-950 text-white flex w-full">
       <Sidebar
@@ -102,12 +109,13 @@ const CampaignDetail = () => {
                 Back to Campaigns
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-white">{mockCampaignData.name}</h1>
-                <p className="text-gray-400">{mockCampaignData.description}</p>
+                <div className="flex items-center space-x-3">
+                  <h1 className="text-2xl font-bold text-white">{mockCampaignData.name}</h1>
+                  <Badge className={`${getStatusColor(mockCampaignData.status)} text-white`}>
+                    {mockCampaignData.status}
+                  </Badge>
+                </div>
               </div>
-              <Badge className={`${getStatusColor(mockCampaignData.status)} text-white`}>
-                {mockCampaignData.status}
-              </Badge>
             </div>
             <div className="flex space-x-2">
               <Button variant="outline" className="border-gray-700 text-gray-300">
@@ -194,7 +202,6 @@ const CampaignDetail = () => {
               <TabsTrigger value="overview" className="data-[state=active]:bg-purple-600">Overview</TabsTrigger>
               <TabsTrigger value="sessions" className="data-[state=active]:bg-purple-600">Sessions</TabsTrigger>
               <TabsTrigger value="contacts" className="data-[state=active]:bg-purple-600">Contacts</TabsTrigger>
-              <TabsTrigger value="settings" className="data-[state=active]:bg-purple-600">Settings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
@@ -204,62 +211,103 @@ const CampaignDetail = () => {
                     <CardTitle className="text-white">Campaign Information</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Start Date:</span>
-                      <span className="text-white">{mockCampaignData.startDate}</span>
+                    <div>
+                      <p className="text-sm text-gray-400 mb-1">Description</p>
+                      <p className="text-white">{mockCampaignData.description}</p>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">End Date:</span>
-                      <span className="text-white">{mockCampaignData.endDate}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Assigned Agent:</span>
-                      <span className="text-white">{mockCampaignData.agent.name}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Phone Number:</span>
-                      <span className="text-white">{mockCampaignData.phoneNumber}</span>
+                    <div className="space-y-3 pt-4 border-t border-gray-700">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Start Date:</span>
+                        <span className="text-white">{mockCampaignData.startDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">End Date:</span>
+                        <span className="text-white">{mockCampaignData.endDate}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Phone Number:</span>
+                        <span className="text-white">{mockCampaignData.phoneNumber}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-gray-900 border-gray-800">
                   <CardHeader>
-                    <CardTitle className="text-white">Performance Summary</CardTitle>
+                    <CardTitle className="text-white">Assigned Agent</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Contact Rate</span>
-                        <span className="text-white">{((mockCampaignData.metrics.contacted / mockCampaignData.metrics.totalContacts) * 100).toFixed(1)}%</span>
+                  <CardContent>
+                    <div 
+                      className="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-purple-500/50 transition-all cursor-pointer"
+                      onClick={handleAgentClick}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <Bot className="w-5 h-5 text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-white">{mockCampaignData.agent.name}</h3>
+                            <Badge className={`${getStatusColor(mockCampaignData.agent.status)} text-white text-xs`}>
+                              {mockCampaignData.agent.status}
+                            </Badge>
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300">
+                          View Details →
+                        </Button>
                       </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${(mockCampaignData.metrics.contacted / mockCampaignData.metrics.totalContacts) * 100}%` }} />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Response Rate</span>
-                        <span className="text-white">{((mockCampaignData.metrics.responded / mockCampaignData.metrics.contacted) * 100).toFixed(1)}%</span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-green-600 h-2 rounded-full" style={{ width: `${(mockCampaignData.metrics.responded / mockCampaignData.metrics.contacted) * 100}%` }} />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Conversion Rate</span>
-                        <span className="text-white">{mockCampaignData.metrics.conversionRate}%</span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${mockCampaignData.metrics.conversionRate}%` }} />
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-400">Conversations:</span>
+                          <p className="text-white font-medium">{mockCampaignData.agent.conversations.toLocaleString()}</p>
+                        </div>
+                        <div>
+                          <span className="text-gray-400">Success Rate:</span>
+                          <p className="text-green-400 font-medium">{mockCampaignData.agent.successRate}%</p>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
+
+              <Card className="bg-gray-900 border-gray-800 mt-6">
+                <CardHeader>
+                  <CardTitle className="text-white">Performance Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Contact Rate</span>
+                      <span className="text-white">{((mockCampaignData.metrics.contacted / mockCampaignData.metrics.totalContacts) * 100).toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${(mockCampaignData.metrics.contacted / mockCampaignData.metrics.totalContacts) * 100}%` }} />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Response Rate</span>
+                      <span className="text-white">{((mockCampaignData.metrics.responded / mockCampaignData.metrics.contacted) * 100).toFixed(1)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="bg-green-600 h-2 rounded-full" style={{ width: `${(mockCampaignData.metrics.responded / mockCampaignData.metrics.contacted) * 100}%` }} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Conversion Rate</span>
+                      <span className="text-white">{mockCampaignData.metrics.conversionRate}%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${mockCampaignData.metrics.conversionRate}%` }} />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="sessions">
@@ -316,22 +364,6 @@ const CampaignDetail = () => {
                 <CardContent>
                   <div className="text-center py-8 text-gray-400">
                     Contact management features coming soon...
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="settings">
-              <Card className="bg-gray-900 border-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Campaign Settings</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Configure campaign parameters and automation rules
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8 text-gray-400">
-                    Campaign settings coming soon...
                   </div>
                 </CardContent>
               </Card>
