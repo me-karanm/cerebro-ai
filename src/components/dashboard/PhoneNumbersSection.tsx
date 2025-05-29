@@ -1,15 +1,7 @@
-
 import { useState } from 'react';
-import { MoreVertical } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 interface PhoneNumber {
   id: string;
@@ -62,6 +54,11 @@ const mockPhoneNumbers: PhoneNumber[] = [
 export const PhoneNumbersSection = () => {
   const [phoneNumbers] = useState(mockPhoneNumbers);
 
+  const handlePhoneNumberClick = (phoneId: string) => {
+    console.log('Navigate to phone number details:', phoneId);
+    // TODO: Implement navigation to phone number details
+  };
+
   return (
     <Card className="bg-gray-900 border-gray-800 animate-fade-in">
       <CardHeader>
@@ -73,11 +70,12 @@ export const PhoneNumbersSection = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex overflow-x-auto gap-4 pb-2" style={{ scrollSnapType: 'x mandatory' }}>
+        <div className="flex overflow-x-auto gap-4 pb-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800" style={{ scrollSnapType: 'x mandatory' }}>
           {phoneNumbers.map((phone) => (
             <div
               key={phone.id}
-              className="bg-gray-800 rounded-lg p-4 min-w-[300px] flex-shrink-0 hover:bg-gray-750 transition-colors duration-200"
+              onClick={() => handlePhoneNumberClick(phone.id)}
+              className="bg-gray-800 rounded-lg p-4 min-w-[300px] flex-shrink-0 hover:bg-gray-750 transition-colors duration-200 cursor-pointer hover:ring-1 hover:ring-cyan-400"
               style={{ scrollSnapAlign: 'start' }}
             >
               <div className="flex items-center justify-between mb-3">
@@ -89,18 +87,6 @@ export const PhoneNumbersSection = () => {
                     </Badge>
                   )}
                 </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="w-6 h-6 text-gray-400 hover:text-white">
-                      <MoreVertical className="w-4 h-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-                    <DropdownMenuItem className="text-white hover:bg-gray-700">Edit</DropdownMenuItem>
-                    <DropdownMenuItem className="text-white hover:bg-gray-700">Unassign</DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-400 hover:bg-gray-700">Remove</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
 
               <div className="flex items-center text-sm mb-3">

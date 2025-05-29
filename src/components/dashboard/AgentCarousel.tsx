@@ -1,5 +1,6 @@
+
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Phone, Megaphone } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -15,6 +16,8 @@ interface Agent {
   voiceNaturalness: number;
   responseRate: number;
   lastUpdated: string;
+  phoneNumbers: string[];
+  campaigns: string[];
 }
 
 const mockAgents: Agent[] = [
@@ -27,7 +30,9 @@ const mockAgents: Agent[] = [
     intelligence: 85,
     voiceNaturalness: 75,
     responseRate: 90,
-    lastUpdated: '2 hours ago'
+    lastUpdated: '2 hours ago',
+    phoneNumbers: ['+1(555)123-4567', '+1(555)789-0123'],
+    campaigns: ['Lead Gen Q1', 'Summer Sale']
   },
   {
     id: '2',
@@ -38,7 +43,9 @@ const mockAgents: Agent[] = [
     intelligence: 78,
     voiceNaturalness: 82,
     responseRate: 87,
-    lastUpdated: '1 day ago'
+    lastUpdated: '1 day ago',
+    phoneNumbers: ['+1(555)987-6543'],
+    campaigns: ['Support Tickets', 'Customer Care']
   },
   {
     id: '3',
@@ -49,7 +56,9 @@ const mockAgents: Agent[] = [
     intelligence: 70,
     voiceNaturalness: 65,
     responseRate: 75,
-    lastUpdated: '3 days ago'
+    lastUpdated: '3 days ago',
+    phoneNumbers: [],
+    campaigns: ['Lead Qualification']
   }
 ];
 
@@ -115,6 +124,40 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
                 <div className="text-center mb-4">
                   <h4 className="text-white font-medium text-lg">{currentAgent.name}</h4>
                   <p className="text-gray-400 text-sm">Last updated: {currentAgent.lastUpdated}</p>
+                </div>
+
+                {/* Phone Numbers */}
+                <div className="mb-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Phone className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-400 text-sm">Phone Numbers</span>
+                  </div>
+                  <div className="text-sm">
+                    {currentAgent.phoneNumbers.length > 0 ? (
+                      currentAgent.phoneNumbers.map((phone, index) => (
+                        <div key={index} className="text-cyan-400">{phone}</div>
+                      ))
+                    ) : (
+                      <div className="text-gray-500">No phone numbers assigned</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Campaigns */}
+                <div className="mb-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Megaphone className="w-4 h-4 text-gray-400" />
+                    <span className="text-gray-400 text-sm">Campaigns</span>
+                  </div>
+                  <div className="text-sm">
+                    {currentAgent.campaigns.length > 0 ? (
+                      currentAgent.campaigns.map((campaign, index) => (
+                        <div key={index} className="text-purple-400">{campaign}</div>
+                      ))
+                    ) : (
+                      <div className="text-gray-500">No campaigns assigned</div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-3 mb-6">
