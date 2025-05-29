@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Play, Pause, Edit, Trash2, Copy, Calendar, Users, Target } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,7 @@ const sampleCampaigns = [
 
 export const CampaignsModule = () => {
   const [campaigns] = useState(sampleCampaigns);
+  const navigate = useNavigate();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -55,6 +57,10 @@ export const CampaignsModule = () => {
       case 'completed': return 'bg-gray-500';
       default: return 'bg-gray-500';
     }
+  };
+
+  const handleCampaignClick = (campaignId: string) => {
+    navigate(`/campaigns/${campaignId}`);
   };
 
   return (
@@ -128,8 +134,8 @@ export const CampaignsModule = () => {
       {/* Campaigns List */}
       <div className="space-y-4">
         {campaigns.map((campaign) => (
-          <Card key={campaign.id} className="bg-gray-800 border-gray-700 hover:border-purple-500/50 transition-all duration-200">
-            <CardContent className="p-6">
+          <Card key={campaign.id} className="bg-gray-800 border-gray-700 hover:border-purple-500/50 transition-all duration-200 cursor-pointer">
+            <CardContent className="p-6" onClick={() => handleCampaignClick(campaign.id)}>
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
@@ -170,7 +176,7 @@ export const CampaignsModule = () => {
                   </div>
                 </div>
 
-                <div className="flex flex-col space-y-2 ml-6">
+                <div className="flex flex-col space-y-2 ml-6" onClick={(e) => e.stopPropagation()}>
                   {campaign.status === 'active' ? (
                     <Button size="sm" variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-white">
                       <Pause className="w-3 h-3 mr-1" />
