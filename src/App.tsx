@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import CreateAgent from "./pages/CreateAgent";
 import NotFound from "./pages/NotFound";
 import Integrations from "./pages/Integrations";
+import Agents from "./pages/Agents";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/agents" element={<Agents />} />
           <Route path="/agents/create" element={<CreateAgent />} />
           <Route path="/integrations" element={<Integrations />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
