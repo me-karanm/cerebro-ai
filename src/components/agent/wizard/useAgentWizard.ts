@@ -28,31 +28,27 @@ export interface AgentWizardData {
   emphasis: number;
   callRouting: string;
   
-  // Connections
+  // Connections - now using integration IDs instead of direct config
   connections: {
     call: {
       enabled: boolean;
-      apiKey: string;
-      webhookUrl: string;
-      selectedPhoneNumber: string;
+      selectedPhoneNumberId: string;
     };
     whatsapp: {
       enabled: boolean;
-      apiKey: string;
-      phoneNumber: string;
-      webhookUrl: string;
+      selectedAccountId: string;
     };
     telegram: {
       enabled: boolean;
-      botToken: string;
-      webhookUrl: string;
+      selectedBotId: string;
     };
     email: {
       enabled: boolean;
-      smtpHost: string;
-      smtpPort: string;
-      username: string;
-      password: string;
+      selectedAccountId: string;
+    };
+    wechat: {
+      enabled: boolean;
+      selectedAccountId: string;
     };
   };
 
@@ -104,27 +100,23 @@ const initialData: AgentWizardData = {
   connections: {
     call: {
       enabled: false,
-      apiKey: '',
-      webhookUrl: '',
-      selectedPhoneNumber: '',
+      selectedPhoneNumberId: '',
     },
     whatsapp: {
       enabled: false,
-      apiKey: '',
-      phoneNumber: '',
-      webhookUrl: '',
+      selectedAccountId: '',
     },
     telegram: {
       enabled: false,
-      botToken: '',
-      webhookUrl: '',
+      selectedBotId: '',
     },
     email: {
       enabled: false,
-      smtpHost: '',
-      smtpPort: '',
-      username: '',
-      password: '',
+      selectedAccountId: '',
+    },
+    wechat: {
+      enabled: false,
+      selectedAccountId: '',
     },
   },
   integrations: {
