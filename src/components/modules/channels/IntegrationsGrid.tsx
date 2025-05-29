@@ -1,5 +1,5 @@
 
-import { Settings, Check, X, ExternalLink } from 'lucide-react';
+import { Settings, Play, Square, CheckCircle, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,16 +10,34 @@ interface Integration {
   description: string;
   icon: string;
   category: string;
-  status: string;
+  status: 'connected' | 'configured' | 'disconnected';
   config: any;
 }
 
 interface IntegrationsGridProps {
   integrations: Integration[];
   onConfigureIntegration: (id: string) => void;
+  getCategoryColor?: (category: string) => string;
 }
 
-export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: IntegrationsGridProps) => {
+export const IntegrationsGrid = ({ 
+  integrations, 
+  onConfigureIntegration,
+  getCategoryColor 
+}: IntegrationsGridProps) => {
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'connected':
+        return <CheckCircle className="w-4 h-4 text-green-400" />;
+      case 'configured':
+        return <AlertCircle className="w-4 h-4 text-blue-400" />;
+      case 'disconnected':
+        return <Square className="w-4 h-4 text-gray-400" />;
+      default:
+        return <Square className="w-4 h-4 text-gray-400" />;
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'connected':
@@ -33,74 +51,23 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'connected':
-        return <Check className="w-4 h-4 text-green-400" />;
-      case 'configured':
-        return <Settings className="w-4 h-4 text-blue-400" />;
-      case 'disconnected':
-        return <X className="w-4 h-4 text-gray-400" />;
-      default:
-        return <X className="w-4 h-4 text-gray-400" />;
-    }
+  const defaultGetCategoryColor = (category: string) => {
+    const colors = {
+      'Messaging': 'bg-blue-600',
+      'Web': 'bg-green-600',
+      'Email': 'bg-purple-600',
+      'Productivity': 'bg-orange-600',
+      'CRM': 'bg-pink-600',
+      'Helpdesk': 'bg-yellow-600',
+      'Custom': 'bg-gray-600',
+    };
+    return colors[category as keyof typeof colors] || 'bg-gray-600';
   };
 
-  const renderConfigDetails = (integration: Integration) => {
-    if (integration.status === 'disconnected') return null;
-
-    return (
-      <div className="bg-gray-700 rounded-lg p-3 text-sm">
-        {integration.id === 'whatsapp' && (
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Phone:</span>
-              <span className="text-white">{integration.config.phone}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Verified:</span>
-              <span className="text-green-400">✓ Yes</span>
-            </div>
-          </div>
-        )}
-        {integration.id === 'webchat' && (
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Domain:</span>
-              <span className="text-white">{integration.config.domain}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Status:</span>
-              <span className="text-green-400">Active</span>
-            </div>
-          </div>
-        )}
-        {integration.id === 'hubspot' && (
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-gray-400">API Key:</span>
-              <span className="text-white">{integration.config.apiKey}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Syncing:</span>
-              <span className="text-green-400">✓ Active</span>
-            </div>
-          </div>
-        )}
-        {integration.id === 'email' && (
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-gray-400">Email:</span>
-              <span className="text-white">{integration.config.email}</span>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
+  const categoryColorFn = getCategoryColor || defaultGetCategoryColor;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {integrations.map((integration) => (
         <Card key={integration.id} className="bg-gray-800 border-gray-700 hover:border-purple-500/50 transition-all duration-200">
           <CardHeader className="pb-3">
@@ -109,12 +76,16 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
                 <div className="text-2xl">{integration.icon}</div>
                 <div>
                   <CardTitle className="text-white text-lg">{integration.name}</CardTitle>
-                  <Badge variant="outline" className="mt-1 text-xs">
+                  <Badge 
+                    className={`${categoryColorFn(integration.category)} text-white text-xs mt-1`}
+                  >
                     {integration.category}
                   </Badge>
                 </div>
               </div>
-              {getStatusIcon(integration.status)}
+              <div className="flex items-center space-x-1">
+                {getStatusIcon(integration.status)}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -126,21 +97,40 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
                 <Button
                   size="sm"
                   variant="outline"
-                  className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
                   onClick={() => onConfigureIntegration(integration.id)}
                 >
                   <Settings className="w-3 h-3 mr-1" />
                   Configure
                 </Button>
                 {integration.status === 'connected' && (
-                  <Button size="sm" variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
-                    <ExternalLink className="w-3 h-3" />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white"
+                  >
+                    <Play className="w-3 h-3 mr-1" />
+                    Test
                   </Button>
                 )}
               </div>
             </div>
 
-            {renderConfigDetails(integration)}
+            {/* Configuration Details */}
+            {integration.status !== 'disconnected' && Object.keys(integration.config).length > 0 && (
+              <div className="text-xs text-gray-500 bg-gray-900 rounded p-2">
+                <p>Configuration active</p>
+                {integration.config.phone && (
+                  <p>Phone: {integration.config.phone}</p>
+                )}
+                {integration.config.email && (
+                  <p>Email: {integration.config.email}</p>
+                )}
+                {integration.config.domain && (
+                  <p>Domain: {integration.config.domain}</p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}

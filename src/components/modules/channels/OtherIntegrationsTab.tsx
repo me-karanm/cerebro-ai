@@ -42,6 +42,33 @@ const integrations = [
     config: {}
   },
   {
+    id: 'wechat',
+    name: 'WeChat',
+    description: 'Connect to WeChat for messaging',
+    icon: '💚',
+    category: 'Messaging',
+    status: 'disconnected',
+    config: {}
+  },
+  {
+    id: 'facebook',
+    name: 'Facebook Messenger',
+    description: 'Integrate with Facebook Messenger',
+    icon: '📘',
+    category: 'Messaging',
+    status: 'disconnected',
+    config: {}
+  },
+  {
+    id: 'slack',
+    name: 'Slack',
+    description: 'Connect to Slack workspace for notifications',
+    icon: '📢',
+    category: 'Productivity',
+    status: 'disconnected',
+    config: {}
+  },
+  {
     id: 'salesforce',
     name: 'Salesforce CRM',
     description: 'Sync leads and contacts with Salesforce',
@@ -60,20 +87,20 @@ const integrations = [
     config: { apiKey: '***-***-***', syncing: true }
   },
   {
-    id: 'slack',
-    name: 'Slack',
-    description: 'Connect to Slack workspace for notifications',
-    icon: '📢',
-    category: 'Productivity',
+    id: 'zendesk',
+    name: 'Zendesk',
+    description: 'Connect to Zendesk for ticket management',
+    icon: '🎫',
+    category: 'Helpdesk',
     status: 'disconnected',
     config: {}
   },
   {
-    id: 'facebook',
-    name: 'Facebook Messenger',
-    description: 'Integrate with Facebook Messenger',
-    icon: '📘',
-    category: 'Messaging',
+    id: 'webhook',
+    name: 'Custom Webhook',
+    description: 'Send data to custom webhook endpoints',
+    icon: '🔗',
+    category: 'Custom',
     status: 'disconnected',
     config: {}
   },
@@ -99,6 +126,19 @@ export const OtherIntegrationsTab = ({ onAddIntegration }: OtherIntegrationsTabP
 
   const handleConfigureIntegration = (id: string) => {
     setSelectedIntegration(id);
+  };
+
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      'Messaging': 'bg-blue-600',
+      'Web': 'bg-green-600',
+      'Email': 'bg-purple-600',
+      'Productivity': 'bg-orange-600',
+      'CRM': 'bg-pink-600',
+      'Helpdesk': 'bg-yellow-600',
+      'Custom': 'bg-gray-600',
+    };
+    return colors[category as keyof typeof colors] || 'bg-gray-600';
   };
 
   return (
@@ -161,6 +201,7 @@ export const OtherIntegrationsTab = ({ onAddIntegration }: OtherIntegrationsTabP
       <IntegrationsGrid 
         integrations={filteredIntegrations}
         onConfigureIntegration={handleConfigureIntegration}
+        getCategoryColor={getCategoryColor}
       />
     </div>
   );
