@@ -1,10 +1,8 @@
-
 import { useState } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { DashboardModule } from '@/components/modules/DashboardModule';
 import { AgentsModule } from '@/components/modules/AgentsModule';
 import { CampaignsModule } from '@/components/modules/CampaignsModule';
-import { ConversationStudioModule } from '@/components/modules/ConversationStudioModule';
 import { VoiceStudioModule } from '@/components/modules/VoiceStudioModule';
 import { AnalyticsModule } from '@/components/modules/AnalyticsModule';
 import { ChannelsModule } from '@/components/modules/ChannelsModule';
@@ -24,8 +22,6 @@ const Index = () => {
         return <AgentsModule />;
       case 'campaigns':
         return <CampaignsModule />;
-      case 'conversation-studio':
-        return <ConversationStudioModule />;
       case 'voice-studio':
         return <VoiceStudioModule />;
       case 'analytics':
