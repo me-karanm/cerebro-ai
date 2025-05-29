@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Play, Pause, Users, Phone, Mail, MessageCircle, Edit, Archive, BarChart3, Bot } from 'lucide-react';
@@ -82,7 +81,7 @@ const CampaignDetail = () => {
     }
   };
 
-  const handleAgentClick = () => {
+  const handleAgentCardClick = () => {
     navigate(`/agents/${mockCampaignData.agent.id}`);
   };
 
@@ -238,8 +237,8 @@ const CampaignDetail = () => {
                   </CardHeader>
                   <CardContent>
                     <div 
-                      className="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-purple-500/50 transition-all cursor-pointer"
-                      onClick={handleAgentClick}
+                      className="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-purple-500/50 hover:bg-gray-800/80 transition-all cursor-pointer"
+                      onClick={handleAgentCardClick}
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center space-x-3">
@@ -253,9 +252,9 @@ const CampaignDetail = () => {
                             </Badge>
                           </div>
                         </div>
-                        <Button variant="ghost" size="sm" className="text-blue-400 hover:text-blue-300">
+                        <div className="text-blue-400 hover:text-blue-300 text-sm font-medium">
                           View Details →
-                        </Button>
+                        </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
