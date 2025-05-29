@@ -1,108 +1,62 @@
 
 import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ChannelsHeader } from './channels/ChannelsHeader';
-import { ChannelsStats } from './channels/ChannelsStats';
-import { WebhooksSection } from './channels/WebhooksSection';
-import { IntegrationsGrid } from './channels/IntegrationsGrid';
-import { SDKSection } from './channels/SDKSection';
+import { PhoneNumbersTab } from './channels/PhoneNumbersTab';
+import { OtherIntegrationsTab } from './channels/OtherIntegrationsTab';
 import { AddIntegrationModal } from './AddIntegrationModal';
-
-const integrations = [
-  {
-    id: 'whatsapp',
-    name: 'WhatsApp Business',
-    description: 'Connect to WhatsApp Business API for messaging',
-    icon: '💬',
-    category: 'Messaging',
-    status: 'connected',
-    config: { phone: '+1234567890', verified: true }
-  },
-  {
-    id: 'sip',
-    name: 'SIP/Telephony',
-    description: 'Connect to SIP providers for voice calls',
-    icon: '📞',
-    category: 'Voice',
-    status: 'disconnected',
-    config: {}
-  },
-  {
-    id: 'webchat',
-    name: 'Web Chat Widget',
-    description: 'Embed chat widget on your website',
-    icon: '💻',
-    category: 'Web',
-    status: 'connected',
-    config: { domain: 'example.com', embedded: true }
-  },
-  {
-    id: 'email',
-    name: 'Email Integration',
-    description: 'Handle support tickets via email',
-    icon: '📧',
-    category: 'Email',
-    status: 'configured',
-    config: { email: 'support@example.com' }
-  },
-  {
-    id: 'salesforce',
-    name: 'Salesforce CRM',
-    description: 'Sync leads and contacts with Salesforce',
-    icon: '☁️',
-    category: 'CRM',
-    status: 'disconnected',
-    config: {}
-  },
-  {
-    id: 'hubspot',
-    name: 'HubSpot CRM',
-    description: 'Integrate with HubSpot for lead management',
-    icon: '🧡',
-    category: 'CRM',
-    status: 'connected',
-    config: { apiKey: '***-***-***', syncing: true }
-  },
-];
+import { PurchaseNumberModal } from './channels/PurchaseNumberModal';
 
 export const ChannelsModule = () => {
-  const [selectedIntegration, setSelectedIntegration] = useState<string | null>(null);
-  const [showWebhooks, setShowWebhooks] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-
-  const handleConfigureIntegration = (id: string) => {
-    setSelectedIntegration(id);
-  };
-
-  const handleToggleWebhooks = () => {
-    setShowWebhooks(!showWebhooks);
-  };
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('phone-numbers');
 
   const handleAddIntegration = () => {
     setShowAddModal(true);
   };
 
+  const handlePurchaseNumber = () => {
+    setShowPurchaseModal(true);
+  };
+
   return (
     <div className="p-6 space-y-6">
-      <ChannelsHeader 
-        onAddIntegration={handleAddIntegration}
-        onToggleWebhooks={handleToggleWebhooks}
-        showWebhooks={showWebhooks}
-      />
+      <ChannelsHeader />
 
-      <ChannelsStats integrations={integrations} />
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-gray-800 border-gray-700">
+          <TabsTrigger 
+            value="phone-numbers" 
+            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+          >
+            Phone Numbers
+          </TabsTrigger>
+          <TabsTrigger 
+            value="other-integrations"
+            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+          >
+            Other Integrations
+          </TabsTrigger>
+        </TabsList>
 
-      {showWebhooks && <WebhooksSection />}
+        <TabsContent value="phone-numbers" className="mt-6">
+          <PhoneNumbersTab onPurchaseNumber={handlePurchaseNumber} />
+        </TabsContent>
 
-      <IntegrationsGrid 
-        integrations={integrations}
-        onConfigureIntegration={handleConfigureIntegration}
-      />
-
-      <SDKSection />
+        <TabsContent value="other-integrations" className="mt-6">
+          <OtherIntegrationsTab onAddIntegration={handleAddIntegration} />
+        </TabsContent>
+      </Tabs>
 
       <AddIntegrationModal 
         open={showAddModal}
         onOpenChange={setShowAddModal}
+      />
+
+      <PurchaseNumberModal
+        open={showPurchaseModal}
+        onOpenChange={setShowPurchaseModal}
       />
     </div>
   );
