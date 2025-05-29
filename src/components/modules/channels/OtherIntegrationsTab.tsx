@@ -11,7 +11,7 @@ const integrations = [
     description: 'Connect to WhatsApp Business API for messaging',
     icon: '💬',
     category: 'Messaging',
-    status: 'connected' as const,
+    status: 'connected',
     config: { phone: '+1234567890', verified: true }
   },
   {
@@ -20,7 +20,7 @@ const integrations = [
     description: 'Embed chat widget on your website',
     icon: '💻',
     category: 'Web',
-    status: 'connected' as const,
+    status: 'connected',
     config: { domain: 'example.com', embedded: true }
   },
   {
@@ -29,7 +29,7 @@ const integrations = [
     description: 'Handle support tickets via email',
     icon: '📧',
     category: 'Email',
-    status: 'configured' as const,
+    status: 'configured',
     config: { email: 'support@example.com' }
   },
   {
@@ -38,34 +38,7 @@ const integrations = [
     description: 'Create automated bot for Telegram',
     icon: '📱',
     category: 'Messaging',
-    status: 'disconnected' as const,
-    config: {}
-  },
-  {
-    id: 'wechat',
-    name: 'WeChat',
-    description: 'Connect to WeChat for messaging',
-    icon: '💚',
-    category: 'Messaging',
-    status: 'disconnected' as const,
-    config: {}
-  },
-  {
-    id: 'facebook',
-    name: 'Facebook Messenger',
-    description: 'Integrate with Facebook Messenger',
-    icon: '📘',
-    category: 'Messaging',
-    status: 'disconnected' as const,
-    config: {}
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    description: 'Connect to Slack workspace for notifications',
-    icon: '📢',
-    category: 'Productivity',
-    status: 'disconnected' as const,
+    status: 'disconnected',
     config: {}
   },
   {
@@ -74,7 +47,7 @@ const integrations = [
     description: 'Sync leads and contacts with Salesforce',
     icon: '☁️',
     category: 'CRM',
-    status: 'disconnected' as const,
+    status: 'disconnected',
     config: {}
   },
   {
@@ -83,25 +56,25 @@ const integrations = [
     description: 'Integrate with HubSpot for lead management',
     icon: '🧡',
     category: 'CRM',
-    status: 'connected' as const,
+    status: 'connected',
     config: { apiKey: '***-***-***', syncing: true }
   },
   {
-    id: 'zendesk',
-    name: 'Zendesk',
-    description: 'Connect to Zendesk for ticket management',
-    icon: '🎫',
-    category: 'Helpdesk',
-    status: 'disconnected' as const,
+    id: 'slack',
+    name: 'Slack',
+    description: 'Connect to Slack workspace for notifications',
+    icon: '📢',
+    category: 'Productivity',
+    status: 'disconnected',
     config: {}
   },
   {
-    id: 'webhook',
-    name: 'Custom Webhook',
-    description: 'Send data to custom webhook endpoints',
-    icon: '🔗',
-    category: 'Custom',
-    status: 'disconnected' as const,
+    id: 'facebook',
+    name: 'Facebook Messenger',
+    description: 'Integrate with Facebook Messenger',
+    icon: '📘',
+    category: 'Messaging',
+    status: 'disconnected',
     config: {}
   },
 ];
@@ -126,19 +99,6 @@ export const OtherIntegrationsTab = ({ onAddIntegration }: OtherIntegrationsTabP
 
   const handleConfigureIntegration = (id: string) => {
     setSelectedIntegration(id);
-  };
-
-  const getCategoryColor = (category: string) => {
-    const colors = {
-      'Messaging': 'bg-blue-600',
-      'Web': 'bg-green-600',
-      'Email': 'bg-purple-600',
-      'Productivity': 'bg-orange-600',
-      'CRM': 'bg-pink-600',
-      'Helpdesk': 'bg-yellow-600',
-      'Custom': 'bg-gray-600',
-    };
-    return colors[category as keyof typeof colors] || 'bg-gray-600';
   };
 
   return (
@@ -201,7 +161,6 @@ export const OtherIntegrationsTab = ({ onAddIntegration }: OtherIntegrationsTabP
       <IntegrationsGrid 
         integrations={filteredIntegrations}
         onConfigureIntegration={handleConfigureIntegration}
-        getCategoryColor={getCategoryColor}
       />
     </div>
   );
