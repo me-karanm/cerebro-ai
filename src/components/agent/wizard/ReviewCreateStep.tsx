@@ -81,33 +81,41 @@ export const ReviewCreateStep = ({ data }: ReviewCreateStepProps) => {
           </CardContent>
         </Card>
 
-        {/* Voice & Calling Summary */}
+        {/* Communication Channels Summary */}
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader>
-            <CardTitle className="text-white">Voice & Calling</CardTitle>
+            <CardTitle className="text-white">Communication Channels</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-gray-400">Voice Enabled:</span>
-              <Badge variant={data.enableVoice ? 'default' : 'secondary'}>
-                {data.enableVoice ? 'Yes' : 'No'}
+              <span className="text-gray-400">Phone Calls:</span>
+              <Badge variant={data.connections.call?.enabled ? 'default' : 'secondary'}>
+                {data.connections.call?.enabled ? 'Enabled' : 'Disabled'}
               </Badge>
             </div>
-            {data.enableVoice && (
-              <>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Selected Voice:</span>
-                  <span className="text-white">{data.selectedVoice}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">TTS Engine:</span>
-                  <span className="text-white">{data.ttsEngine}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Call Routing:</span>
-                  <span className="text-white">{data.callRouting}</span>
-                </div>
-              </>
+            <div className="flex justify-between">
+              <span className="text-gray-400">WhatsApp:</span>
+              <Badge variant={data.connections.whatsapp?.enabled ? 'default' : 'secondary'}>
+                {data.connections.whatsapp?.enabled ? 'Enabled' : 'Disabled'}
+              </Badge>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Email:</span>
+              <Badge variant={data.connections.email?.enabled ? 'default' : 'secondary'}>
+                {data.connections.email?.enabled ? 'Enabled' : 'Disabled'}
+              </Badge>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Telegram:</span>
+              <Badge variant={data.connections.telegram?.enabled ? 'default' : 'secondary'}>
+                {data.connections.telegram?.enabled ? 'Enabled' : 'Disabled'}
+              </Badge>
+            </div>
+            {data.connections.call?.enabled && data.selectedVoice && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Selected Voice:</span>
+                <span className="text-white">{data.selectedVoice}</span>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -187,7 +195,7 @@ export const ReviewCreateStep = ({ data }: ReviewCreateStepProps) => {
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                <span className="text-gray-300">Phone numbers will be assigned (if voice enabled)</span>
+                <span className="text-gray-300">Communication channels will be set up</span>
               </div>
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
