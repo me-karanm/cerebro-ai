@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Bot, Megaphone, MessageSquare, Mic, BarChart3, Zap, Shield, Rocket, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -12,26 +11,19 @@ interface SidebarProps {
 }
 
 const modules = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & metrics', path: '/' },
-  { id: 'agents', label: 'Agents', icon: Bot, description: 'Create & manage AI agents', path: '/agents' },
-  { id: 'campaigns', label: 'Campaigns', icon: Megaphone, description: 'Campaign management', path: '/campaigns' },
-  { id: 'conversation-studio', label: 'Conversation Studio', icon: MessageSquare, description: 'Design conversation flows', path: '/conversation-studio' },
-  { id: 'voice-studio', label: 'Voice Studio', icon: Mic, description: 'Configure voice properties', path: '/voice-studio' },
-  { id: 'analytics', label: 'Analytics', icon: BarChart3, description: 'Performance metrics', path: '/analytics' },
-  { id: 'integrations', label: 'Integrations', icon: Zap, description: 'Connect platforms', path: '/integrations' },
-  { id: 'security', label: 'Security', icon: Shield, description: 'Access & compliance', path: '/security' },
-  { id: 'deployment', label: 'Deployment', icon: Rocket, description: 'Deploy to environments', path: '/deployment' },
-  { id: 'settings', label: 'Settings', icon: Settings, description: 'System configuration', path: '/settings' },
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & metrics' },
+  { id: 'agents', label: 'Agents', icon: Bot, description: 'Create & manage AI agents' },
+  { id: 'campaigns', label: 'Campaigns', icon: Megaphone, description: 'Campaign management' },
+  { id: 'conversation-studio', label: 'Conversation Studio', icon: MessageSquare, description: 'Design conversation flows' },
+  { id: 'voice-studio', label: 'Voice Studio', icon: Mic, description: 'Configure voice properties' },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3, description: 'Performance metrics' },
+  { id: 'channels', label: 'Channels & Integrations', icon: Zap, description: 'Connect platforms' },
+  { id: 'security', label: 'Security', icon: Shield, description: 'Access & compliance' },
+  { id: 'deployment', label: 'Deployment', icon: Rocket, description: 'Deploy to environments' },
+  { id: 'settings', label: 'Settings', icon: Settings, description: 'System configuration' },
 ];
 
 export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed }: SidebarProps) => {
-  const navigate = useNavigate();
-
-  const handleModuleClick = (moduleId: string, path: string) => {
-    setActiveModule(moduleId);
-    navigate(path);
-  };
-
   return (
     <div className={cn(
       "fixed left-0 top-0 h-full bg-gray-900 border-r border-gray-800 transition-all duration-300 z-40",
@@ -65,7 +57,7 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
         {modules.map((module) => (
           <button
             key={module.id}
-            onClick={() => handleModuleClick(module.id, module.path)}
+            onClick={() => setActiveModule(module.id)}
             className={cn(
               "w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group",
               activeModule === module.id

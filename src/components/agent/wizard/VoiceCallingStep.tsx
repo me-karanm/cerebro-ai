@@ -1,6 +1,4 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,8 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Phone, Plus, Mail, MessageSquare } from 'lucide-react';
-import { MessageCircle } from 'lucide-react'; // For WeChat
+import { Phone, Plus } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -19,9 +16,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { AgentWizardData } from './useAgentWizard';
-import { useIntegrationsStore, PhoneNumber, WhatsAppAccount, EmailAccount, TelegramBot, WeChatAccount } from '@/store/integrationsStore';
-import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface VoiceCallingStepProps {
   data: AgentWizardData;
@@ -48,29 +42,15 @@ const callRoutingOptions = [
   { value: 'round-robin', label: 'Round Robin' },
 ];
 
-export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  
-  // Integration dialogs
-  const [openDialogs, setOpenDialogs] = useState({
-    phoneNumbers: false,
-    whatsapp: false,
-    email: false,
-    telegram: false,
-    wechat: false,
-  });
-  
-  // Get integrations from store
-  const {
-    phoneNumbers,
-    whatsappAccounts,
-    emailAccounts,
-    telegramBots,
-    wechatAccounts,
-  } = useIntegrationsStore();
+// Mock data for purchased phone numbers
+const purchasedNumbers = [
+  { id: '1', number: '+1 (555) 123-4567', type: 'Local', location: 'New York, NY' },
+  { id: '2', number: '+1 (555) 987-6543', type: 'Toll-Free', location: 'US National' },
+  { id: '3', number: '+44 20 7946 0958', type: 'Local', location: 'London, UK' },
+];
 
-  // Ensure connections are initialized
+export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
+  // Add safety check for connections
   const connections = data.connections || {
     call: { enabled: false, apiKey: '', webhookUrl: '', selectedPhoneNumber: '' },
     whatsapp: { enabled: false, apiKey: '', phoneNumber: '', webhookUrl: '' },
@@ -90,8 +70,9 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
     });
   };
 
-  const handleRedirectToIntegrations = () => {
-    navigate('/integrations');
+  const handlePurchaseNewNumber = () => {
+    // This would typically open a modal or navigate to a purchase flow
+    console.log('Opening phone number purchase flow...');
   };
 
   return (
@@ -250,6 +231,12 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
               )}
             </CardContent>
           </Card>
+
+          <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
+            <p className="text-blue-200 text-sm">
+              📞 <strong>Note:</strong> Phone numbers will be assigned after agent creation.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -257,7 +244,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
       <div className="mt-8">
         <h3 className="text-lg font-semibold text-white mb-4">Connections</h3>
         <p className="text-sm text-gray-400 mb-6">
-          Configure external communication channels for your agent from your existing integrations.
+          Configure external communication channels for your agent.
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -276,110 +263,58 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
               <CardContent className="space-y-4">
                 {/* Phone Numbers Section */}
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Label className="text-sm text-white">Select Phone Number</Label>
-                    <Button
-                      size="sm"
-                      variant="link"
-                      className="text-blue-400 text-sm p-0 h-auto"
-                      onClick={handleRedirectToIntegrations}
+                  <Label className="text-sm text-white">Select Phone Number</Label>
+                  <div className="mt-2 space-y-3">
+                    <RadioGroup
+                      value={connections.call?.selectedPhoneNumber || ''}
+                      onValueChange={(value) => updateConnection('call', 'selectedPhoneNumber', value)}
                     >
-                      Manage Numbers
+                      {purchasedNumbers.map((phoneNumber) => (
+                        <div key={phoneNumber.id} className="flex items-center space-x-2 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+                          <RadioGroupItem value={phoneNumber.id} id={phoneNumber.id} />
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2">
+                              <Phone className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm text-white font-medium">{phoneNumber.number}</span>
+                              <span className="text-xs text-gray-400 bg-gray-600 px-2 py-1 rounded">
+                                {phoneNumber.type}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-400 mt-1">{phoneNumber.location}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={handlePurchaseNewNumber}
+                      className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Purchase New Number
                     </Button>
                   </div>
-                  
-                  {phoneNumbers.length === 0 ? (
-                    <div className="bg-gray-700/50 rounded-lg border border-gray-600 p-4 text-center">
-                      <p className="text-sm text-gray-400 mb-2">No phone numbers available</p>
-                      <Dialog open={openDialogs.phoneNumbers} onOpenChange={(open) => setOpenDialogs({...openDialogs, phoneNumbers: open})}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="border-gray-700 text-white hover:bg-gray-800">
-                            <Plus className="w-4 h-4 mr-1" /> Add Phone Number
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Add Phone Number</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Create a new phone number in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To add a phone number, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, phoneNumbers: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  ) : (
-                    <>
-                      <RadioGroup
-                        value={connections.call?.selectedPhoneNumber || ''}
-                        onValueChange={(value) => updateConnection('call', 'selectedPhoneNumber', value)}
-                        className="space-y-3"
-                      >
-                        {phoneNumbers.map((phoneNumber) => (
-                          <div key={phoneNumber.id} className="flex items-center space-x-2 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
-                            <RadioGroupItem value={phoneNumber.id} id={phoneNumber.id} />
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-2">
-                                <Phone className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm text-white font-medium">{phoneNumber.number}</span>
-                                <span className="text-xs text-gray-400 bg-gray-600 px-2 py-1 rounded">
-                                  {phoneNumber.type}
-                                </span>
-                              </div>
-                              <p className="text-xs text-gray-400 mt-1">{phoneNumber.location}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                      
-                      <Dialog open={openDialogs.phoneNumbers} onOpenChange={(open) => setOpenDialogs({...openDialogs, phoneNumbers: open})}>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600 mt-2"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Add Another Number
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Add Phone Number</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Create a new phone number in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To add another phone number, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, phoneNumbers: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </>
-                  )}
+                </div>
+
+                <div>
+                  <Label className="text-sm text-white">API Key</Label>
+                  <Input
+                    type="password"
+                    value={connections.call?.apiKey || ''}
+                    onChange={(e) => updateConnection('call', 'apiKey', e.target.value)}
+                    placeholder="Enter your call service API key"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm text-white">Webhook URL</Label>
+                  <Input
+                    value={connections.call?.webhookUrl || ''}
+                    onChange={(e) => updateConnection('call', 'webhookUrl', e.target.value)}
+                    placeholder="https://your-webhook-url.com"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
                 </div>
               </CardContent>
             )}
@@ -399,107 +334,32 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
             {connections.whatsapp?.enabled && (
               <CardContent className="space-y-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Label className="text-sm text-white">Select WhatsApp Account</Label>
-                    <Button
-                      size="sm"
-                      variant="link"
-                      className="text-blue-400 text-sm p-0 h-auto"
-                      onClick={handleRedirectToIntegrations}
-                    >
-                      Manage Accounts
-                    </Button>
-                  </div>
-                  
-                  {whatsappAccounts.length === 0 ? (
-                    <div className="bg-gray-700/50 rounded-lg border border-gray-600 p-4 text-center">
-                      <p className="text-sm text-gray-400 mb-2">No WhatsApp accounts available</p>
-                      <Dialog open={openDialogs.whatsapp} onOpenChange={(open) => setOpenDialogs({...openDialogs, whatsapp: open})}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="border-gray-700 text-white hover:bg-gray-800">
-                            <Plus className="w-4 h-4 mr-1" /> Connect WhatsApp
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Connect WhatsApp</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Connect a WhatsApp account in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To connect a WhatsApp account, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, whatsapp: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  ) : (
-                    <>
-                      <Select
-                        value={connections.whatsapp?.phoneNumber || ''}
-                        onValueChange={(value) => updateConnection('whatsapp', 'phoneNumber', value)}
-                      >
-                        <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                          <SelectValue placeholder="Select WhatsApp account" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-700 border-gray-600">
-                          {whatsappAccounts.map((account) => (
-                            <SelectItem key={account.id} value={account.phoneNumber} className="text-white">
-                              <div className="flex items-center">
-                                <span className="font-medium">{account.name}</span>
-                                <span className="text-xs text-gray-400 ml-2">({account.phoneNumber})</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      <Dialog open={openDialogs.whatsapp} onOpenChange={(open) => setOpenDialogs({...openDialogs, whatsapp: open})}>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600 mt-2"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Connect Another Account
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Connect WhatsApp</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Connect another WhatsApp account in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To connect another WhatsApp account, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, whatsapp: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </>
-                  )}
+                  <Label className="text-sm text-white">API Key</Label>
+                  <Input
+                    type="password"
+                    value={connections.whatsapp?.apiKey || ''}
+                    onChange={(e) => updateConnection('whatsapp', 'apiKey', e.target.value)}
+                    placeholder="Enter WhatsApp Business API key"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm text-white">Phone Number</Label>
+                  <Input
+                    value={connections.whatsapp?.phoneNumber || ''}
+                    onChange={(e) => updateConnection('whatsapp', 'phoneNumber', e.target.value)}
+                    placeholder="+1234567890"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm text-white">Webhook URL</Label>
+                  <Input
+                    value={connections.whatsapp?.webhookUrl || ''}
+                    onChange={(e) => updateConnection('whatsapp', 'webhookUrl', e.target.value)}
+                    placeholder="https://your-webhook-url.com"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
                 </div>
               </CardContent>
             )}
@@ -519,107 +379,23 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
             {connections.telegram?.enabled && (
               <CardContent className="space-y-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Label className="text-sm text-white">Select Telegram Bot</Label>
-                    <Button
-                      size="sm"
-                      variant="link"
-                      className="text-blue-400 text-sm p-0 h-auto"
-                      onClick={handleRedirectToIntegrations}
-                    >
-                      Manage Bots
-                    </Button>
-                  </div>
-                  
-                  {telegramBots.length === 0 ? (
-                    <div className="bg-gray-700/50 rounded-lg border border-gray-600 p-4 text-center">
-                      <p className="text-sm text-gray-400 mb-2">No Telegram bots available</p>
-                      <Dialog open={openDialogs.telegram} onOpenChange={(open) => setOpenDialogs({...openDialogs, telegram: open})}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="border-gray-700 text-white hover:bg-gray-800">
-                            <Plus className="w-4 h-4 mr-1" /> Connect Telegram
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Connect Telegram</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Connect a Telegram bot in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To connect a Telegram bot, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, telegram: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  ) : (
-                    <>
-                      <Select
-                        value={connections.telegram?.botToken || ''}
-                        onValueChange={(value) => updateConnection('telegram', 'botToken', value)}
-                      >
-                        <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                          <SelectValue placeholder="Select Telegram bot" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-700 border-gray-600">
-                          {telegramBots.map((bot) => (
-                            <SelectItem key={bot.id} value={bot.id} className="text-white">
-                              <div className="flex items-center">
-                                <span className="font-medium">{bot.name}</span>
-                                <span className="text-xs text-gray-400 ml-2">(@{bot.username})</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      <Dialog open={openDialogs.telegram} onOpenChange={(open) => setOpenDialogs({...openDialogs, telegram: open})}>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600 mt-2"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Connect Another Bot
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Connect Telegram</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Connect another Telegram bot in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To connect another Telegram bot, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, telegram: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </>
-                  )}
+                  <Label className="text-sm text-white">Bot Token</Label>
+                  <Input
+                    type="password"
+                    value={connections.telegram?.botToken || ''}
+                    onChange={(e) => updateConnection('telegram', 'botToken', e.target.value)}
+                    placeholder="123456789:ABCdefGhIJKlmNoPQRsTuVwXyZ"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm text-white">Webhook URL</Label>
+                  <Input
+                    value={connections.telegram?.webhookUrl || ''}
+                    onChange={(e) => updateConnection('telegram', 'webhookUrl', e.target.value)}
+                    placeholder="https://your-webhook-url.com"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
                 </div>
               </CardContent>
             )}
@@ -639,256 +415,41 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
             {connections.email?.enabled && (
               <CardContent className="space-y-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Label className="text-sm text-white">Select Email Account</Label>
-                    <Button
-                      size="sm"
-                      variant="link"
-                      className="text-blue-400 text-sm p-0 h-auto"
-                      onClick={handleRedirectToIntegrations}
-                    >
-                      Manage Accounts
-                    </Button>
-                  </div>
-                  
-                  {emailAccounts.length === 0 ? (
-                    <div className="bg-gray-700/50 rounded-lg border border-gray-600 p-4 text-center">
-                      <p className="text-sm text-gray-400 mb-2">No email accounts available</p>
-                      <Dialog open={openDialogs.email} onOpenChange={(open) => setOpenDialogs({...openDialogs, email: open})}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="border-gray-700 text-white hover:bg-gray-800">
-                            <Plus className="w-4 h-4 mr-1" /> Connect Email
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Connect Email</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Configure an email account in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To configure an email account, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, email: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  ) : (
-                    <>
-                      <Select
-                        value={connections.email?.username || ''}
-                        onValueChange={(value) => {
-                          const selectedAccount = emailAccounts.find(account => account.email === value);
-                          if (selectedAccount) {
-                            updateConnection('email', 'username', value);
-                          }
-                        }}
-                      >
-                        <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                          <SelectValue placeholder="Select email account" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-700 border-gray-600">
-                          {emailAccounts.map((account) => (
-                            <SelectItem key={account.id} value={account.email} className="text-white">
-                              <div className="flex items-center">
-                                <span className="font-medium">{account.name}</span>
-                                <span className="text-xs text-gray-400 ml-2">({account.email})</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      <Dialog open={openDialogs.email} onOpenChange={(open) => setOpenDialogs({...openDialogs, email: open})}>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600 mt-2"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Configure Another Account
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Configure Email</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Configure another email account in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To configure another email account, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, email: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </>
-                  )}
+                  <Label className="text-sm text-white">SMTP Host</Label>
+                  <Input
+                    value={connections.email?.smtpHost || ''}
+                    onChange={(e) => updateConnection('email', 'smtpHost', e.target.value)}
+                    placeholder="smtp.gmail.com"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
                 </div>
-              </CardContent>
-            )}
-          </Card>
-          
-          {/* WeChat Connection */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-base text-white flex items-center justify-between">
-                WeChat Integration
-                <Switch
-                  checked={connections.wechat?.enabled || false}
-                  onCheckedChange={(checked) => {
-                    // Initialize wechat connection with all required properties
-                    const updatedConnections = {
-                      ...connections,
-                      wechat: {
-                        enabled: checked,
-                        accountId: connections.wechat?.accountId || '',
-                        appId: connections.wechat?.appId || '',
-                        appSecret: connections.wechat?.appSecret || ''
-                      }
-                    };
-                    onUpdate({ connections: updatedConnections });
-                  }}
-                />
-              </CardTitle>
-            </CardHeader>
-            {connections.wechat?.enabled && (
-              <CardContent className="space-y-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <Label className="text-sm text-white">Select WeChat Account</Label>
-                    <Button
-                      size="sm"
-                      variant="link"
-                      className="text-blue-400 text-sm p-0 h-auto"
-                      onClick={handleRedirectToIntegrations}
-                    >
-                      Manage Accounts
-                    </Button>
-                  </div>
-                  
-                  {wechatAccounts.length === 0 ? (
-                    <div className="bg-gray-700/50 rounded-lg border border-gray-600 p-4 text-center">
-                      <p className="text-sm text-gray-400 mb-2">No WeChat accounts available</p>
-                      <Dialog open={openDialogs.wechat} onOpenChange={(open) => setOpenDialogs({...openDialogs, wechat: open})}>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="border-gray-700 text-white hover:bg-gray-800">
-                            <Plus className="w-4 h-4 mr-1" /> Connect WeChat
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Connect WeChat</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Connect a WeChat account in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To connect a WeChat account, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, wechat: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </div>
-                  ) : (
-                    <>
-                      <Select
-                        value={connections.wechat?.accountId || ''}
-                        onValueChange={(value) => {
-                          const updatedConnections = {
-                            ...connections,
-                            wechat: {
-                              ...connections.wechat,
-                              enabled: connections.wechat?.enabled || false,
-                              accountId: value,
-                              appId: connections.wechat?.appId || '',
-                              appSecret: connections.wechat?.appSecret || ''
-                            }
-                          };
-                          onUpdate({ connections: updatedConnections });
-                        }}
-                      >
-                        <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                          <SelectValue placeholder="Select WeChat account" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-700 border-gray-600">
-                          {wechatAccounts.map((account) => (
-                            <SelectItem key={account.id} value={account.accountId} className="text-white">
-                              <div className="flex items-center">
-                                <span className="font-medium">{account.name}</span>
-                                <span className="text-xs text-gray-400 ml-2">({account.accountId})</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      <Dialog open={openDialogs.wechat} onOpenChange={(open) => setOpenDialogs({...openDialogs, wechat: open})}>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600 mt-2"
-                          >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Connect Another Account
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-gray-900 border-gray-700 text-white">
-                          <DialogHeader>
-                            <DialogTitle className="text-xl text-white">Connect WeChat</DialogTitle>
-                            <DialogDescription className="text-gray-400">
-                              Connect another WeChat account in the integrations section.
-                            </DialogDescription>
-                          </DialogHeader>
-                          <div className="py-4 text-center">
-                            <p className="text-sm text-gray-400 mb-4">
-                              To connect another WeChat account, you'll need to visit the integrations page.
-                            </p>
-                            <Button 
-                              onClick={() => {
-                                setOpenDialogs({...openDialogs, wechat: false});
-                                handleRedirectToIntegrations();
-                              }}
-                              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white"
-                            >
-                              Go to Integrations
-                            </Button>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </>
-                  )}
+                  <Label className="text-sm text-white">SMTP Port</Label>
+                  <Input
+                    value={connections.email?.smtpPort || ''}
+                    onChange={(e) => updateConnection('email', 'smtpPort', e.target.value)}
+                    placeholder="587"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm text-white">Username</Label>
+                  <Input
+                    value={connections.email?.username || ''}
+                    onChange={(e) => updateConnection('email', 'username', e.target.value)}
+                    placeholder="your-email@gmail.com"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm text-white">Password</Label>
+                  <Input
+                    type="password"
+                    value={connections.email?.password || ''}
+                    onChange={(e) => updateConnection('email', 'password', e.target.value)}
+                    placeholder="App password or SMTP password"
+                    className="bg-gray-700 border-gray-600 text-white mt-1"
+                  />
                 </div>
               </CardContent>
             )}

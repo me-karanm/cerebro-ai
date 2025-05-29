@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 
 export interface AgentWizardData {
@@ -53,12 +54,6 @@ export interface AgentWizardData {
       username: string;
       password: string;
     };
-    wechat?: {
-      enabled: boolean;
-      accountId: string;
-      appId: string;
-      appSecret: string;
-    }
   };
 
   // Step 4: Integrations & Webhooks
