@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Rocket, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface SidebarProps {
   activeModule: string;
@@ -24,9 +25,33 @@ const modules = [
 ];
 
 export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed }: SidebarProps) => {
+  const navigate = useNavigate();
+
   const handleModuleClick = (moduleId: string) => {
     console.log('Module clicked:', moduleId);
     setActiveModule(moduleId);
+    
+    // Navigate to the appropriate route
+    switch (moduleId) {
+      case 'dashboard':
+        navigate('/');
+        break;
+      case 'agents':
+        navigate('/agents');
+        break;
+      case 'campaigns':
+        navigate('/campaigns');
+        break;
+      case 'contacts':
+        navigate('/contacts');
+        break;
+      case 'channels':
+        navigate('/channels');
+        break;
+      default:
+        console.log(`Navigation to ${moduleId} not implemented yet`);
+        break;
+    }
   };
 
   return (
