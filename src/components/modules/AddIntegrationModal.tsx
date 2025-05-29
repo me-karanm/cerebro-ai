@@ -1,8 +1,6 @@
 
 import { useState } from 'react';
-import { X } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { IntegrationSetupForm } from './IntegrationSetupForm';
 import { useIntegrationsStore } from '@/store/integrationsStore';
 
@@ -92,16 +90,8 @@ export const AddIntegrationModal = ({ open, onOpenChange }: AddIntegrationModalP
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-700 text-white">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-white flex items-center justify-between">
+          <DialogTitle className="text-2xl font-bold text-white">
             Add New Integration
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClose}
-              className="text-gray-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </Button>
           </DialogTitle>
         </DialogHeader>
         
