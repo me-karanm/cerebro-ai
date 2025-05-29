@@ -1,14 +1,70 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Upload, Users, Search, Filter, Download } from 'lucide-react';
+import { Plus, Users } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { ContactModal } from '@/components/contacts/ContactModal';
+import { ContactTable } from '@/components/contacts/ContactTable';
+
+interface Contact {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  assignedAgent: string;
+  tags: string[];
+  createdOn: string;
+}
+
+interface Agent {
+  id: string;
+  name: string;
+}
+
+// Mock data
+const mockAgents: Agent[] = [
+  { id: '1', name: 'Sarah Chen' },
+  { id: '2', name: 'Marcus Johnson' },
+  { id: '3', name: 'Emma Davis' },
+];
+
+const mockContacts: Contact[] = [
+  {
+    id: '1',
+    name: 'John Smith',
+    email: 'john.smith@email.com',
+    phone: '+1 (555) 123-4567',
+    assignedAgent: '1',
+    tags: ['Lead', 'Hot'],
+    createdOn: '2024-01-15T10:30:00Z'
+  },
+  {
+    id: '2',
+    name: 'Alice Johnson',
+    email: 'alice.johnson@company.com',
+    phone: '+1 (555) 987-6543',
+    assignedAgent: '2',
+    tags: ['Customer', 'VIP'],
+    createdOn: '2024-01-10T14:20:00Z'
+  },
+  {
+    id: '3',
+    name: 'Robert Brown',
+    email: 'robert.brown@example.com',
+    phone: '+1 (555) 456-7890',
+    assignedAgent: '1',
+    tags: ['Prospect', 'Warm'],
+    createdOn: '2024-01-08T09:15:00Z'
+  }
+];
 
 const Contacts = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [contacts, setContacts] = useState<Contact[]>(mockContacts);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | undefined>();
   const navigate = useNavigate();
 
   const handleModuleChange = (module: string) => {
@@ -34,6 +90,37 @@ const Contacts = () => {
     }
   };
 
+  const handleAddContact = () => {
+    setEditingContact(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
+    if ('id' in contactData) {
+      // Editing existing contact
+      setContacts(contacts.map(c => c.id === contactData.id ? contactData : c));
+    } else {
+      // Adding new contact
+      const newContact: Contact = {
+        ...contactData,
+        id: Date.now().toString(),
+        createdOn: new Date().toISOString()
+      };
+      setContacts([...contacts, newContact]);
+    }
+  };
+
+  const handleDeleteContact = (contactId: string) => {
+    if (confirm('Are you sure you want to delete this contact?')) {
+      setContacts(contacts.filter(c => c.id !== contactId));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-950 text-white flex w-full">
       <Sidebar
@@ -48,18 +135,15 @@ const Contacts = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-white">Contacts</h1>
-              <p className="text-gray-400">Manage your contact lists and import leads</p>
+              <p className="text-gray-400">Manage your contact lists and customer data</p>
             </div>
-            <div className="flex space-x-3">
-              <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                <Upload className="w-4 h-4 mr-2" />
-                Import Contacts
-              </Button>
-              <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Add Contact
-              </Button>
-            </div>
+            <Button 
+              onClick={handleAddContact}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Contact
+            </Button>
           </div>
 
           {/* Stats Cards */}
@@ -69,7 +153,7 @@ const Contacts = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-400">Total Contacts</p>
-                    <p className="text-2xl font-bold text-white">0</p>
+                    <p className="text-2xl font-bold text-white">{contacts.length}</p>
                   </div>
                   <Users className="w-8 h-8 text-purple-400" />
                 </div>
@@ -79,8 +163,10 @@ const Contacts = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">Active Lists</p>
-                    <p className="text-2xl font-bold text-blue-400">0</p>
+                    <p className="text-sm text-gray-400">Assigned Contacts</p>
+                    <p className="text-2xl font-bold text-blue-400">
+                      {contacts.filter(c => c.assignedAgent && c.assignedAgent !== 'unassigned').length}
+                    </p>
                   </div>
                   <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
                 </div>
@@ -90,10 +176,12 @@ const Contacts = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">Segmented</p>
-                    <p className="text-2xl font-bold text-green-400">0</p>
+                    <p className="text-sm text-gray-400">Hot Leads</p>
+                    <p className="text-2xl font-bold text-green-400">
+                      {contacts.filter(c => c.tags.includes('Hot')).length}
+                    </p>
                   </div>
-                  <div className="text-green-400">🎯</div>
+                  <div className="text-green-400">🔥</div>
                 </div>
               </CardContent>
             </Card>
@@ -101,71 +189,39 @@ const Contacts = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-400">Imported This Month</p>
-                    <p className="text-2xl font-bold text-yellow-400">0</p>
+                    <p className="text-sm text-gray-400">VIP Customers</p>
+                    <p className="text-2xl font-bold text-yellow-400">
+                      {contacts.filter(c => c.tags.includes('VIP')).length}
+                    </p>
                   </div>
-                  <Upload className="w-8 h-8 text-yellow-400" />
+                  <div className="text-yellow-400">👑</div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Search and Filters */}
+          {/* Contacts Table */}
           <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <Input 
-                    placeholder="Search contacts..." 
-                    className="bg-gray-900 border-gray-700 text-white pl-10"
-                  />
-                </div>
-                <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filter
-                </Button>
-                <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                  <Download className="w-4 h-4 mr-2" />
-                  Export
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Empty State */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-12">
-              <div className="text-center space-y-6">
-                <div className="w-24 h-24 mx-auto bg-gray-700 rounded-full flex items-center justify-center">
-                  <Users className="w-12 h-12 text-gray-400" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-white">No contacts yet</h3>
-                  <p className="text-gray-400 max-w-md mx-auto">
-                    Start building your contact database by importing existing lists or adding contacts manually.
-                  </p>
-                </div>
-                <div className="flex justify-center space-x-4">
-                  <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Your First Contact
-                  </Button>
-                  <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                    <Upload className="w-4 h-4 mr-2" />
-                    Import from CSV
-                  </Button>
-                </div>
-                <div className="pt-6 border-t border-gray-700">
-                  <p className="text-sm text-gray-500">
-                    Support for CSV, Excel, and CRM integrations coming soon.
-                  </p>
-                </div>
-              </div>
+            <CardContent className="p-0">
+              <ContactTable
+                contacts={contacts}
+                agents={mockAgents}
+                onEdit={handleEditContact}
+                onDelete={handleDeleteContact}
+              />
             </CardContent>
           </Card>
         </div>
       </main>
+
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveContact}
+        contact={editingContact}
+        agents={mockAgents}
+      />
     </div>
   );
 };
