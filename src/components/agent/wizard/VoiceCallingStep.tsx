@@ -6,6 +6,8 @@ import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Phone, Plus } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -40,10 +42,17 @@ const callRoutingOptions = [
   { value: 'round-robin', label: 'Round Robin' },
 ];
 
+// Mock data for purchased phone numbers
+const purchasedNumbers = [
+  { id: '1', number: '+1 (555) 123-4567', type: 'Local', location: 'New York, NY' },
+  { id: '2', number: '+1 (555) 987-6543', type: 'Toll-Free', location: 'US National' },
+  { id: '3', number: '+44 20 7946 0958', type: 'Local', location: 'London, UK' },
+];
+
 export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
   // Add safety check for connections
   const connections = data.connections || {
-    call: { enabled: false, apiKey: '', webhookUrl: '' },
+    call: { enabled: false, apiKey: '', webhookUrl: '', selectedPhoneNumber: '' },
     whatsapp: { enabled: false, apiKey: '', phoneNumber: '', webhookUrl: '' },
     telegram: { enabled: false, botToken: '', webhookUrl: '' },
     email: { enabled: false, smtpHost: '', smtpPort: '', username: '', password: '' },
@@ -61,11 +70,16 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
     });
   };
 
+  const handlePurchaseNewNumber = () => {
+    // This would typically open a modal or navigate to a purchase flow
+    console.log('Opening phone number purchase flow...');
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-white mb-4">Voice & Calling</h2>
-        <p className="text-gray-400 mb-6">
+        <p className="text-sm text-gray-400 mb-6">
           Configure voice capabilities and calling features for your agent.
         </p>
       </div>
@@ -75,7 +89,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
         <div className="space-y-6">
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Voice Configuration</CardTitle>
+              <CardTitle className="text-base text-white">Voice Configuration</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-2">
@@ -84,7 +98,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   checked={data.enableVoice}
                   onCheckedChange={(checked) => onUpdate({ enableVoice: !!checked })}
                 />
-                <Label htmlFor="enable-voice" className="text-white">
+                <Label htmlFor="enable-voice" className="text-sm text-white">
                   Enable Voice Capabilities
                 </Label>
               </div>
@@ -95,7 +109,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
               {data.enableVoice && (
                 <>
                   <div>
-                    <Label className="text-white">Voice Selection</Label>
+                    <Label className="text-sm text-white">Voice Selection</Label>
                     <Select
                       value={data.selectedVoice}
                       onValueChange={(value) => onUpdate({ selectedVoice: value })}
@@ -107,7 +121,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                         {voiceOptions.map((voice) => (
                           <SelectItem key={voice.value} value={voice.value} className="text-white">
                             <div>
-                              <div>{voice.label}</div>
+                              <div className="text-sm">{voice.label}</div>
                               <div className="text-xs text-gray-400">{voice.description}</div>
                             </div>
                           </SelectItem>
@@ -117,7 +131,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   </div>
 
                   <div>
-                    <Label className="text-white">TTS Engine</Label>
+                    <Label className="text-sm text-white">TTS Engine</Label>
                     <Select
                       value={data.ttsEngine}
                       onValueChange={(value) => onUpdate({ ttsEngine: value })}
@@ -128,7 +142,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                       <SelectContent className="bg-gray-700 border-gray-600">
                         {ttsEngines.map((engine) => (
                           <SelectItem key={engine.value} value={engine.value} className="text-white">
-                            {engine.label}
+                            <span className="text-sm">{engine.label}</span>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -144,13 +158,13 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
         <div className="space-y-6">
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Voice Settings</CardTitle>
+              <CardTitle className="text-base text-white">Voice Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {data.enableVoice ? (
                 <>
                   <div>
-                    <Label className="text-white">
+                    <Label className="text-sm text-white">
                       Pitch: {data.pitch}
                     </Label>
                     <Slider
@@ -164,7 +178,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   </div>
 
                   <div>
-                    <Label className="text-white">
+                    <Label className="text-sm text-white">
                       Speed: {data.speed}
                     </Label>
                     <Slider
@@ -178,7 +192,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   </div>
 
                   <div>
-                    <Label className="text-white">
+                    <Label className="text-sm text-white">
                       Emphasis: {data.emphasis}
                     </Label>
                     <Slider
@@ -192,7 +206,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   </div>
 
                   <div>
-                    <Label className="text-white">Call Routing</Label>
+                    <Label className="text-sm text-white">Call Routing</Label>
                     <Select
                       value={data.callRouting}
                       onValueChange={(value) => onUpdate({ callRouting: value })}
@@ -203,7 +217,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                       <SelectContent className="bg-gray-700 border-gray-600">
                         {callRoutingOptions.map((option) => (
                           <SelectItem key={option.value} value={option.value} className="text-white">
-                            {option.label}
+                            <span className="text-sm">{option.label}</span>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -211,7 +225,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   </div>
                 </>
               ) : (
-                <p className="text-gray-400 text-center py-8">
+                <p className="text-sm text-gray-400 text-center py-8">
                   Enable voice capabilities to configure voice settings.
                 </p>
               )}
@@ -228,8 +242,8 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
 
       {/* Connections Section */}
       <div className="mt-8">
-        <h3 className="text-xl font-semibold text-white mb-4">Connections</h3>
-        <p className="text-gray-400 mb-6">
+        <h3 className="text-lg font-semibold text-white mb-4">Connections</h3>
+        <p className="text-sm text-gray-400 mb-6">
           Configure external communication channels for your agent.
         </p>
 
@@ -237,7 +251,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
           {/* Call Connection */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white flex items-center justify-between">
+              <CardTitle className="text-base text-white flex items-center justify-between">
                 Call Integration
                 <Switch
                   checked={connections.call?.enabled || false}
@@ -247,8 +261,44 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
             </CardHeader>
             {connections.call?.enabled && (
               <CardContent className="space-y-4">
+                {/* Phone Numbers Section */}
                 <div>
-                  <Label className="text-white">API Key</Label>
+                  <Label className="text-sm text-white">Select Phone Number</Label>
+                  <div className="mt-2 space-y-3">
+                    <RadioGroup
+                      value={connections.call?.selectedPhoneNumber || ''}
+                      onValueChange={(value) => updateConnection('call', 'selectedPhoneNumber', value)}
+                    >
+                      {purchasedNumbers.map((phoneNumber) => (
+                        <div key={phoneNumber.id} className="flex items-center space-x-2 p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+                          <RadioGroupItem value={phoneNumber.id} id={phoneNumber.id} />
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2">
+                              <Phone className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm text-white font-medium">{phoneNumber.number}</span>
+                              <span className="text-xs text-gray-400 bg-gray-600 px-2 py-1 rounded">
+                                {phoneNumber.type}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-400 mt-1">{phoneNumber.location}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </RadioGroup>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={handlePurchaseNewNumber}
+                      className="w-full bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Purchase New Number
+                    </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm text-white">API Key</Label>
                   <Input
                     type="password"
                     value={connections.call?.apiKey || ''}
@@ -258,7 +308,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Webhook URL</Label>
+                  <Label className="text-sm text-white">Webhook URL</Label>
                   <Input
                     value={connections.call?.webhookUrl || ''}
                     onChange={(e) => updateConnection('call', 'webhookUrl', e.target.value)}
@@ -273,7 +323,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
           {/* WhatsApp Connection */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white flex items-center justify-between">
+              <CardTitle className="text-base text-white flex items-center justify-between">
                 WhatsApp Integration
                 <Switch
                   checked={connections.whatsapp?.enabled || false}
@@ -284,7 +334,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
             {connections.whatsapp?.enabled && (
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-white">API Key</Label>
+                  <Label className="text-sm text-white">API Key</Label>
                   <Input
                     type="password"
                     value={connections.whatsapp?.apiKey || ''}
@@ -294,7 +344,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Phone Number</Label>
+                  <Label className="text-sm text-white">Phone Number</Label>
                   <Input
                     value={connections.whatsapp?.phoneNumber || ''}
                     onChange={(e) => updateConnection('whatsapp', 'phoneNumber', e.target.value)}
@@ -303,7 +353,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Webhook URL</Label>
+                  <Label className="text-sm text-white">Webhook URL</Label>
                   <Input
                     value={connections.whatsapp?.webhookUrl || ''}
                     onChange={(e) => updateConnection('whatsapp', 'webhookUrl', e.target.value)}
@@ -318,7 +368,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
           {/* Telegram Connection */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white flex items-center justify-between">
+              <CardTitle className="text-base text-white flex items-center justify-between">
                 Telegram Integration
                 <Switch
                   checked={connections.telegram?.enabled || false}
@@ -329,7 +379,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
             {connections.telegram?.enabled && (
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-white">Bot Token</Label>
+                  <Label className="text-sm text-white">Bot Token</Label>
                   <Input
                     type="password"
                     value={connections.telegram?.botToken || ''}
@@ -339,7 +389,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Webhook URL</Label>
+                  <Label className="text-sm text-white">Webhook URL</Label>
                   <Input
                     value={connections.telegram?.webhookUrl || ''}
                     onChange={(e) => updateConnection('telegram', 'webhookUrl', e.target.value)}
@@ -354,7 +404,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
           {/* Email Connection */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white flex items-center justify-between">
+              <CardTitle className="text-base text-white flex items-center justify-between">
                 Email Integration
                 <Switch
                   checked={connections.email?.enabled || false}
@@ -365,7 +415,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
             {connections.email?.enabled && (
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-white">SMTP Host</Label>
+                  <Label className="text-sm text-white">SMTP Host</Label>
                   <Input
                     value={connections.email?.smtpHost || ''}
                     onChange={(e) => updateConnection('email', 'smtpHost', e.target.value)}
@@ -374,7 +424,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white">SMTP Port</Label>
+                  <Label className="text-sm text-white">SMTP Port</Label>
                   <Input
                     value={connections.email?.smtpPort || ''}
                     onChange={(e) => updateConnection('email', 'smtpPort', e.target.value)}
@@ -383,7 +433,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Username</Label>
+                  <Label className="text-sm text-white">Username</Label>
                   <Input
                     value={connections.email?.username || ''}
                     onChange={(e) => updateConnection('email', 'username', e.target.value)}
@@ -392,7 +442,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   />
                 </div>
                 <div>
-                  <Label className="text-white">Password</Label>
+                  <Label className="text-sm text-white">Password</Label>
                   <Input
                     type="password"
                     value={connections.email?.password || ''}

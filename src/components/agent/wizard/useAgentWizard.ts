@@ -34,6 +34,7 @@ export interface AgentWizardData {
       enabled: boolean;
       apiKey: string;
       webhookUrl: string;
+      selectedPhoneNumber: string;
     };
     whatsapp: {
       enabled: boolean;
@@ -105,6 +106,7 @@ const initialData: AgentWizardData = {
       enabled: false,
       apiKey: '',
       webhookUrl: '',
+      selectedPhoneNumber: '',
     },
     whatsapp: {
       enabled: false,
