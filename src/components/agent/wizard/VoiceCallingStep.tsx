@@ -41,12 +41,20 @@ const callRoutingOptions = [
 ];
 
 export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
+  // Add safety check for connections
+  const connections = data.connections || {
+    call: { enabled: false, apiKey: '', webhookUrl: '' },
+    whatsapp: { enabled: false, apiKey: '', phoneNumber: '', webhookUrl: '' },
+    telegram: { enabled: false, botToken: '', webhookUrl: '' },
+    email: { enabled: false, smtpHost: '', smtpPort: '', username: '', password: '' },
+  };
+
   const updateConnection = (connection: string, field: string, value: any) => {
     onUpdate({
       connections: {
-        ...data.connections,
+        ...connections,
         [connection]: {
-          ...data.connections[connection as keyof typeof data.connections],
+          ...connections[connection as keyof typeof connections],
           [field]: value,
         },
       },
@@ -232,18 +240,18 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
               <CardTitle className="text-white flex items-center justify-between">
                 Call Integration
                 <Switch
-                  checked={data.connections.call.enabled}
+                  checked={connections.call?.enabled || false}
                   onCheckedChange={(checked) => updateConnection('call', 'enabled', checked)}
                 />
               </CardTitle>
             </CardHeader>
-            {data.connections.call.enabled && (
+            {connections.call?.enabled && (
               <CardContent className="space-y-4">
                 <div>
                   <Label className="text-white">API Key</Label>
                   <Input
                     type="password"
-                    value={data.connections.call.apiKey}
+                    value={connections.call?.apiKey || ''}
                     onChange={(e) => updateConnection('call', 'apiKey', e.target.value)}
                     placeholder="Enter your call service API key"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -252,7 +260,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                 <div>
                   <Label className="text-white">Webhook URL</Label>
                   <Input
-                    value={data.connections.call.webhookUrl}
+                    value={connections.call?.webhookUrl || ''}
                     onChange={(e) => updateConnection('call', 'webhookUrl', e.target.value)}
                     placeholder="https://your-webhook-url.com"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -268,18 +276,18 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
               <CardTitle className="text-white flex items-center justify-between">
                 WhatsApp Integration
                 <Switch
-                  checked={data.connections.whatsapp.enabled}
+                  checked={connections.whatsapp?.enabled || false}
                   onCheckedChange={(checked) => updateConnection('whatsapp', 'enabled', checked)}
                 />
               </CardTitle>
             </CardHeader>
-            {data.connections.whatsapp.enabled && (
+            {connections.whatsapp?.enabled && (
               <CardContent className="space-y-4">
                 <div>
                   <Label className="text-white">API Key</Label>
                   <Input
                     type="password"
-                    value={data.connections.whatsapp.apiKey}
+                    value={connections.whatsapp?.apiKey || ''}
                     onChange={(e) => updateConnection('whatsapp', 'apiKey', e.target.value)}
                     placeholder="Enter WhatsApp Business API key"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -288,7 +296,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                 <div>
                   <Label className="text-white">Phone Number</Label>
                   <Input
-                    value={data.connections.whatsapp.phoneNumber}
+                    value={connections.whatsapp?.phoneNumber || ''}
                     onChange={(e) => updateConnection('whatsapp', 'phoneNumber', e.target.value)}
                     placeholder="+1234567890"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -297,7 +305,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                 <div>
                   <Label className="text-white">Webhook URL</Label>
                   <Input
-                    value={data.connections.whatsapp.webhookUrl}
+                    value={connections.whatsapp?.webhookUrl || ''}
                     onChange={(e) => updateConnection('whatsapp', 'webhookUrl', e.target.value)}
                     placeholder="https://your-webhook-url.com"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -313,18 +321,18 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
               <CardTitle className="text-white flex items-center justify-between">
                 Telegram Integration
                 <Switch
-                  checked={data.connections.telegram.enabled}
+                  checked={connections.telegram?.enabled || false}
                   onCheckedChange={(checked) => updateConnection('telegram', 'enabled', checked)}
                 />
               </CardTitle>
             </CardHeader>
-            {data.connections.telegram.enabled && (
+            {connections.telegram?.enabled && (
               <CardContent className="space-y-4">
                 <div>
                   <Label className="text-white">Bot Token</Label>
                   <Input
                     type="password"
-                    value={data.connections.telegram.botToken}
+                    value={connections.telegram?.botToken || ''}
                     onChange={(e) => updateConnection('telegram', 'botToken', e.target.value)}
                     placeholder="123456789:ABCdefGhIJKlmNoPQRsTuVwXyZ"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -333,7 +341,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                 <div>
                   <Label className="text-white">Webhook URL</Label>
                   <Input
-                    value={data.connections.telegram.webhookUrl}
+                    value={connections.telegram?.webhookUrl || ''}
                     onChange={(e) => updateConnection('telegram', 'webhookUrl', e.target.value)}
                     placeholder="https://your-webhook-url.com"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -349,17 +357,17 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
               <CardTitle className="text-white flex items-center justify-between">
                 Email Integration
                 <Switch
-                  checked={data.connections.email.enabled}
+                  checked={connections.email?.enabled || false}
                   onCheckedChange={(checked) => updateConnection('email', 'enabled', checked)}
                 />
               </CardTitle>
             </CardHeader>
-            {data.connections.email.enabled && (
+            {connections.email?.enabled && (
               <CardContent className="space-y-4">
                 <div>
                   <Label className="text-white">SMTP Host</Label>
                   <Input
-                    value={data.connections.email.smtpHost}
+                    value={connections.email?.smtpHost || ''}
                     onChange={(e) => updateConnection('email', 'smtpHost', e.target.value)}
                     placeholder="smtp.gmail.com"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -368,7 +376,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                 <div>
                   <Label className="text-white">SMTP Port</Label>
                   <Input
-                    value={data.connections.email.smtpPort}
+                    value={connections.email?.smtpPort || ''}
                     onChange={(e) => updateConnection('email', 'smtpPort', e.target.value)}
                     placeholder="587"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -377,7 +385,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                 <div>
                   <Label className="text-white">Username</Label>
                   <Input
-                    value={data.connections.email.username}
+                    value={connections.email?.username || ''}
                     onChange={(e) => updateConnection('email', 'username', e.target.value)}
                     placeholder="your-email@gmail.com"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -387,7 +395,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                   <Label className="text-white">Password</Label>
                   <Input
                     type="password"
-                    value={data.connections.email.password}
+                    value={connections.email?.password || ''}
                     onChange={(e) => updateConnection('email', 'password', e.target.value)}
                     placeholder="App password or SMTP password"
                     className="bg-gray-700 border-gray-600 text-white mt-1"
