@@ -1,6 +1,6 @@
-
 import { useState } from 'react';
 import { Plus, Search, Filter, Bot, Play, Settings, MoreVertical, Edit, Trash2, Copy } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +47,7 @@ const sampleAgents = [
 ];
 
 export const AgentsModule = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [agents] = useState(sampleAgents);
@@ -55,6 +56,10 @@ export const AgentsModule = () => {
     agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     agent.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleCreateAgent = () => {
+    navigate('/agents/create');
+  };
 
   if (selectedAgent) {
     const agent = agents.find(a => a.id === selectedAgent);
@@ -74,7 +79,10 @@ export const AgentsModule = () => {
           <h1 className="text-3xl font-bold text-white">Agents</h1>
           <p className="text-gray-400">Create and manage your AI agents</p>
         </div>
-        <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
+        <Button 
+          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+          onClick={handleCreateAgent}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Create Agent
         </Button>

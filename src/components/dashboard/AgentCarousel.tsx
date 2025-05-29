@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -54,7 +53,11 @@ const mockAgents: Agent[] = [
   }
 ];
 
-export const AgentCarousel = () => {
+interface AgentCarouselProps {
+  onCreateAgent?: () => void;
+}
+
+export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [agents, setAgents] = useState(mockAgents);
 
@@ -178,7 +181,10 @@ export const AgentCarousel = () => {
           </div>
         </div>
         
-        <Button className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white">
+        <Button 
+          className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white"
+          onClick={onCreateAgent}
+        >
           + Create New Agent
         </Button>
       </CardContent>

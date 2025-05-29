@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { Users, MessageCircle, DollarSign, Zap, Bell, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -56,7 +57,12 @@ const statsData = [
 const billingFilters = ['Current Billing Cycle', 'Last Billing Cycle', 'Last 3 Months', 'This Year'];
 
 export const DashboardModule = () => {
+  const navigate = useNavigate();
   const [selectedBilling, setSelectedBilling] = useState('Current Billing Cycle');
+
+  const handleCreateAgent = () => {
+    navigate('/agents/create');
+  };
 
   return (
     <div className="p-6 space-y-6 min-h-screen">
@@ -109,12 +115,12 @@ export const DashboardModule = () => {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Agent Carousel */}
-        <AgentCarousel />
+        <AgentCarousel onCreateAgent={handleCreateAgent} />
 
         {/* Phone Numbers & Sentiment */}
         <div className="space-y-6">
           <PhoneNumbersSection />
-          <SentimentAnalysis />
+          <SentimentAnalysis onCreateAgent={handleCreateAgent} />
         </div>
       </div>
 
