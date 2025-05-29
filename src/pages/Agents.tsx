@@ -1,9 +1,9 @@
 
 import { useState } from 'react';
 import { Sidebar } from '@/components/Sidebar';
-import { CreateAgentWizard } from '@/components/agent/CreateAgentWizard';
+import { AgentsModule } from '@/components/modules/AgentsModule';
 
-const CreateAgent = () => {
+const Agents = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
@@ -15,10 +15,10 @@ const CreateAgent = () => {
         setCollapsed={setSidebarCollapsed}
       />
       <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <CreateAgentWizard />
+        <AgentsModule />
       </main>
     </div>
   );
 };
 
-export default CreateAgent;
+export default Agents;
