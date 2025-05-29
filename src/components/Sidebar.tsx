@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Rocket, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,11 @@ const modules = [
 ];
 
 export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed }: SidebarProps) => {
+  const handleModuleClick = (moduleId: string) => {
+    console.log('Module clicked:', moduleId);
+    setActiveModule(moduleId);
+  };
+
   return (
     <div className={cn(
       "fixed left-0 top-0 h-full bg-gray-900 border-r border-gray-800 transition-all duration-300 z-40",
@@ -55,9 +61,9 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
         {modules.map((module) => (
           <button
             key={module.id}
-            onClick={() => setActiveModule(module.id)}
+            onClick={() => handleModuleClick(module.id)}
             className={cn(
-              "w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group",
+              "w-full flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 group cursor-pointer",
               activeModule === module.id
                 ? "bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30 text-purple-300"
                 : "hover:bg-gray-800 text-gray-300 hover:text-white"
