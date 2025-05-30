@@ -295,7 +295,6 @@ const CampaignDetail = () => {
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="bg-gray-900 border-gray-800">
               <TabsTrigger value="overview" className="data-[state=active]:bg-purple-600">Overview</TabsTrigger>
-              <TabsTrigger value="sessions" className="data-[state=active]:bg-purple-600">Sessions</TabsTrigger>
               <TabsTrigger value="contacts" className="data-[state=active]:bg-purple-600">Contacts</TabsTrigger>
             </TabsList>
 
@@ -401,49 +400,6 @@ const CampaignDetail = () => {
                       <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${mockCampaignData.metrics.conversionRate}%` }} />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="sessions">
-              <Card className="bg-gray-900 border-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Campaign Sessions</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    All conversations and interactions for this campaign
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-gray-800">
-                        <TableHead className="text-gray-400">Session ID</TableHead>
-                        <TableHead className="text-gray-400">Lead Name</TableHead>
-                        <TableHead className="text-gray-400">Email</TableHead>
-                        <TableHead className="text-gray-400">Phone</TableHead>
-                        <TableHead className="text-gray-400">Duration</TableHead>
-                        <TableHead className="text-gray-400">Disposition</TableHead>
-                        <TableHead className="text-gray-400">Timestamp</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {mockCampaignData.sessions.map((session) => (
-                        <TableRow key={session.id} className="border-gray-800 hover:bg-gray-800">
-                          <TableCell className="text-white font-mono">{session.id}</TableCell>
-                          <TableCell className="text-white">{session.leadName}</TableCell>
-                          <TableCell className="text-gray-300">{session.email}</TableCell>
-                          <TableCell className="text-gray-300">{session.phone}</TableCell>
-                          <TableCell className="text-white">{session.duration}</TableCell>
-                          <TableCell>
-                            <Badge className={`${getDispositionColor(session.disposition)} text-white`}>
-                              {session.disposition}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-gray-300">{session.timestamp}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
                 </CardContent>
               </Card>
             </TabsContent>
