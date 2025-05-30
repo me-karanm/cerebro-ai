@@ -1,17 +1,57 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Play, Pause, Users, Phone, Mail, MessageCircle, Edit, Archive, BarChart3, Bot } from 'lucide-react';
+import { ArrowLeft, Play, Pause, Users, Phone, Mail, MessageCircle, Edit, Archive, BarChart3, Bot, Plus, Upload, Download } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ContactModal } from '@/components/contacts/ContactModal';
+import { ContactTable } from '@/components/contacts/ContactTable';
+import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
+import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
+import { useContactsStore } from '@/store/contactsStore';
+import { useContacts } from '@/contexts/ContactsContext';
+import { Contact } from '@/types/contact';
+
+interface Agent {
+  id: string;
+  name: string;
+}
+
+interface Campaign {
+  id: string;
+  name: string;
+}
+
+// Mock data for agents and campaigns
+const mockAgents: Agent[] = [
+  { id: '1', name: 'Sarah Chen' },
+  { id: '2', name: 'Marcus Johnson' },
+  { id: '3', name: 'Emma Davis' },
+];
+
+const mockCampaigns: Campaign[] = [
+  { id: '1', name: 'Q1 Lead Generation Campaign' },
+  { id: '2', name: 'Customer Follow-up' },
+  { id: '3', name: 'Product Demo Campaign' },
+];
 
 const CampaignDetail = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | undefined>(undefined);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const navigate = useNavigate();
   const { campaignId } = useParams();
+
+  // Contact store integration
+  const contactsStore = useContactsStore();
+  const { exportContacts, importContactsFromCSV } = useContacts();
+  const campaignContacts = contactsStore.getContactsByCampaign(campaignId || '1');
 
   const handleModuleChange = (module: string) => {
     switch (module) {
@@ -34,6 +74,62 @@ const CampaignDetail = () => {
         console.log(`Navigation to ${module} not implemented yet`);
         break;
     }
+  };
+
+  // Contact management handlers
+  const handleAddContact = () => {
+    setEditingContact(undefined);
+    setIsContactModalOpen(true);
+  };
+
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setIsContactModalOpen(true);
+  };
+
+  const handleContactClick = (contact: Contact) => {
+    setSelectedContact(contact);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
+    if ('id' in contactData && contactData.id) {
+      contactsStore.updateContact(contactData.id, contactData as Contact);
+    } else {
+      // Add campaign context when creating new contact
+      const newContactData = {
+        ...contactData,
+        campaign: campaignId || '1'
+      } as Omit<Contact, 'id' | 'createdOn'>;
+      contactsStore.addContact(newContactData);
+    }
+  };
+
+  const handleDeleteContact = (contactId: string) => {
+    if (confirm('Are you sure you want to delete this contact?')) {
+      contactsStore.deleteContact(contactId);
+    }
+  };
+
+  const handleImportContacts = async (file: File) => {
+    const result = await importContactsFromCSV(file, { campaignId: campaignId || '1' });
+    if (result.success) {
+      console.log(`Successfully imported ${result.imported} contacts`);
+      if (result.errors.length > 0) {
+        console.warn('Import warnings:', result.errors);
+      }
+    } else {
+      console.error('Import failed:', result.errors);
+    }
+    return result;
+  };
+
+  const handleExportContacts = () => {
+    // Set filter to current campaign before export
+    contactsStore.setFilters({ campaign: campaignId || '1' });
+    exportContacts('csv');
+    // Clear filter after export
+    contactsStore.clearFilters();
   };
 
   const mockCampaignData = {
@@ -355,21 +451,77 @@ const CampaignDetail = () => {
             <TabsContent value="contacts">
               <Card className="bg-gray-900 border-gray-800">
                 <CardHeader>
-                  <CardTitle className="text-white">Contact Management</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Manage campaign contacts and upload lists
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8 text-gray-400">
-                    Contact management features coming soon...
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-white">Campaign Contacts</CardTitle>
+                      <CardDescription className="text-gray-400">
+                        Manage contacts assigned to this campaign ({campaignContacts.length} contacts)
+                      </CardDescription>
+                    </div>
+                    <div className="flex space-x-3">
+                      <Button 
+                        onClick={handleExportContacts}
+                        variant="outline"
+                        className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Export CSV
+                      </Button>
+                      <Button 
+                        onClick={() => setIsImportModalOpen(true)}
+                        variant="outline"
+                        className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Import CSV
+                      </Button>
+                      <Button 
+                        onClick={handleAddContact}
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Contact
+                      </Button>
+                    </div>
                   </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <ContactTable
+                    contacts={campaignContacts}
+                    agents={mockAgents}
+                    campaigns={mockCampaigns}
+                    onEdit={handleEditContact}
+                    onDelete={handleDeleteContact}
+                    onContactClick={handleContactClick}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
           </Tabs>
         </div>
       </main>
+
+      {/* Contact Modals */}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        onSave={handleSaveContact}
+        contact={editingContact}
+        agents={mockAgents}
+        campaigns={mockCampaigns}
+      />
+
+      <ImportCSVModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImportContacts}
+      />
+
+      <ContactDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        contact={selectedContact}
+      />
     </div>
   );
 };
