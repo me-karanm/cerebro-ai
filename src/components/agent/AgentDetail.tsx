@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings } from 'lucide-react';
+import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -211,7 +210,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <Card className="bg-gray-800 border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -261,9 +260,20 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Credits Used</p>
-                <p className="text-2xl font-bold text-orange-400">600 / 10,000</p>
+                <p className="text-2xl font-bold text-orange-400">600</p>
               </div>
               <CreditCard className="w-8 h-8 text-orange-400" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-800 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Avg Success Rate</p>
+                <p className="text-2xl font-bold text-green-400">94%</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-green-400" />
             </div>
           </CardContent>
         </Card>
