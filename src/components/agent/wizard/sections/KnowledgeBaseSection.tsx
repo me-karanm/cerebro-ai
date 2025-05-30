@@ -68,7 +68,7 @@ export const KnowledgeBaseSection = ({ data, onUpdate }: KnowledgeBaseSectionPro
       return `${url.split('?')[0]}/thumbnail.png`;
     }
     if (url.includes('draw.io') || url.includes('diagrams.net')) {
-      return null; // Draw.io doesn't provide direct thumbnails
+      return null;
     }
     return null;
   };
@@ -256,8 +256,8 @@ export const KnowledgeBaseSection = ({ data, onUpdate }: KnowledgeBaseSectionPro
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Text Input */}
             <div className="space-y-2">
