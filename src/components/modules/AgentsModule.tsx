@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight, Users, MessageCircle, DollarSign, CreditCard, Clock, PhoneCall } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -301,17 +302,30 @@ export const AgentsModule = () => {
         </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-        {statsData.map((stat, index) => (
-          <StatsCard
-            key={index}
-            icon={stat.icon}
-            label={stat.label}
-            value={stat.value}
-            tooltip={stat.tooltip}
-          />
-        ))}
+      {/* Stats Cards - 2 rows with 4 cards each */}
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {statsData.slice(0, 4).map((stat, index) => (
+            <StatsCard
+              key={index}
+              icon={stat.icon}
+              label={stat.label}
+              value={stat.value}
+              tooltip={stat.tooltip}
+            />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {statsData.slice(4).map((stat, index) => (
+            <StatsCard
+              key={index + 4}
+              icon={stat.icon}
+              label={stat.label}
+              value={stat.value}
+              tooltip={stat.tooltip}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Agents Grid */}
