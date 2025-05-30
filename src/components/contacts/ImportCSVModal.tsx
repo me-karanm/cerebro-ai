@@ -8,7 +8,7 @@ import { Upload, FileText, AlertCircle } from 'lucide-react';
 interface ImportCSVModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onImport: (contacts: any[]) => void;
+  onImport: (file: File) => Promise<{ success: boolean; imported: number; errors: string[] }>;
 }
 
 export const ImportCSVModal = ({ isOpen, onClose, onImport }: ImportCSVModalProps) => {
@@ -28,61 +28,6 @@ export const ImportCSVModal = ({ isOpen, onClose, onImport }: ImportCSVModalProp
     }
   };
 
-  const parseCSV = (csvText: string) => {
-    const lines = csvText.split('\n').filter(line => line.trim());
-    if (lines.length < 2) {
-      throw new Error('CSV must contain at least a header row and one data row');
-    }
-
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const contacts = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      const values = lines[i].split(',').map(v => v.trim());
-      if (values.length < headers.length) continue;
-
-      const contact: any = {
-        id: Date.now().toString() + i,
-        name: '',
-        email: '',
-        phone: '',
-        assignedAgent: '',
-        campaign: '',
-        tags: [],
-        createdOn: new Date().toISOString()
-      };
-
-      headers.forEach((header, index) => {
-        const value = values[index]?.replace(/"/g, '') || '';
-        switch (header) {
-          case 'name':
-          case 'full name':
-          case 'fullname':
-            contact.name = value;
-            break;
-          case 'email':
-          case 'email address':
-            contact.email = value;
-            break;
-          case 'phone':
-          case 'phone number':
-          case 'phonenumber':
-            contact.phone = value;
-            break;
-          case 'tags':
-            contact.tags = value ? value.split(';').map(tag => tag.trim()) : [];
-            break;
-        }
-      });
-
-      if (contact.name && contact.email) {
-        contacts.push(contact);
-      }
-    }
-
-    return contacts;
-  };
-
   const handleImport = async () => {
     if (!file) return;
 
@@ -90,18 +35,16 @@ export const ImportCSVModal = ({ isOpen, onClose, onImport }: ImportCSVModalProp
     setError('');
 
     try {
-      const fileText = await file.text();
-      const contacts = parseCSV(fileText);
+      const result = await onImport(file);
       
-      if (contacts.length === 0) {
-        throw new Error('No valid contacts found in CSV');
+      if (result.success) {
+        onClose();
+        setFile(null);
+      } else {
+        setError(result.errors.join(', '));
       }
-
-      onImport(contacts);
-      onClose();
-      setFile(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to parse CSV file');
+      setError(err instanceof Error ? err.message : 'Failed to import CSV file');
     } finally {
       setIsUploading(false);
     }

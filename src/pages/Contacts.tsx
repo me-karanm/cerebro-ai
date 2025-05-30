@@ -11,6 +11,7 @@ import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
 import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
 import { useContactsStore } from '@/store/contactsStore';
 import { useContacts } from '@/contexts/ContactsContext';
+import type { Contact } from '@/store/contactsStore';
 
 interface Agent {
   id: string;
@@ -40,8 +41,8 @@ const Contacts = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [editingContact, setEditingContact] = useState<any>(undefined);
-  const [selectedContact, setSelectedContact] = useState<any>(null);
+  const [editingContact, setEditingContact] = useState<Contact | undefined>(undefined);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const navigate = useNavigate();
 
   // Use the new contacts store and context
@@ -78,12 +79,12 @@ const Contacts = () => {
     setIsModalOpen(true);
   };
 
-  const handleEditContact = (contact: any) => {
+  const handleEditContact = (contact: Contact) => {
     setEditingContact(contact);
     setIsModalOpen(true);
   };
 
-  const handleContactClick = (contact: any) => {
+  const handleContactClick = (contact: Contact) => {
     setSelectedContact(contact);
     setIsDetailModalOpen(true);
   };
@@ -120,6 +121,12 @@ const Contacts = () => {
   const handleExportContacts = () => {
     exportContacts('csv');
   };
+
+  // Convert contacts to the expected format for ContactTable
+  const formattedContacts = contacts.map(contact => ({
+    ...contact,
+    assignedAgent: contact.assignedAgent || ''
+  }));
 
   return (
     <div className="min-h-screen bg-gray-950 text-white flex w-full">
@@ -216,7 +223,7 @@ const Contacts = () => {
           <Card className="bg-gray-800 border-gray-700">
             <CardContent className="p-0">
               <ContactTable
-                contacts={contacts}
+                contacts={formattedContacts}
                 agents={mockAgents}
                 campaigns={mockCampaigns}
                 onEdit={handleEditContact}
