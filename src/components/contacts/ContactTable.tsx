@@ -1,11 +1,10 @@
-
 import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Contact } from '@/store/contactsStore';
+import { Contact } from '@/types/contact';
 
 interface Agent {
   id: string;

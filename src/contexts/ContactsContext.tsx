@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useEffect } from 'react';
-import { useContactsStore, Contact } from '@/store/contactsStore';
+import { useContactsStore } from '@/store/contactsStore';
+import { Contact } from '@/types/contact';
 
 interface ContactsContextType {
   // Re-export store methods for easy access

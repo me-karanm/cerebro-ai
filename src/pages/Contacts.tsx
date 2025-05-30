@@ -8,8 +8,9 @@ import { ContactModal } from '@/components/contacts/ContactModal';
 import { ContactTable } from '@/components/contacts/ContactTable';
 import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
 import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
-import { useContactsStore, Contact } from '@/store/contactsStore';
+import { useContactsStore } from '@/store/contactsStore';
 import { useContacts } from '@/contexts/ContactsContext';
+import { Contact } from '@/types/contact';
 
 interface Agent {
   id: string;
@@ -96,7 +97,7 @@ const Contacts = () => {
       const newContactData: Omit<Contact, 'id' | 'createdOn'> = {
         ...contactData,
         source: 'manual' as const,
-        assignedAgent: contactData.assignedAgent || '',
+        assignedAgent: contactData.assignedAgent || undefined,
         tags: contactData.tags || [],
         notes: contactData.notes || '',
       };
