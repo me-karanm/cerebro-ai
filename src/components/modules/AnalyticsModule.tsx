@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { TrendingUp, TrendingDown, Users, MessageCircle, Clock, ThumbsUp, Filter, Download } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -217,8 +216,7 @@ export const AnalyticsModule = () => {
                     cy="50%"
                     outerRadius="80%"
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    labelStyle={{ fontSize: '10px', fill: '#fff' }}
+                    label={({ name, value }: any) => `${name}: ${value}%`}
                   >
                     {channelData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -254,8 +252,7 @@ export const AnalyticsModule = () => {
                     cy="50%"
                     outerRadius="80%"
                     dataKey="value"
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    labelStyle={{ fontSize: '10px', fill: '#fff' }}
+                    label={({ name, value }: any) => `${name}: ${value}%`}
                   >
                     {sentimentData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
