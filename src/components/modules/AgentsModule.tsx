@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight, Users, MessageCircle, DollarSign, CreditCard, Clock, PhoneCall } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,8 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { AgentDetail } from '@/components/agent/AgentDetail';
+import { DuplicateAgentModal } from '@/components/agent/DuplicateAgentModal';
+import { StatsCard } from '@/components/dashboard/StatsCard';
+import { Agent } from '@/types/agent';
 
-const sampleAgents = [
+const sampleAgents: Agent[] = [
   {
     id: '1',
     name: 'Customer Support Agent',
@@ -21,6 +23,16 @@ const sampleAgents = [
     successRate: 94,
     lastUpdated: '2 hours ago',
     persona: 'Friendly and helpful customer service representative',
+    creditsUsed: 600,
+    creditsTotal: 10000,
+    intelligence: 85,
+    voiceNaturalness: 75,
+    responseRate: 90,
+    phoneNumber: '+1(555)123-4567',
+    campaigns: ['Support Tickets', 'Customer Care'],
+    totalMinutes: 2340,
+    averageCallDuration: 4.2,
+    monthlyCost: 299
   },
   {
     id: '2',
@@ -33,6 +45,16 @@ const sampleAgents = [
     successRate: 87,
     lastUpdated: '1 day ago',
     persona: 'Enthusiastic sales professional focused on results',
+    creditsUsed: 450,
+    creditsTotal: 8000,
+    intelligence: 82,
+    voiceNaturalness: 78,
+    responseRate: 85,
+    phoneNumber: '+1(555)789-0123',
+    campaigns: ['Lead Gen Q1', 'Summer Sale'],
+    totalMinutes: 1890,
+    averageCallDuration: 3.8,
+    monthlyCost: 249
   },
   {
     id: '3',
@@ -45,6 +67,15 @@ const sampleAgents = [
     successRate: 0,
     lastUpdated: '3 days ago',
     persona: 'Patient and knowledgeable technical expert',
+    creditsUsed: 0,
+    creditsTotal: 5000,
+    intelligence: 88,
+    voiceNaturalness: 80,
+    responseRate: 0,
+    campaigns: ['Tech Support'],
+    totalMinutes: 0,
+    averageCallDuration: 0,
+    monthlyCost: 0
   },
   // Add more agents to demonstrate pagination
   {
@@ -58,6 +89,15 @@ const sampleAgents = [
     successRate: 91,
     lastUpdated: '5 hours ago',
     persona: 'Creative and enthusiastic marketing specialist',
+    creditsUsed: 320,
+    creditsTotal: 6000,
+    intelligence: 79,
+    voiceNaturalness: 85,
+    responseRate: 88,
+    campaigns: ['Marketing Campaign'],
+    totalMinutes: 1245,
+    averageCallDuration: 3.5,
+    monthlyCost: 189
   },
   {
     id: '5',
@@ -70,6 +110,15 @@ const sampleAgents = [
     successRate: 0,
     lastUpdated: '1 week ago',
     persona: 'Professional and helpful HR representative',
+    creditsUsed: 0,
+    creditsTotal: 4000,
+    intelligence: 75,
+    voiceNaturalness: 72,
+    responseRate: 0,
+    campaigns: ['HR Support'],
+    totalMinutes: 0,
+    averageCallDuration: 0,
+    monthlyCost: 0
   },
   {
     id: '6',
@@ -82,6 +131,15 @@ const sampleAgents = [
     successRate: 96,
     lastUpdated: '1 day ago',
     persona: 'Detail-oriented financial expert',
+    creditsUsed: 280,
+    creditsTotal: 5500,
+    intelligence: 86,
+    voiceNaturalness: 77,
+    responseRate: 92,
+    campaigns: ['Finance Support'],
+    totalMinutes: 967,
+    averageCallDuration: 4.8,
+    monthlyCost: 149
   },
 ];
 
@@ -91,8 +149,10 @@ export const AgentsModule = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
-  const [agents] = useState(sampleAgents);
+  const [agents, setAgents] = useState(sampleAgents);
   const [currentPage, setCurrentPage] = useState(1);
+  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
+  const [agentToDuplicate, setAgentToDuplicate] = useState<Agent | null>(null);
 
   const filteredAgents = agents.filter(agent =>
     agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -104,6 +164,61 @@ export const AgentsModule = () => {
   const endIndex = startIndex + AGENTS_PER_PAGE;
   const currentAgents = filteredAgents.slice(startIndex, endIndex);
 
+  // Calculate stats
+  const activeAgents = agents.filter(a => a.status === 'active');
+  const totalConversations = agents.reduce((sum, agent) => sum + agent.conversations, 0);
+  const totalCost = agents.reduce((sum, agent) => sum + agent.monthlyCost, 0);
+  const totalCredits = agents.reduce((sum, agent) => sum + agent.creditsUsed, 0);
+  const totalMinutes = agents.reduce((sum, agent) => sum + agent.totalMinutes, 0);
+  const avgCallDuration = activeAgents.length > 0 
+    ? activeAgents.reduce((sum, agent) => sum + agent.averageCallDuration, 0) / activeAgents.length 
+    : 0;
+
+  const statsData = [
+    {
+      icon: Bot,
+      label: 'Total Agents',
+      value: agents.length.toString().padStart(2, '0'),
+      tooltip: 'Total number of configured agents'
+    },
+    {
+      icon: Users,
+      label: 'Active Agents',
+      value: activeAgents.length.toString().padStart(2, '0'),
+      tooltip: 'Number of currently active agents'
+    },
+    {
+      icon: MessageCircle,
+      label: 'Total Conversations',
+      value: totalConversations.toLocaleString(),
+      tooltip: 'Total conversations across all agents'
+    },
+    {
+      icon: DollarSign,
+      label: 'Total Cost',
+      value: `$${totalCost}`,
+      tooltip: 'Total monthly cost for all agents'
+    },
+    {
+      icon: CreditCard,
+      label: 'Total Credits',
+      value: totalCredits.toLocaleString(),
+      tooltip: 'Total credits used across all agents'
+    },
+    {
+      icon: Clock,
+      label: 'Total Minutes',
+      value: totalMinutes.toLocaleString(),
+      tooltip: 'Total call minutes across all agents'
+    },
+    {
+      icon: PhoneCall,
+      label: 'Avg Call Duration',
+      value: `${avgCallDuration.toFixed(1)}m`,
+      tooltip: 'Average call duration across active agents'
+    }
+  ];
+
   const handleCreateAgent = () => {
     navigate('/agents/create');
   };
@@ -114,6 +229,32 @@ export const AgentsModule = () => {
 
   const handleAgentClick = (agentId: string) => {
     setSelectedAgent(agentId);
+  };
+
+  const handleDuplicateAgent = (agent: Agent) => {
+    setAgentToDuplicate(agent);
+    setDuplicateModalOpen(true);
+  };
+
+  const handleDuplicateConfirm = (newName: string) => {
+    if (agentToDuplicate) {
+      const newAgent: Agent = {
+        ...agentToDuplicate,
+        id: Date.now().toString(),
+        name: newName,
+        status: 'draft',
+        conversations: 0,
+        creditsUsed: 0,
+        totalMinutes: 0,
+        averageCallDuration: 0,
+        monthlyCost: 0,
+        phoneNumber: undefined, // Reset phone number for duplicate
+        lastUpdated: 'Just now'
+      };
+      setAgents(prev => [...prev, newAgent]);
+    }
+    setDuplicateModalOpen(false);
+    setAgentToDuplicate(null);
   };
 
   if (selectedAgent) {
@@ -161,55 +302,16 @@ export const AgentsModule = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-gray-800 border-gray-700">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Total Agents</p>
-                <p className="text-2xl font-bold text-white">{agents.length}</p>
-              </div>
-              <Bot className="w-8 h-8 text-purple-400" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="bg-gray-800 border-gray-700">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Active Agents</p>
-                <p className="text-2xl font-bold text-green-400">{agents.filter(a => a.status === 'active').length}</p>
-              </div>
-              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="bg-gray-800 border-gray-700">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Total Conversations</p>
-                <p className="text-2xl font-bold text-blue-400">
-                  {agents.reduce((sum, agent) => sum + agent.conversations, 0).toLocaleString()}
-                </p>
-              </div>
-              <div className="text-blue-400">📞</div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="bg-gray-800 border-gray-700">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Avg Success Rate</p>
-                <p className="text-2xl font-bold text-purple-400">
-                  {Math.round(agents.reduce((sum, agent) => sum + agent.successRate, 0) / agents.length)}%
-                </p>
-              </div>
-              <div className="text-purple-400">📈</div>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+        {statsData.map((stat, index) => (
+          <StatsCard
+            key={index}
+            icon={stat.icon}
+            label={stat.label}
+            value={stat.value}
+            tooltip={stat.tooltip}
+          />
+        ))}
       </div>
 
       {/* Agents Grid */}
@@ -248,6 +350,10 @@ export const AgentsModule = () => {
                   <span className="text-white">{agent.voice}</span>
                 </div>
                 <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Phone:</span>
+                  <span className="text-blue-400">{agent.phoneNumber || 'Not assigned'}</span>
+                </div>
+                <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Conversations:</span>
                   <span className="text-blue-400">{agent.conversations.toLocaleString()}</span>
                 </div>
@@ -283,7 +389,10 @@ export const AgentsModule = () => {
                     size="sm" 
                     variant="ghost" 
                     className="text-gray-400 hover:text-green-400"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDuplicateAgent(agent);
+                    }}
                   >
                     <Copy className="w-3 h-3" />
                   </Button>
@@ -328,6 +437,17 @@ export const AgentsModule = () => {
           </Pagination>
         </div>
       )}
+
+      {/* Duplicate Agent Modal */}
+      <DuplicateAgentModal
+        isOpen={duplicateModalOpen}
+        onClose={() => {
+          setDuplicateModalOpen(false);
+          setAgentToDuplicate(null);
+        }}
+        onConfirm={handleDuplicateConfirm}
+        originalAgent={agentToDuplicate}
+      />
     </div>
   );
 };

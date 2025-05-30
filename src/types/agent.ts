@@ -9,6 +9,10 @@ export interface Agent {
   voiceNaturalness: number;
   responseRate: number;
   lastUpdated: string;
-  phoneNumbers: string[];
+  phoneNumber?: string; // One-to-one mapping
   campaigns: string[];
+  conversations: number;
+  totalMinutes: number;
+  averageCallDuration: number;
+  monthlyCost: number;
 }
