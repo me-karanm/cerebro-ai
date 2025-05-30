@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -52,7 +53,10 @@ const mockPhoneNumbers: PhoneNumber[] = [
 ];
 
 export const PhoneNumbersSection = () => {
-  const [phoneNumbers] = useState(mockPhoneNumbers);
+  // Sort phone numbers by creation date, newest first
+  const [phoneNumbers] = useState(
+    mockPhoneNumbers.sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+  );
 
   const handlePhoneNumberClick = (phoneId: string) => {
     console.log('Navigate to phone number details:', phoneId);

@@ -1,16 +1,7 @@
 
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
 
 interface QualityMetric {
   label: string;
@@ -40,36 +31,11 @@ const qualityMetrics: QualityMetric[] = [
   }
 ];
 
-const timeFilters = ['Last 7 Days', 'Last 30 Days', 'Last 90 Days', 'This Year'];
-
 export const ConversationQuality = () => {
-  const [selectedFilter, setSelectedFilter] = useState('Last 7 Days');
-
   return (
     <Card className="bg-gray-900 border-gray-800 animate-fade-in">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-white">Conversation Quality</CardTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
-                {selectedFilter}
-                <ChevronDown className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-              {timeFilters.map((filter) => (
-                <DropdownMenuItem
-                  key={filter}
-                  onClick={() => setSelectedFilter(filter)}
-                  className="text-white hover:bg-gray-700"
-                >
-                  {filter}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <CardTitle className="text-white">Conversation Quality</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

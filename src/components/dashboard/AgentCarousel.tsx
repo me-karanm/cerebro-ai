@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, Phone, Megaphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -89,6 +88,28 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
   const handleAgentClick = () => {
     navigate('/agents');
   };
+
+  // If no agents exist, show create button only
+  if (agents.length === 0) {
+    return (
+      <Card className="bg-gray-900 border-gray-800 animate-fade-in">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-white font-semibold text-lg">Agent Setup</h3>
+          </div>
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-4">No agents configured yet</div>
+            <Button 
+              className="bg-green-500 hover:bg-green-600 text-white"
+              onClick={onCreateAgent}
+            >
+              + Create New Agent
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const currentAgent = agents[currentIndex];
 
@@ -241,13 +262,6 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
             </div>
           </div>
         </div>
-        
-        <Button 
-          className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white"
-          onClick={onCreateAgent}
-        >
-          + Create New Agent
-        </Button>
       </CardContent>
     </Card>
   );
