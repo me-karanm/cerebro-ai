@@ -132,7 +132,7 @@ export const DashboardModule = () => {
         {/* Phone Numbers & Sentiment */}
         <div className="space-y-6">
           <PhoneNumbersSection />
-          <SentimentAnalysis onCreateAgent={handleCreateAgent} />
+          <SentimentAnalysis />
         </div>
       </div>
 

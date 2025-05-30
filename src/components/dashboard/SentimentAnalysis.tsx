@@ -1,5 +1,5 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SentimentData {
@@ -8,10 +8,6 @@ interface SentimentData {
   emoji: string;
   color: string;
   bgColor: string;
-}
-
-interface SentimentAnalysisProps {
-  onCreateAgent?: () => void;
 }
 
 const sentimentData: SentimentData[] = [
@@ -38,7 +34,7 @@ const sentimentData: SentimentData[] = [
   }
 ];
 
-export const SentimentAnalysis = ({ onCreateAgent }: SentimentAnalysisProps) => {
+export const SentimentAnalysis = () => {
   return (
     <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 animate-fade-in">
       <CardHeader>
@@ -68,13 +64,6 @@ export const SentimentAnalysis = ({ onCreateAgent }: SentimentAnalysisProps) => 
             </TooltipContent>
           </Tooltip>
         ))}
-        
-        <Button 
-          className="w-full mt-4 bg-green-500 hover:bg-green-600 text-white"
-          onClick={onCreateAgent}
-        >
-          + Create New Agent
-        </Button>
       </CardContent>
     </Card>
   );
