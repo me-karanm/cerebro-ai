@@ -7,17 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
-
-interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  assignedAgent: string;
-  campaign?: string;
-  tags: string[];
-  createdOn: string;
-}
+import { Contact } from '@/store/contactsStore';
 
 interface Agent {
   id: string;
@@ -56,7 +46,7 @@ export const ContactModal = ({ isOpen, onClose, onSave, contact, agents, campaig
         name: contact.name,
         email: contact.email,
         phone: contact.phone,
-        assignedAgent: contact.assignedAgent,
+        assignedAgent: contact.assignedAgent || '',
         campaign: contact.campaign || '',
         tags: contact.tags
       });
