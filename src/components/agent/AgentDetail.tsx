@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp } from 'lucide-react';
+import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp, Plus, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,6 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useNavigate } from 'react-router-dom';
+import { ContactModal } from '@/components/contacts/ContactModal';
+import { ContactTable } from '@/components/contacts/ContactTable';
+import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
+import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
+import { useContactsStore } from '@/store/contactsStore';
+import { useContacts } from '@/contexts/ContactsContext';
+import { Contact } from '@/types/contact';
 
 interface Agent {
   id: string;
@@ -29,7 +35,7 @@ interface AgentDetailProps {
   onBack: () => void;
 }
 
-// Mock data for campaigns and conversations
+// Mock data for campaigns
 const mockCampaigns = [
   { 
     id: 'c1', 
@@ -60,51 +66,11 @@ const mockCampaigns = [
   },
 ];
 
-const mockConversations = [
-  {
-    id: 'conv1',
-    leadName: 'John Smith',
-    email: 'john@example.com',
-    phone: '+1(555)123-4567',
-    duration: '4m 32s',
-    disposition: 'Qualified',
-    timestamp: '2024-01-15 14:30',
-    campaign: 'Lead Generation Q4',
-    hasRecording: true
-  },
-  {
-    id: 'conv2',
-    leadName: 'Sarah Johnson',
-    email: 'sarah@example.com',
-    phone: '+1(555)987-6543',
-    duration: '2m 15s',
-    disposition: 'Not Interested',
-    timestamp: '2024-01-15 13:45',
-    campaign: 'Product Demo Calls',
-    hasRecording: true
-  },
-  {
-    id: 'conv3',
-    leadName: 'Mike Davis',
-    email: 'mike@example.com',
-    phone: '+1(555)456-7890',
-    duration: '7m 08s',
-    disposition: 'Callback Requested',
-    timestamp: '2024-01-15 12:20',
-    campaign: 'Customer Support',
-    hasRecording: false
-  },
+const mockAgents = [
+  { id: '1', name: 'SalesBot Pro' },
+  { id: '2', name: 'Customer Support AI' },
+  { id: '3', name: 'Lead Qualifier Bot' },
 ];
-
-const getDispositionColor = (disposition: string) => {
-  switch (disposition.toLowerCase()) {
-    case 'qualified': return 'bg-green-600';
-    case 'not interested': return 'bg-red-600';
-    case 'callback requested': return 'bg-yellow-600';
-    case 'voicemail': return 'bg-blue-600';
-    default: return 'bg-gray-600';
-  }
-};
 
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
@@ -118,6 +84,16 @@ const getStatusColor = (status: string) => {
 export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | undefined>(undefined);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+
+  // Contact store integration
+  const contactsStore = useContactsStore();
+  const { exportContacts, importContactsFromCSV } = useContacts();
+  const agentContacts = contactsStore.getContactsByAgent(agent.id);
 
   const handleAnalytics = () => {
     console.log('Navigate to analytics for agent:', agent.id);
@@ -153,6 +129,62 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const handleEditIntegrations = () => {
     console.log('Edit integrations for agent:', agent.id);
     // TODO: Open integrations management modal
+  };
+
+  // Contact management handlers
+  const handleAddContact = () => {
+    setEditingContact(undefined);
+    setIsContactModalOpen(true);
+  };
+
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setIsContactModalOpen(true);
+  };
+
+  const handleContactClick = (contact: Contact) => {
+    setSelectedContact(contact);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
+    if ('id' in contactData && contactData.id) {
+      contactsStore.updateContact(contactData.id, contactData as Contact);
+    } else {
+      // Add agent context when creating new contact
+      const newContactData = {
+        ...contactData,
+        assignedAgent: agent.id
+      } as Omit<Contact, 'id' | 'createdOn'>;
+      contactsStore.addContact(newContactData);
+    }
+  };
+
+  const handleDeleteContact = (contactId: string) => {
+    if (confirm('Are you sure you want to delete this contact?')) {
+      contactsStore.deleteContact(contactId);
+    }
+  };
+
+  const handleImportContacts = async (file: File) => {
+    const result = await importContactsFromCSV(file, { agentId: agent.id });
+    if (result.success) {
+      console.log(`Successfully imported ${result.imported} contacts`);
+      if (result.errors.length > 0) {
+        console.warn('Import warnings:', result.errors);
+      }
+    } else {
+      console.error('Import failed:', result.errors);
+    }
+    return result;
+  };
+
+  const handleExportContacts = () => {
+    // Set filter to current agent before export
+    contactsStore.setFilters({ assignedAgent: agent.id });
+    exportContacts('csv');
+    // Clear filter after export
+    contactsStore.clearFilters();
   };
 
   return (
@@ -284,10 +316,11 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-gray-800 border-gray-700">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
+          <TabsTrigger value="contacts">Contacts</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
+          
           <div className="grid grid-cols-1 gap-6">
             {/* Agent Information */}
             <Card className="bg-gray-800 border-gray-700">
@@ -429,80 +462,78 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="activity" className="space-y-6">
-          {/* Filters */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-4">
-                <Input 
-                  placeholder="Search conversations..." 
-                  className="bg-gray-900 border-gray-700 text-white flex-1"
-                />
-                <Select defaultValue="all">
-                  <SelectTrigger className="bg-gray-900 border-gray-700 text-white w-48">
-                    <SelectValue placeholder="Filter by disposition" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Dispositions</SelectItem>
-                    <SelectItem value="qualified">Qualified</SelectItem>
-                    <SelectItem value="not-interested">Not Interested</SelectItem>
-                    <SelectItem value="callback">Callback Requested</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                  <Filter className="w-4 h-4 mr-2" />
-                  More Filters
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Activity List */}
+        <TabsContent value="contacts" className="space-y-6">
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Recent Activity</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="grid grid-cols-6 gap-4 py-2 px-4 bg-gray-900 rounded text-sm font-medium text-gray-400">
-                  <span>Lead Name</span>
-                  <span>Contact</span>
-                  <span>Duration</span>
-                  <span>Disposition</span>
-                  <span>Campaign</span>
-                  <span>Actions</span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-white">Agent Contacts</CardTitle>
+                  <p className="text-gray-400 text-sm mt-1">
+                    Manage contacts assigned to {agent.name} ({agentContacts.length} contacts)
+                  </p>
                 </div>
-                {mockConversations.map(conv => (
-                  <div key={conv.id} className="grid grid-cols-6 gap-4 py-3 px-4 bg-gray-900 rounded hover:bg-gray-850 transition-colors">
-                    <span className="text-white">{conv.leadName}</span>
-                    <div className="text-sm">
-                      <div className="text-gray-300">{conv.email}</div>
-                      <div className="text-gray-400">{conv.phone}</div>
-                    </div>
-                    <span className="text-gray-300">{conv.duration}</span>
-                    <Badge className={`${getDispositionColor(conv.disposition)} text-white w-fit`}>
-                      {conv.disposition}
-                    </Badge>
-                    <span className="text-gray-300">{conv.campaign}</span>
-                    <div className="flex space-x-2">
-                      {conv.hasRecording && (
-                        <>
-                          <Button size="sm" variant="ghost" className="text-gray-400 hover:text-blue-400">
-                            <Play className="w-3 h-3" />
-                          </Button>
-                          <Button size="sm" variant="ghost" className="text-gray-400 hover:text-green-400">
-                            <Download className="w-3 h-3" />
-                          </Button>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                <div className="flex space-x-3">
+                  <Button 
+                    onClick={handleExportContacts}
+                    variant="outline"
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
+                  <Button 
+                    onClick={() => setIsImportModalOpen(true)}
+                    variant="outline"
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  >
+                    <Upload className="w-4 h-4 mr-2" />
+                    Import CSV
+                  </Button>
+                  <Button 
+                    onClick={handleAddContact}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Contact
+                  </Button>
+                </div>
               </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <ContactTable
+                contacts={agentContacts}
+                agents={mockAgents}
+                campaigns={mockCampaigns}
+                onEdit={handleEditContact}
+                onDelete={handleDeleteContact}
+                onContactClick={handleContactClick}
+              />
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Contact Modals */}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        onSave={handleSaveContact}
+        contact={editingContact}
+        agents={mockAgents}
+        campaigns={mockCampaigns}
+      />
+
+      <ImportCSVModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onImport={handleImportContacts}
+      />
+
+      <ContactDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        contact={selectedContact}
+      />
     </div>
   );
 };
