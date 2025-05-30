@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Users, Upload } from 'lucide-react';
+import { Plus, Users, Upload, Download } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,17 +9,8 @@ import { ContactModal } from '@/components/contacts/ContactModal';
 import { ContactTable } from '@/components/contacts/ContactTable';
 import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
 import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
-
-interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  assignedAgent: string;
-  campaign?: string;
-  tags: string[];
-  createdOn: string;
-}
+import { useContactsStore } from '@/store/contactsStore';
+import { useContacts } from '@/contexts/ContactsContext';
 
 interface Agent {
   id: string;
@@ -31,7 +22,7 @@ interface Campaign {
   name: string;
 }
 
-// Mock data
+// Mock data for agents and campaigns
 const mockAgents: Agent[] = [
   { id: '1', name: 'Sarah Chen' },
   { id: '2', name: 'Marcus Johnson' },
@@ -44,48 +35,20 @@ const mockCampaigns: Campaign[] = [
   { id: '3', name: 'Product Demo Campaign' },
 ];
 
-const mockContacts: Contact[] = [
-  {
-    id: '1',
-    name: 'John Smith',
-    email: 'john.smith@email.com',
-    phone: '+1 (555) 123-4567',
-    assignedAgent: '1',
-    campaign: '1',
-    tags: ['Lead', 'Hot'],
-    createdOn: '2024-01-15T10:30:00Z'
-  },
-  {
-    id: '2',
-    name: 'Alice Johnson',
-    email: 'alice.johnson@company.com',
-    phone: '+1 (555) 987-6543',
-    assignedAgent: '2',
-    campaign: '2',
-    tags: ['Customer', 'VIP'],
-    createdOn: '2024-01-10T14:20:00Z'
-  },
-  {
-    id: '3',
-    name: 'Robert Brown',
-    email: 'robert.brown@example.com',
-    phone: '+1 (555) 456-7890',
-    assignedAgent: '1',
-    campaign: '1',
-    tags: ['Prospect', 'Warm'],
-    createdOn: '2024-01-08T09:15:00Z'
-  }
-];
-
 const Contacts = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [contacts, setContacts] = useState<Contact[]>(mockContacts);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [editingContact, setEditingContact] = useState<Contact | undefined>();
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [editingContact, setEditingContact] = useState<any>(undefined);
+  const [selectedContact, setSelectedContact] = useState<any>(null);
   const navigate = useNavigate();
+
+  // Use the new contacts store and context
+  const contactsStore = useContactsStore();
+  const { exportContacts, importContactsFromCSV } = useContacts();
+  const contacts = contactsStore.getFilteredContacts();
+  const stats = contactsStore.getContactStats();
 
   const handleModuleChange = (module: string) => {
     switch (module) {
@@ -115,39 +78,47 @@ const Contacts = () => {
     setIsModalOpen(true);
   };
 
-  const handleEditContact = (contact: Contact) => {
+  const handleEditContact = (contact: any) => {
     setEditingContact(contact);
     setIsModalOpen(true);
   };
 
-  const handleContactClick = (contact: Contact) => {
+  const handleContactClick = (contact: any) => {
     setSelectedContact(contact);
     setIsDetailModalOpen(true);
   };
 
-  const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
+  const handleSaveContact = (contactData: any) => {
     if ('id' in contactData) {
       // Editing existing contact
-      setContacts(contacts.map(c => c.id === contactData.id ? contactData : c));
+      contactsStore.updateContact(contactData.id, contactData);
     } else {
       // Adding new contact
-      const newContact: Contact = {
-        ...contactData,
-        id: Date.now().toString(),
-        createdOn: new Date().toISOString()
-      };
-      setContacts([...contacts, newContact]);
+      contactsStore.addContact(contactData);
     }
   };
 
   const handleDeleteContact = (contactId: string) => {
     if (confirm('Are you sure you want to delete this contact?')) {
-      setContacts(contacts.filter(c => c.id !== contactId));
+      contactsStore.deleteContact(contactId);
     }
   };
 
-  const handleImportContacts = (importedContacts: Contact[]) => {
-    setContacts([...contacts, ...importedContacts]);
+  const handleImportContacts = async (file: File) => {
+    const result = await importContactsFromCSV(file);
+    if (result.success) {
+      console.log(`Successfully imported ${result.imported} contacts`);
+      if (result.errors.length > 0) {
+        console.warn('Import warnings:', result.errors);
+      }
+    } else {
+      console.error('Import failed:', result.errors);
+    }
+    return result;
+  };
+
+  const handleExportContacts = () => {
+    exportContacts('csv');
   };
 
   return (
@@ -167,6 +138,14 @@ const Contacts = () => {
               <p className="text-gray-400">Manage your contact lists and customer data</p>
             </div>
             <div className="flex space-x-3">
+              <Button 
+                onClick={handleExportContacts}
+                variant="outline"
+                className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export CSV
+              </Button>
               <Button 
                 onClick={() => setIsImportModalOpen(true)}
                 variant="outline"
@@ -192,7 +171,7 @@ const Contacts = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-400">Total Contacts</p>
-                    <p className="text-2xl font-bold text-white">{contacts.length}</p>
+                    <p className="text-2xl font-bold text-white">{stats.total}</p>
                   </div>
                   <Users className="w-8 h-8 text-purple-400" />
                 </div>
@@ -203,9 +182,7 @@ const Contacts = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-400">Assigned Contacts</p>
-                    <p className="text-2xl font-bold text-blue-400">
-                      {contacts.filter(c => c.assignedAgent && c.assignedAgent !== 'unassigned').length}
-                    </p>
+                    <p className="text-2xl font-bold text-blue-400">{stats.assigned}</p>
                   </div>
                   <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
                 </div>
@@ -216,9 +193,7 @@ const Contacts = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-400">Hot Leads</p>
-                    <p className="text-2xl font-bold text-green-400">
-                      {contacts.filter(c => c.tags.includes('Hot')).length}
-                    </p>
+                    <p className="text-2xl font-bold text-green-400">{stats.hotLeads}</p>
                   </div>
                   <div className="text-green-400">🔥</div>
                 </div>
@@ -229,9 +204,7 @@ const Contacts = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-gray-400">VIP Customers</p>
-                    <p className="text-2xl font-bold text-yellow-400">
-                      {contacts.filter(c => c.tags.includes('VIP')).length}
-                    </p>
+                    <p className="text-2xl font-bold text-yellow-400">{stats.vipCustomers}</p>
                   </div>
                   <div className="text-yellow-400">👑</div>
                 </div>
