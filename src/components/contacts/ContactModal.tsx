@@ -22,7 +22,7 @@ interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (contact: Omit<Contact, 'id' | 'createdOn'> | Contact) => void;
-  contact?: Contact;
+  contact?: Contact | undefined;
   agents: Agent[];
   campaigns: Campaign[];
 }
@@ -42,12 +42,12 @@ export const ContactModal = ({ isOpen, onClose, onSave, contact, agents, campaig
   useEffect(() => {
     if (contact) {
       setFormData({
-        name: contact.name,
-        email: contact.email,
-        phone: contact.phone,
+        name: contact.name || '',
+        email: contact.email || '',
+        phone: contact.phone || '',
         assignedAgent: contact.assignedAgent || '',
         campaign: contact.campaign || '',
-        tags: contact.tags
+        tags: contact.tags || []
       });
     } else {
       setFormData({
@@ -63,14 +63,27 @@ export const ContactModal = ({ isOpen, onClose, onSave, contact, agents, campaig
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const contactData = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      assignedAgent: formData.assignedAgent || undefined,
+      campaign: formData.campaign || undefined,
+      tags: formData.tags,
+      source: 'manual' as const,
+      notes: ''
+    };
+
     if (contact) {
-      onSave({ ...contact, ...formData });
-    } else {
-      onSave({
-        ...formData,
-        source: 'manual' as const,
-        notes: ''
+      // Editing existing contact
+      onSave({ 
+        ...contact, 
+        ...contactData
       });
+    } else {
+      // Adding new contact
+      onSave(contactData);
     }
     onClose();
   };

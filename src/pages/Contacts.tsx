@@ -89,17 +89,34 @@ const Contacts = () => {
   };
 
   const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
-    if ('id' in contactData) {
-      // Editing existing contact
-      contactsStore.updateContact(contactData.id, contactData);
-    } else {
-      // Adding new contact - ensure required fields are present
-      const newContactData: Omit<Contact, 'id' | 'createdOn'> = {
-        ...contactData,
-        source: 'manual' as const,
-        assignedAgent: contactData.assignedAgent || undefined,
+    if ('id' in contactData && contactData.id) {
+      // Editing existing contact - ensure all required fields are present
+      const updatedContact: Contact = {
+        id: contactData.id,
+        name: contactData.name,
+        email: contactData.email,
+        phone: contactData.phone,
+        assignedAgent: contactData.assignedAgent,
+        campaign: contactData.campaign,
         tags: contactData.tags || [],
-        notes: contactData.notes || '',
+        createdOn: contactData.createdOn || new Date().toISOString(),
+        source: contactData.source || 'manual',
+        lastContactedAt: contactData.lastContactedAt,
+        notes: contactData.notes || ''
+      };
+      contactsStore.updateContact(updatedContact.id, updatedContact);
+    } else {
+      // Adding new contact
+      const newContactData: Omit<Contact, 'id' | 'createdOn'> = {
+        name: contactData.name,
+        email: contactData.email,
+        phone: contactData.phone,
+        assignedAgent: contactData.assignedAgent,
+        campaign: contactData.campaign,
+        tags: contactData.tags || [],
+        source: 'manual',
+        lastContactedAt: contactData.lastContactedAt,
+        notes: contactData.notes || ''
       };
       contactsStore.addContact(newContactData);
     }
