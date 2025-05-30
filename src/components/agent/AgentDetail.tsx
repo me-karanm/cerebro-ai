@@ -210,8 +210,8 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         </div>
       </div>
 
-      {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Metrics Cards - Single row with 6 cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
         <Card className="bg-gray-800 border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -271,10 +271,10 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Avg Success Rate</p>
-                <p className="text-2xl font-bold text-green-400">94%</p>
+                <p className="text-sm text-gray-400">Total Minutes</p>
+                <p className="text-2xl font-bold text-cyan-400">2,340</p>
               </div>
-              <TrendingUp className="w-8 h-8 text-green-400" />
+              <Clock className="w-8 h-8 text-cyan-400" />
             </div>
           </CardContent>
         </Card>

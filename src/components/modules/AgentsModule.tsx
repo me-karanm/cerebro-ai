@@ -1,6 +1,7 @@
 
+
 import { useState } from 'react';
-import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight, Users, MessageCircle, DollarSign, CreditCard, Clock, PhoneCall } from 'lucide-react';
+import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight, Users, MessageCircle, DollarSign, CreditCard, Clock, PhoneCall, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -174,6 +175,9 @@ export const AgentsModule = () => {
   const avgCallDuration = activeAgents.length > 0 
     ? activeAgents.reduce((sum, agent) => sum + agent.averageCallDuration, 0) / activeAgents.length 
     : 0;
+  const avgSuccessRate = activeAgents.length > 0
+    ? activeAgents.reduce((sum, agent) => sum + agent.successRate, 0) / activeAgents.length
+    : 0;
 
   const statsData = [
     {
@@ -217,6 +221,12 @@ export const AgentsModule = () => {
       label: 'Avg Call Duration',
       value: `${avgCallDuration.toFixed(1)}m`,
       tooltip: 'Average call duration across active agents'
+    },
+    {
+      icon: TrendingUp,
+      label: 'Avg Success Rate',
+      value: `${avgSuccessRate.toFixed(1)}%`,
+      tooltip: 'Average success rate across active agents'
     }
   ];
 
@@ -315,7 +325,7 @@ export const AgentsModule = () => {
             />
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {statsData.slice(4).map((stat, index) => (
             <StatsCard
               key={index + 4}
