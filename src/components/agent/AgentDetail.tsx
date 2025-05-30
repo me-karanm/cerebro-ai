@@ -60,12 +60,6 @@ const mockCampaigns = [
   },
 ];
 
-const mockPhoneNumbers = [
-  { number: '+1(555)123-4567', status: 'active', assigned: true },
-  { number: '+1(555)987-6543', status: 'active', assigned: true },
-  { number: '+1(555)456-7890', status: 'inactive', assigned: false },
-];
-
 const mockConversations = [
   {
     id: 'conv1',
@@ -149,6 +143,16 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const handleCampaignClick = (campaignId: string) => {
     console.log('Navigate to campaign:', campaignId);
     navigate(`/campaigns/${campaignId}`);
+  };
+
+  const handleEditPhoneNumber = () => {
+    console.log('Edit phone number for agent:', agent.id);
+    // TODO: Open phone number assignment modal
+  };
+
+  const handleEditIntegrations = () => {
+    console.log('Edit integrations for agent:', agent.id);
+    // TODO: Open integrations management modal
   };
 
   return (
@@ -245,7 +249,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Avg Response Time</p>
+                <p className="text-sm text-gray-400">Avg Duration</p>
                 <p className="text-2xl font-bold text-cyan-400">4m 12s</p>
               </div>
               <Clock className="w-8 h-8 text-cyan-400" />
@@ -273,17 +277,70 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Agent Description */}
+          <div className="grid grid-cols-1 gap-6">
+            {/* Agent Information */}
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-white">Agent Information</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <div>
                   <p className="text-sm text-gray-400 mb-1">Description</p>
                   <p className="text-white">{agent.description}</p>
                 </div>
+                
+                {/* Associated Phone Number */}
+                <div className="flex items-center justify-between p-4 bg-gray-900 rounded-lg">
+                  <div>
+                    <p className="text-sm text-gray-400 mb-1">Associated Phone Number</p>
+                    <div className="flex items-center space-x-3">
+                      <Phone className="w-4 h-4 text-cyan-400" />
+                      <span className="text-white">+1(555)123-4567</span>
+                    </div>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    className="text-gray-400 hover:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={handleEditPhoneNumber}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                {/* Active Integrations */}
+                <div className="p-4 bg-gray-900 rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm text-gray-400">Active Integrations</p>
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      className="text-gray-400 hover:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={handleEditIntegrations}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Email</span>
+                      <Badge variant="default" className="bg-green-600">Active</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">WhatsApp</span>
+                      <Badge variant="default" className="bg-green-600">Active</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Voice Calls</span>
+                      <Badge variant="default" className="bg-green-600">Active</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300">Telegram</span>
+                      <Badge variant="secondary">Inactive</Badge>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-700">
                   <div>
                     <p className="text-sm text-gray-400">Total Sessions</p>
@@ -297,68 +354,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Phone Numbers Associated */}
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center justify-between">
-                  Phone Numbers Associated
-                  <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
-                    <Settings className="w-4 h-4 mr-2" />
-                    Manage
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {mockPhoneNumbers.map((phone, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      <span className="text-white">{phone.number}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={phone.status === 'active' ? 'default' : 'secondary'}>
-                        {phone.status}
-                      </Badge>
-                      <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white">
-                        {phone.assigned ? 'Disable' : 'Assign'}
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-                <Button size="sm" variant="outline" className="w-full border-gray-700 text-gray-300 hover:bg-gray-800">
-                  + Add Phone Number
-                </Button>
-              </CardContent>
-            </Card>
           </div>
-
-          {/* Active Integrations */}
-          <Card className="bg-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">Active Integrations</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Email</span>
-                  <Badge variant="default" className="bg-green-600">Active</Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-300">WhatsApp</span>
-                  <Badge variant="default" className="bg-green-600">Active</Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Voice Calls</span>
-                  <Badge variant="default" className="bg-green-600">Active</Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Telegram</span>
-                  <Badge variant="secondary">Inactive</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Linked Campaigns Table */}
           <Card className="bg-gray-800 border-gray-700">
