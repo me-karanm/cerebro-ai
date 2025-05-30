@@ -365,38 +365,6 @@ export const AgentsModule = () => {
 
               <div className="flex items-center justify-between pt-2 border-t border-gray-700">
                 <span className="text-xs text-gray-500">Updated {agent.lastUpdated}</span>
-                <div className="flex space-x-1">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-gray-400 hover:text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAgentClick(agent.id);
-                    }}
-                  >
-                    <Edit className="w-3 h-3" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    className="text-gray-400 hover:text-blue-400"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Play className="w-3 h-3" />
-                  </Button>
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    className="text-gray-400 hover:text-green-400"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDuplicateAgent(agent);
-                    }}
-                  >
-                    <Copy className="w-3 h-3" />
-                  </Button>
-                </div>
               </div>
             </CardContent>
           </Card>
