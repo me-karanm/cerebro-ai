@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
@@ -28,12 +29,14 @@ interface ContactTableProps {
 export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, onContactClick }: ContactTableProps) => {
   const navigate = useNavigate();
 
-  const getAgentName = (agentId: string) => {
+  const getAgentName = (agentId?: string) => {
+    if (!agentId) return 'Unassigned';
     const agent = agents.find(a => a.id === agentId);
     return agent ? agent.name : 'Unassigned';
   };
 
-  const getCampaignName = (campaignId: string) => {
+  const getCampaignName = (campaignId?: string) => {
+    if (!campaignId) return 'No Campaign';
     const campaign = campaigns.find(c => c.id === campaignId);
     return campaign ? campaign.name : 'No Campaign';
   };
@@ -46,13 +49,13 @@ export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, on
     });
   };
 
-  const handleAgentClick = (agentId: string) => {
+  const handleAgentClick = (agentId?: string) => {
     if (agentId && agentId !== 'unassigned') {
       navigate(`/agents/${agentId}`);
     }
   };
 
-  const handleCampaignClick = (campaignId: string) => {
+  const handleCampaignClick = (campaignId?: string) => {
     if (campaignId) {
       navigate(`/campaigns/${campaignId}`);
     }
@@ -101,9 +104,9 @@ export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, on
               <TableCell className="text-gray-300">{contact.email}</TableCell>
               <TableCell className="text-gray-300">{contact.phone}</TableCell>
               <TableCell>
-                {contact.assignedAgent && contact.assignedAgent !== 'unassigned' ? (
+                {contact.assignedAgent ? (
                   <button
-                    onClick={() => handleAgentClick(contact.assignedAgent!)}
+                    onClick={() => handleAgentClick(contact.assignedAgent)}
                     className="text-blue-400 hover:text-blue-300 flex items-center space-x-1 transition-colors"
                   >
                     <span>{getAgentName(contact.assignedAgent)}</span>
