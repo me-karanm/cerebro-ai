@@ -1,28 +1,27 @@
+
 import { useState, useCallback } from 'react';
 
 export interface AgentWizardData {
   // Step 1: Agent Basics
   name: string;
+  description?: string;
   initialMessage: string;
   systemPrompt: string;
   llmModel: string;
   temperature: number;
-  useRAG: boolean;
+  selectedVoice: string;
+  voicePitch?: number;
+  voiceSpeed?: number;
 
   // Step 2: Knowledge & Functions
+  useRAG: boolean;
   knowledgeFiles: File[];
   knowledgeUrls: string[];
   knowledgeText: string;
   customFunctionCode: string;
   functions: any[];
-  memoryLength: number;
-  enableLongTermMemory: boolean;
 
-  // Step 3: Voice & Calling + Connections
-  selectedVoice: string; // Only keep the selected voice, remove other voice settings
-  callRouting: string;
-  
-  // Connections - now using integration IDs instead of direct config
+  // Step 3: Communication Channels
   connections: {
     call: {
       enabled: boolean;
@@ -32,37 +31,15 @@ export interface AgentWizardData {
       enabled: boolean;
       selectedAccountId: string;
     };
-    telegram: {
-      enabled: boolean;
-      selectedBotId: string;
-    };
     email: {
       enabled: boolean;
       selectedAccountId: string;
     };
-    wechat: {
+    widget: {
       enabled: boolean;
       selectedAccountId: string;
     };
   };
-
-  // Step 4: Integrations & Webhooks
-  integrations: {
-    slack: boolean;
-    teams: boolean;
-    hubspot: boolean;
-    zendesk: boolean;
-  };
-  webhookUrl: string;
-  authHeaders: { key: string; value: string }[];
-  maxRetries: number;
-  retryDelay: number;
-
-  // Step 5: Widget & Retention
-  dataRetentionDays: number;
-  enableWidget: boolean;
-  widgetColor: string;
-  widgetPosition: string;
 
   // Additional fields
   status: 'draft' | 'active';
@@ -72,20 +49,20 @@ export interface AgentWizardData {
 
 const initialData: AgentWizardData = {
   name: '',
+  description: '',
   initialMessage: '',
   systemPrompt: '',
   llmModel: 'gpt-4',
   temperature: 0.7,
+  selectedVoice: 'alloy',
+  voicePitch: 0,
+  voiceSpeed: 1,
   useRAG: false,
   knowledgeFiles: [],
   knowledgeUrls: [],
   knowledgeText: '',
   customFunctionCode: '',
   functions: [],
-  memoryLength: 10,
-  enableLongTermMemory: false,
-  selectedVoice: '', // Only keep selected voice
-  callRouting: 'direct',
   connections: {
     call: {
       enabled: false,
@@ -95,33 +72,15 @@ const initialData: AgentWizardData = {
       enabled: false,
       selectedAccountId: '',
     },
-    telegram: {
-      enabled: false,
-      selectedBotId: '',
-    },
     email: {
       enabled: false,
       selectedAccountId: '',
     },
-    wechat: {
+    widget: {
       enabled: false,
       selectedAccountId: '',
     },
   },
-  integrations: {
-    slack: false,
-    teams: false,
-    hubspot: false,
-    zendesk: false,
-  },
-  webhookUrl: '',
-  authHeaders: [],
-  maxRetries: 3,
-  retryDelay: 2,
-  dataRetentionDays: 30,
-  enableWidget: false,
-  widgetColor: '#7C3AED',
-  widgetPosition: 'bottom-right',
   status: 'draft',
 };
 
@@ -150,14 +109,8 @@ export const useAgentWizard = () => {
         return !!(agentData.name && agentData.initialMessage && agentData.systemPrompt);
       case 1: // Knowledge & Functions
         return true; // Optional fields
-      case 2: // Voice & Calling
+      case 2: // Communication Channels
         return true; // All optional
-      case 3: // Integrations & Webhooks
-        return true; // All optional
-      case 4: // Widget & Retention
-        return true; // All optional
-      case 5: // Review & Create
-        return true;
       default:
         return false;
     }

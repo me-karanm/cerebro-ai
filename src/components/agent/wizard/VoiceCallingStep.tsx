@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Phone, MessageCircle, Mail, Plus, Settings } from 'lucide-react';
+import { Phone, MessageCircle, Mail, Plus, Settings, Monitor } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -34,14 +34,6 @@ const availableChannels = [
     color: 'bg-green-500'
   },
   {
-    id: 'telegram',
-    name: 'Telegram Bot',
-    icon: MessageCircle,
-    description: 'Create automated Telegram bot',
-    category: 'Messaging',
-    color: 'bg-blue-400'
-  },
-  {
     id: 'email',
     name: 'Email Integration',
     icon: Mail,
@@ -50,58 +42,18 @@ const availableChannels = [
     color: 'bg-purple-500'
   },
   {
-    id: 'wechat',
-    name: 'WeChat',
-    icon: MessageCircle,
-    description: 'Connect to WeChat platform',
-    category: 'Messaging',
-    color: 'bg-emerald-500'
-  },
-  {
-    id: 'facebook',
-    name: 'Facebook Messenger',
-    icon: MessageCircle,
-    description: 'Integrate with Facebook Messenger',
-    category: 'Messaging',
-    color: 'bg-blue-600'
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    icon: MessageCircle,
-    description: 'Connect to Slack workspace',
-    category: 'Collaboration',
-    color: 'bg-purple-600'
-  },
-  {
-    id: 'hubspot',
-    name: 'HubSpot CRM',
-    icon: Settings,
-    description: 'Integrate with HubSpot CRM',
-    category: 'CRM',
+    id: 'widget',
+    name: 'Web Widget',
+    icon: Monitor,
+    description: 'Embed chat widget on your website',
+    category: 'Web',
     color: 'bg-orange-500'
-  },
-  {
-    id: 'zendesk',
-    name: 'Zendesk',
-    icon: Settings,
-    description: 'Connect to Zendesk helpdesk',
-    category: 'Helpdesk',
-    color: 'bg-green-600'
-  },
-  {
-    id: 'webhook',
-    name: 'Custom Webhook',
-    icon: Settings,
-    description: 'Custom webhook integration',
-    category: 'Custom',
-    color: 'bg-gray-500'
   }
 ];
 
 export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
   const [showAddModal, setShowAddModal] = useState(false);
-  const { phoneNumbers, whatsappAccounts, telegramBots, emailAccounts, wechatAccounts } = useIntegrationsStore();
+  const { phoneNumbers, whatsappAccounts, emailAccounts } = useIntegrationsStore();
 
   const handleConnectionToggle = (channelId: string, enabled: boolean) => {
     onUpdate({
@@ -134,12 +86,10 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
         return phoneNumbers;
       case 'whatsapp':
         return whatsappAccounts;
-      case 'telegram':
-        return telegramBots;
       case 'email':
         return emailAccounts;
-      case 'wechat':
-        return wechatAccounts;
+      case 'widget':
+        return []; // Widget doesn't need account selection
       default:
         return [];
     }
@@ -151,18 +101,15 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
         return account.number;
       case 'whatsapp':
         return account.phoneNumber;
-      case 'telegram':
-        return account.botName;
       case 'email':
         return account.email;
-      case 'wechat':
-        return account.accountName;
       default:
         return account.name || account.id;
     }
   };
 
   const isChannelConfigured = (channelId: string) => {
+    if (channelId === 'widget') return true; // Widget is always available
     const accounts = getAvailableAccounts(channelId);
     return accounts.length > 0;
   };
@@ -175,46 +122,6 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
           Configure how your agent will communicate with users across different platforms.
         </p>
       </div>
-
-      {/* Voice Settings */}
-      <Card className="bg-gray-800 border-gray-700">
-        <CardHeader>
-          <CardTitle className="text-white">Voice Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="voice-select" className="text-gray-300">Voice Selection</Label>
-              <Select value={data.selectedVoice} onValueChange={(value) => onUpdate({ selectedVoice: value })}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Choose a voice" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
-                  <SelectItem value="alloy">Alloy</SelectItem>
-                  <SelectItem value="echo">Echo</SelectItem>
-                  <SelectItem value="fable">Fable</SelectItem>
-                  <SelectItem value="onyx">Onyx</SelectItem>
-                  <SelectItem value="nova">Nova</SelectItem>
-                  <SelectItem value="shimmer">Shimmer</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="routing-select" className="text-gray-300">Call Routing</Label>
-              <Select value={data.callRouting} onValueChange={(value) => onUpdate({ callRouting: value })}>
-                <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                  <SelectValue placeholder="Select routing method" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-700 border-gray-600">
-                  <SelectItem value="direct">Direct to Agent</SelectItem>
-                  <SelectItem value="queue">Queue System</SelectItem>
-                  <SelectItem value="round-robin">Round Robin</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Channel Configuration */}
       <Card className="bg-gray-800 border-gray-700">
@@ -264,7 +171,7 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                         </div>
                         <p className="text-gray-400 text-sm mb-3">{channel.description}</p>
                         
-                        {isEnabled && isConfigured && (
+                        {isEnabled && isConfigured && channel.id !== 'widget' && (
                           <div className="space-y-2">
                             <Label className="text-gray-300 text-xs">Select Account:</Label>
                             <Select
@@ -289,7 +196,13 @@ export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
                           </div>
                         )}
                         
-                        {!isConfigured && (
+                        {isEnabled && channel.id === 'widget' && (
+                          <div className="text-xs text-green-400">
+                            Widget will be automatically configured when agent is created
+                          </div>
+                        )}
+                        
+                        {!isConfigured && channel.id !== 'widget' && (
                           <Button
                             variant="outline"
                             size="sm"

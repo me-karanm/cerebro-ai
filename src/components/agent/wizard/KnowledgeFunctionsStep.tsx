@@ -1,7 +1,6 @@
 
 import { KnowledgeBaseSection } from './sections/KnowledgeBaseSection';
 import { FunctionsSection } from './sections/FunctionsSection';
-import { MemorySettingsSection } from './sections/MemorySettingsSection';
 import { AgentWizardData } from './useAgentWizard';
 
 interface KnowledgeFunctionsStepProps {
@@ -25,10 +24,9 @@ export const KnowledgeFunctionsStep = ({ data, onUpdate }: KnowledgeFunctionsSte
           <KnowledgeBaseSection data={data} onUpdate={onUpdate} />
         </div>
 
-        {/* Functions & Memory */}
+        {/* Functions */}
         <div className="space-y-6">
           <FunctionsSection data={data} onUpdate={onUpdate} />
-          <MemorySettingsSection data={data} onUpdate={onUpdate} />
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -7,27 +8,58 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AgentBasicsStep } from './AgentBasicsStep';
 import { KnowledgeFunctionsStep } from './KnowledgeFunctionsStep';
 import { VoiceCallingStep } from './VoiceCallingStep';
-import { IntegrationsWebhooksStep } from './IntegrationsWebhooksStep';
-import { WidgetRetentionStep } from './WidgetRetentionStep';
-import { ReviewCreateStep } from './ReviewCreateStep';
 import { useAgentWizard } from './useAgentWizard';
 
 const steps = [
   { title: 'Agent Basics', component: AgentBasicsStep },
   { title: 'Knowledge & Functions', component: KnowledgeFunctionsStep },
-  { title: 'Voice & Calling', component: VoiceCallingStep },
-  { title: 'Integrations & Webhooks', component: IntegrationsWebhooksStep },
-  { title: 'Widget & Retention', component: WidgetRetentionStep },
-  { title: 'Review & Create', component: ReviewCreateStep },
+  { title: 'Communication Channels', component: VoiceCallingStep },
 ];
+
+// Mock function to load agent data for editing
+const loadAgentData = (agentId: string) => {
+  // In a real app, this would fetch data from an API
+  console.log('Loading agent data for editing:', agentId);
+  return {
+    name: 'SalesBot Pro',
+    description: 'Professional sales assistant for lead qualification',
+    initialMessage: 'Hello! I\'m here to help you with your sales inquiries.',
+    systemPrompt: 'You are a professional sales assistant...',
+    llmModel: 'gpt-4',
+    temperature: 0.7,
+    useRAG: true,
+    selectedVoice: 'alloy',
+    voicePitch: 0,
+    voiceSpeed: 1,
+    connections: {
+      call: { enabled: true, selectedPhoneNumberId: 'phone1' },
+      whatsapp: { enabled: true, selectedAccountId: 'wa1' },
+      email: { enabled: true, selectedAccountId: 'email1' },
+      widget: { enabled: false, selectedAccountId: '' },
+    },
+    status: 'active' as const,
+  };
+};
 
 export const CreateAgentWizard = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editAgentId = searchParams.get('edit');
+  const isEditing = !!editAgentId;
+  
   const [currentStep, setCurrentStep] = useState(0);
-  const { agentData, updateAgentData, validateStep, saveDraft, createAgent } = useAgentWizard();
+  const { agentData, updateAgentData, validateStep, saveDraft, createAgent, loadExistingAgent } = useAgentWizard();
 
   const CurrentStepComponent = steps[currentStep].component;
   const progressPercentage = ((currentStep + 1) / steps.length) * 100;
+
+  useEffect(() => {
+    if (isEditing && editAgentId) {
+      // Load existing agent data for editing
+      const existingData = loadAgentData(editAgentId);
+      loadExistingAgent(existingData);
+    }
+  }, [isEditing, editAgentId, loadExistingAgent]);
 
   const handleNext = async () => {
     const isValid = await validateStep(currentStep);
@@ -47,7 +79,7 @@ export const CreateAgentWizard = () => {
   };
 
   const handleCreateAgent = async () => {
-    const success = await createAgent();
+    const success = await createAgent(isEditing);
     if (success) {
       navigate('/agents');
     }
@@ -67,12 +99,15 @@ export const CreateAgentWizard = () => {
             variant="ghost"
             size="sm"
             onClick={() => navigate('/agents')}
+            className="text-gray-400 hover:text-white"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Agents
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-white">Create New Agent</h1>
+            <h1 className="text-2xl font-bold text-white">
+              {isEditing ? 'Edit Agent' : 'Create New Agent'}
+            </h1>
             <p className="text-gray-400">Step {currentStep + 1} of {steps.length}: {steps[currentStep].title}</p>
           </div>
         </div>
@@ -89,7 +124,7 @@ export const CreateAgentWizard = () => {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                   index <= currentStep
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-purple-600 text-white'
                     : 'bg-gray-700 text-gray-400'
                 }`}
               >
@@ -102,7 +137,7 @@ export const CreateAgentWizard = () => {
               </span>
               {index < steps.length - 1 && (
                 <div className={`flex-1 h-px mx-4 ${
-                  index < currentStep ? 'bg-green-600' : 'bg-gray-700'
+                  index < currentStep ? 'bg-purple-600' : 'bg-gray-700'
                 }`} />
               )}
             </div>
@@ -127,6 +162,7 @@ export const CreateAgentWizard = () => {
           variant="outline"
           onClick={handleBack}
           disabled={currentStep === 0}
+          className="border-gray-700 text-gray-300 hover:bg-gray-800"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
@@ -136,6 +172,7 @@ export const CreateAgentWizard = () => {
           <Button
             variant="outline"
             onClick={handleSaveDraft}
+            className="border-gray-700 text-gray-300 hover:bg-gray-800"
           >
             <Save className="w-4 h-4 mr-2" />
             Save Draft
@@ -144,13 +181,15 @@ export const CreateAgentWizard = () => {
           {currentStep === steps.length - 1 ? (
             <Button
               onClick={handleCreateAgent}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               disabled={!canProceed()}
             >
-              Create Agent
+              {isEditing ? 'Update Agent' : 'Create Agent'}
             </Button>
           ) : (
             <Button
               onClick={handleNext}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
               disabled={!canProceed()}
             >
               Next

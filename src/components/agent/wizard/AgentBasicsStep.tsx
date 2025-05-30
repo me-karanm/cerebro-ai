@@ -3,7 +3,6 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Select,
@@ -26,6 +25,15 @@ const llmModels = [
   { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
 ];
 
+const voices = [
+  { value: 'alloy', label: 'Alloy' },
+  { value: 'echo', label: 'Echo' },
+  { value: 'fable', label: 'Fable' },
+  { value: 'onyx', label: 'Onyx' },
+  { value: 'nova', label: 'Nova' },
+  { value: 'shimmer', label: 'Shimmer' },
+];
+
 export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
   return (
     <div className="space-y-6">
@@ -37,7 +45,7 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Column */}
+        {/* Left Column - Basic Information */}
         <div className="space-y-6">
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
@@ -57,6 +65,23 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                 />
                 <p className="text-xs text-gray-400 mt-1">
                   This will help you identify the agent in your dashboard and reports.
+                </p>
+              </div>
+
+              <div>
+                <Label htmlFor="agent-description" className="text-white">
+                  Description
+                </Label>
+                <Textarea
+                  id="agent-description"
+                  value={data.description || ''}
+                  onChange={(e) => onUpdate({ description: e.target.value })}
+                  placeholder="Brief description of your agent's purpose"
+                  className="bg-gray-700 border-gray-600 text-white mt-1"
+                  rows={2}
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  A short description that explains what this agent does.
                 </p>
               </div>
 
@@ -97,8 +122,77 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
           </Card>
         </div>
 
-        {/* Right Column */}
+        {/* Right Column - Voice Settings & Model Configuration */}
         <div className="space-y-6">
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">Voice Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="text-white">Voice Selection</Label>
+                <Select
+                  value={data.selectedVoice}
+                  onValueChange={(value) => onUpdate({ selectedVoice: value })}
+                >
+                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white mt-1">
+                    <SelectValue placeholder="Select a voice" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-700 border-gray-600">
+                    {voices.map((voice) => (
+                      <SelectItem key={voice.value} value={voice.value} className="text-white">
+                        {voice.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-400 mt-1">
+                  Choose the voice that will represent your agent.
+                </p>
+              </div>
+
+              <div>
+                <Label className="text-white">
+                  Voice Pitch: {data.voicePitch || 0}
+                </Label>
+                <div className="mt-2">
+                  <Slider
+                    value={[data.voicePitch || 0]}
+                    onValueChange={([value]) => onUpdate({ voicePitch: value })}
+                    max={2}
+                    min={-2}
+                    step={0.1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>Lower (-2)</span>
+                    <span>Higher (+2)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-white">
+                  Voice Speed: {data.voiceSpeed || 1}x
+                </Label>
+                <div className="mt-2">
+                  <Slider
+                    value={[data.voiceSpeed || 1]}
+                    onValueChange={([value]) => onUpdate({ voiceSpeed: value })}
+                    max={2}
+                    min={0.5}
+                    step={0.1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-gray-400 mt-1">
+                    <span>Slower (0.5x)</span>
+                    <span>Faster (2x)</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
               <CardTitle className="text-white">Model Configuration</CardTitle>
@@ -148,20 +242,6 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                   Adjust the creativity level of your agent's responses.
                 </p>
               </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="use-rag"
-                  checked={data.useRAG}
-                  onCheckedChange={(checked) => onUpdate({ useRAG: !!checked })}
-                />
-                <Label htmlFor="use-rag" className="text-white">
-                  Use RAG (Retrieval Augmented Generation)
-                </Label>
-              </div>
-              <p className="text-xs text-gray-400">
-                Enable knowledge base integration for more accurate and context-aware responses.
-              </p>
             </CardContent>
           </Card>
         </div>
