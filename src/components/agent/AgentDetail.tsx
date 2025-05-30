@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -211,7 +210,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
       </div>
 
       {/* Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <Card className="bg-gray-800 border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
