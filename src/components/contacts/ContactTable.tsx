@@ -5,17 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Trash2, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  assignedAgent: string;
-  campaign?: string;
-  tags: string[];
-  createdOn: string;
-}
+import { Contact } from '@/store/contactsStore';
 
 interface Agent {
   id: string;
@@ -114,7 +104,7 @@ export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, on
               <TableCell>
                 {contact.assignedAgent && contact.assignedAgent !== 'unassigned' ? (
                   <button
-                    onClick={() => handleAgentClick(contact.assignedAgent)}
+                    onClick={() => handleAgentClick(contact.assignedAgent!)}
                     className="text-blue-400 hover:text-blue-300 flex items-center space-x-1 transition-colors"
                   >
                     <span>{getAgentName(contact.assignedAgent)}</span>

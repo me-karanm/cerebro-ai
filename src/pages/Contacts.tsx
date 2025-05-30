@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Upload, Download } from 'lucide-react';
@@ -127,12 +128,6 @@ const Contacts = () => {
     exportContacts('csv');
   };
 
-  // Convert contacts to the expected format for ContactTable
-  const formattedContacts = contacts.map(contact => ({
-    ...contact,
-    assignedAgent: contact.assignedAgent || ''
-  }));
-
   return (
     <div className="min-h-screen bg-gray-950 text-white flex w-full">
       <Sidebar
@@ -228,7 +223,7 @@ const Contacts = () => {
           <Card className="bg-gray-800 border-gray-700">
             <CardContent className="p-0">
               <ContactTable
-                contacts={formattedContacts}
+                contacts={contacts}
                 agents={mockAgents}
                 campaigns={mockCampaigns}
                 onEdit={handleEditContact}
