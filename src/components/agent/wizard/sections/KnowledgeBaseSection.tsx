@@ -257,7 +257,7 @@ export const KnowledgeBaseSection = ({ data, onUpdate }: KnowledgeBaseSectionPro
                   ))}
                 </div>
               )}
-            )}
+            </div>
 
             {/* Text Input */}
             <div className="space-y-2">
