@@ -8,18 +8,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AgentBasicsStep } from './wizard/AgentBasicsStep';
 import { KnowledgeFunctionsStep } from './wizard/KnowledgeFunctionsStep';
 import { VoiceCallingStep } from './wizard/VoiceCallingStep';
-import { IntegrationsWebhooksStep } from './wizard/IntegrationsWebhooksStep';
-import { WidgetRetentionStep } from './wizard/WidgetRetentionStep';
-import { ReviewCreateStep } from './wizard/ReviewCreateStep';
 import { useAgentWizard } from './wizard/useAgentWizard';
 
 const steps = [
   { title: 'Agent Basics', component: AgentBasicsStep },
   { title: 'Knowledge & Functions', component: KnowledgeFunctionsStep },
   { title: 'Communication Channels', component: VoiceCallingStep },
-  { title: 'Integrations & Webhooks', component: IntegrationsWebhooksStep },
-  { title: 'Widget & Retention', component: WidgetRetentionStep },
-  { title: 'Review & Create', component: ReviewCreateStep },
 ];
 
 // Mock function to load agent data for editing
@@ -44,20 +38,6 @@ const loadAgentData = (agentId: string) => {
       wechat: { enabled: false, selectedAccountId: '' },
       widget: { enabled: false, selectedAccountId: '' },
     },
-    integrations: {
-      slack: true,
-      teams: false,
-      hubspot: true,
-      zendesk: false,
-    },
-    webhookUrl: 'https://api.example.com/webhook',
-    authHeaders: [{ key: 'Authorization', value: 'Bearer token123' }],
-    maxRetries: 3,
-    retryDelay: 2,
-    dataRetentionDays: 30,
-    enableWidget: true,
-    widgetColor: '#7C3AED',
-    widgetPosition: 'bottom-right',
     status: 'active' as const,
   };
 };

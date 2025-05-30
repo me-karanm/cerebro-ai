@@ -51,24 +51,6 @@ export interface AgentWizardData {
     };
   };
 
-  // Step 4: Integrations & Webhooks
-  integrations: {
-    slack: boolean;
-    teams: boolean;
-    hubspot: boolean;
-    zendesk: boolean;
-  };
-  webhookUrl: string;
-  authHeaders: Array<{ key: string; value: string }>;
-  maxRetries: number;
-  retryDelay: number;
-
-  // Step 5: Widget & Retention
-  enableWidget: boolean;
-  widgetColor: string;
-  widgetPosition: string;
-  dataRetentionDays: number;
-
   // Additional fields
   status: 'draft' | 'active';
   createdAt?: string;
@@ -119,20 +101,6 @@ const initialData: AgentWizardData = {
       selectedAccountId: '',
     },
   },
-  integrations: {
-    slack: false,
-    teams: false,
-    hubspot: false,
-    zendesk: false,
-  },
-  webhookUrl: '',
-  authHeaders: [],
-  maxRetries: 3,
-  retryDelay: 2,
-  enableWidget: false,
-  widgetColor: '#7C3AED',
-  widgetPosition: 'bottom-right',
-  dataRetentionDays: 30,
   status: 'draft',
 };
 
@@ -162,10 +130,6 @@ export const useAgentWizard = () => {
       case 1: // Knowledge & Functions
         return true; // Optional fields
       case 2: // Communication Channels
-        return true; // All optional
-      case 3: // Integrations & Webhooks
-        return true; // All optional
-      case 4: // Widget & Retention
         return true; // All optional
       default:
         return false;
