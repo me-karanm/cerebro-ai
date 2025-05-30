@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -67,7 +66,11 @@ export const ContactModal = ({ isOpen, onClose, onSave, contact, agents, campaig
     if (contact) {
       onSave({ ...contact, ...formData });
     } else {
-      onSave(formData);
+      onSave({
+        ...formData,
+        source: 'manual' as const,
+        notes: ''
+      });
     }
     onClose();
   };
