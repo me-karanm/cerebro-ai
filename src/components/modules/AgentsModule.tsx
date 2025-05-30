@@ -1,5 +1,3 @@
-
-
 import { useState } from 'react';
 import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight, Users, MessageCircle, DollarSign, CreditCard, Clock, PhoneCall, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -193,40 +191,16 @@ export const AgentsModule = () => {
       tooltip: 'Number of currently active agents'
     },
     {
-      icon: MessageCircle,
-      label: 'Total Conversations',
-      value: totalConversations.toLocaleString(),
-      tooltip: 'Total conversations across all agents'
-    },
-    {
-      icon: DollarSign,
-      label: 'Total Cost',
-      value: `$${totalCost}`,
-      tooltip: 'Total monthly cost for all agents'
-    },
-    {
-      icon: CreditCard,
-      label: 'Total Credits',
-      value: totalCredits.toLocaleString(),
-      tooltip: 'Total credits used across all agents'
-    },
-    {
       icon: Clock,
       label: 'Total Minutes',
       value: totalMinutes.toLocaleString(),
-      tooltip: 'Total call minutes across all agents'
-    },
-    {
-      icon: PhoneCall,
-      label: 'Avg Call Duration',
-      value: `${avgCallDuration.toFixed(1)}m`,
-      tooltip: 'Average call duration across active agents'
+      tooltip: 'Cumulative minutes saved by agents through automation and AI assistance.'
     },
     {
       icon: TrendingUp,
-      label: 'Avg Success Rate',
+      label: 'Average Success Rate',
       value: `${avgSuccessRate.toFixed(1)}%`,
-      tooltip: 'Average success rate across active agents'
+      tooltip: 'Percentage of successful conversations leading to positive outcomes across all agents.'
     }
   ];
 
@@ -312,30 +286,17 @@ export const AgentsModule = () => {
         </Button>
       </div>
 
-      {/* Stats Cards - 2 rows with 4 cards each */}
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {statsData.slice(0, 4).map((stat, index) => (
-            <StatsCard
-              key={index}
-              icon={stat.icon}
-              label={stat.label}
-              value={stat.value}
-              tooltip={stat.tooltip}
-            />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {statsData.slice(4).map((stat, index) => (
-            <StatsCard
-              key={index + 4}
-              icon={stat.icon}
-              label={stat.label}
-              value={stat.value}
-              tooltip={stat.tooltip}
-            />
-          ))}
-        </div>
+      {/* Stats Cards - 4 cards in a single row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {statsData.map((stat, index) => (
+          <StatsCard
+            key={index}
+            icon={stat.icon}
+            label={stat.label}
+            value={stat.value}
+            tooltip={stat.tooltip}
+          />
+        ))}
       </div>
 
       {/* Agents Grid */}
