@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
+import { toast } from '@/hooks/use-toast';
 import { AgentBasicsStep } from './wizard/AgentBasicsStep';
 import { KnowledgeFunctionsStep } from './wizard/KnowledgeFunctionsStep';
 import { VoiceCallingStep } from './wizard/VoiceCallingStep';
@@ -56,16 +57,38 @@ export const CreateAgentWizard = () => {
 
   useEffect(() => {
     if (isEditing && editAgentId) {
-      // Load existing agent data for editing
-      const existingData = loadAgentData(editAgentId);
-      loadExistingAgent(existingData);
+      try {
+        // Load existing agent data for editing
+        const existingData = loadAgentData(editAgentId);
+        loadExistingAgent(existingData);
+      } catch (error) {
+        toast({
+          title: "Error Loading Agent",
+          description: "Failed to load agent data for editing. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   }, [isEditing, editAgentId, loadExistingAgent]);
 
   const handleNext = async () => {
-    const isValid = await validateStep(currentStep);
-    if (isValid && currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+    try {
+      const isValid = await validateStep(currentStep);
+      if (isValid && currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      } else if (!isValid) {
+        toast({
+          title: "Validation Error",
+          description: "Please fill in all required fields before proceeding.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Validation Failed",
+        description: "An error occurred while validating the form. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -76,13 +99,43 @@ export const CreateAgentWizard = () => {
   };
 
   const handleSaveDraft = async () => {
-    await saveDraft();
+    try {
+      await saveDraft();
+      toast({
+        title: "Draft Saved",
+        description: "Your agent draft has been saved successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save draft. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleCreateAgent = async () => {
-    const success = await createAgent(isEditing);
-    if (success) {
-      navigate('/agents');
+    try {
+      const success = await createAgent(isEditing);
+      if (success) {
+        toast({
+          title: isEditing ? "Agent Updated" : "Agent Created",
+          description: `Your agent has been ${isEditing ? 'updated' : 'created'} successfully.`,
+        });
+        navigate('/agents');
+      } else {
+        toast({
+          title: "Creation Failed",
+          description: "Failed to create agent. Please check all required fields and try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 

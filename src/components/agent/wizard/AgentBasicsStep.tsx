@@ -87,7 +87,7 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
 
               <div>
                 <Label htmlFor="initial-message" className="text-white">
-                  Initial Message <span className="text-red-400">*</span>
+                  Initial Message
                 </Label>
                 <Textarea
                   id="initial-message"
@@ -98,7 +98,7 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                   rows={3}
                 />
                 <p className="text-xs text-gray-400 mt-1">
-                  This is the first message users will see when they start interacting with your agent.
+                  This is the first message users will see when they start interacting with your agent. Leave blank to use default.
                 </p>
               </div>
 
@@ -149,46 +149,6 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                 <p className="text-xs text-gray-400 mt-1">
                   Choose the voice that will represent your agent.
                 </p>
-              </div>
-
-              <div>
-                <Label className="text-white">
-                  Voice Pitch: {data.voicePitch || 0}
-                </Label>
-                <div className="mt-2">
-                  <Slider
-                    value={[data.voicePitch || 0]}
-                    onValueChange={([value]) => onUpdate({ voicePitch: value })}
-                    max={2}
-                    min={-2}
-                    step={0.1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>Lower (-2)</span>
-                    <span>Higher (+2)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-white">
-                  Voice Speed: {data.voiceSpeed || 1}x
-                </Label>
-                <div className="mt-2">
-                  <Slider
-                    value={[data.voiceSpeed || 1]}
-                    onValueChange={([value]) => onUpdate({ voiceSpeed: value })}
-                    max={2}
-                    min={0.5}
-                    step={0.1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>Slower (0.5x)</span>
-                    <span>Faster (2x)</span>
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
