@@ -73,46 +73,46 @@ export const DashboardModule = () => {
   };
 
   return (
-    <div className="p-6 space-y-6 min-h-screen">
+    <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6 min-h-screen w-full max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-gray-400 text-sm mt-1">Overview of your AI agent platform</p>
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Dashboard</h1>
+          <p className="text-gray-400 text-xs sm:text-sm mt-1">Overview of your AI agent platform</p>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 text-sm">
-                {selectedBilling}
-                <ChevronDown className="ml-2 h-4 w-4" />
+              <Button variant="outline" size="sm" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 text-xs sm:text-sm min-w-0">
+                <span className="truncate">{selectedBilling}</span>
+                <ChevronDown className="ml-2 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+            <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700 w-48 sm:w-auto">
               {billingFilters.map((filter) => (
                 <DropdownMenuItem
                   key={filter}
                   onClick={() => setSelectedBilling(filter)}
-                  className="text-white hover:bg-gray-700 text-sm"
+                  className="text-white hover:bg-gray-700 text-xs sm:text-sm"
                 >
                   {filter}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <div className="flex items-center space-x-3">
-            <Bell className="w-5 h-5 text-gray-400 cursor-pointer hover:text-cyan-400 transition-colors" />
-            <Avatar className="w-8 h-8">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 cursor-pointer hover:text-cyan-400 transition-colors flex-shrink-0" />
+            <Avatar className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-gray-700 text-white text-sm">AD</AvatarFallback>
+              <AvatarFallback className="bg-gray-700 text-white text-xs sm:text-sm">AD</AvatarFallback>
             </Avatar>
-            <span className="text-sm text-gray-400">admin@cerebroai.com</span>
+            <span className="text-xs sm:text-sm text-gray-400 truncate min-w-0">admin@cerebroai.com</span>
           </div>
         </div>
       </div>
 
       {/* Summary Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4">
         {statsData.map((stat, index) => (
           <StatsCard
             key={index}
@@ -125,22 +125,26 @@ export const DashboardModule = () => {
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
         {/* Agent Carousel */}
-        <AgentCarousel onCreateAgent={handleCreateAgent} />
+        <div className="w-full min-w-0">
+          <AgentCarousel onCreateAgent={handleCreateAgent} />
+        </div>
 
         {/* Phone Numbers & Sentiment */}
-        <div className="space-y-6">
+        <div className="space-y-4 lg:space-y-6 w-full min-w-0">
           <PhoneNumbersSection />
           <SentimentAnalysis />
         </div>
       </div>
 
       {/* Conversation Quality */}
-      <ConversationQuality />
+      <div className="w-full">
+        <ConversationQuality />
+      </div>
 
       {/* Bottom spacing */}
-      <div className="h-8"></div>
+      <div className="h-4 lg:h-8"></div>
     </div>
   );
 };

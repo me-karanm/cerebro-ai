@@ -233,7 +233,7 @@ export const AgentsModule = () => {
         totalMinutes: 0,
         averageCallDuration: 0,
         monthlyCost: 0,
-        phoneNumber: undefined, // Reset phone number for duplicate
+        phoneNumber: undefined,
         lastUpdated: 'Just now'
       };
       setAgents(prev => [...prev, newAgent]);
@@ -253,15 +253,15 @@ export const AgentsModule = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6 w-full max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Agents</h1>
-          <p className="text-gray-400">Create and manage your AI agents</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white truncate">Agents</h1>
+          <p className="text-gray-400 text-sm">Create and manage your AI agents</p>
         </div>
         <Button 
-          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 w-full sm:w-auto"
           onClick={handleCreateAgent}
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -270,8 +270,8 @@ export const AgentsModule = () => {
       </div>
 
       {/* Search and Filters */}
-      <div className="flex items-center space-x-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+        <div className="relative flex-1 max-w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             placeholder="Search agents..."
@@ -280,14 +280,14 @@ export const AgentsModule = () => {
             className="pl-10 bg-gray-800 border-gray-700 text-white"
           />
         </div>
-        <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800">
+        <Button variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800 w-full sm:w-auto">
           <Filter className="w-4 h-4 mr-2" />
           Filter
         </Button>
       </div>
 
-      {/* Stats Cards - 4 cards in a single row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats Cards - Responsive grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
         {statsData.map((stat, index) => (
           <StatsCard
             key={index}
@@ -300,7 +300,7 @@ export const AgentsModule = () => {
       </div>
 
       {/* Agents Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
         {currentAgents.map((agent) => (
           <Card 
             key={agent.id} 
@@ -309,47 +309,47 @@ export const AgentsModule = () => {
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-white" />
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   </div>
-                  <div>
-                    <CardTitle className="text-white text-lg">{agent.name}</CardTitle>
-                    <Badge variant={agent.status === 'active' ? 'default' : 'secondary'} className="mt-1">
+                  <div className="min-w-0 flex-1">
+                    <CardTitle className="text-white text-base sm:text-lg truncate">{agent.name}</CardTitle>
+                    <Badge variant={agent.status === 'active' ? 'default' : 'secondary'} className="mt-1 text-xs">
                       {agent.status}
                     </Badge>
                   </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-gray-400 text-sm">{agent.description}</p>
+            <CardContent className="space-y-3 sm:space-y-4">
+              <p className="text-gray-400 text-xs sm:text-sm line-clamp-2">{agent.description}</p>
               
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-400">Language:</span>
-                  <span className="text-white">{agent.language}</span>
+                  <span className="text-white truncate ml-2">{agent.language}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-400">Voice:</span>
-                  <span className="text-white">{agent.voice}</span>
+                  <span className="text-white truncate ml-2">{agent.voice}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-400">Phone:</span>
-                  <span className="text-blue-400">{agent.phoneNumber || 'Not assigned'}</span>
+                  <span className="text-blue-400 truncate ml-2">{agent.phoneNumber || 'Not assigned'}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-400">Conversations:</span>
                   <span className="text-blue-400">{agent.conversations.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-gray-400">Success Rate:</span>
                   <span className="text-green-400">{agent.successRate}%</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-                <span className="text-xs text-gray-500">Updated {agent.lastUpdated}</span>
+                <span className="text-xs text-gray-500 truncate">Updated {agent.lastUpdated}</span>
               </div>
             </CardContent>
           </Card>
@@ -360,7 +360,7 @@ export const AgentsModule = () => {
       {totalPages > 1 && (
         <div className="flex justify-center">
           <Pagination>
-            <PaginationContent>
+            <PaginationContent className="flex-wrap gap-1">
               <PaginationItem>
                 <PaginationPrevious 
                   onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
