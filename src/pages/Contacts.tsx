@@ -87,13 +87,13 @@ const Contacts = () => {
     setIsDetailModalOpen(true);
   };
 
-  const handleSaveContact = (contactData: any) => {
+  const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
     if ('id' in contactData) {
       // Editing existing contact
       contactsStore.updateContact(contactData.id, contactData);
     } else {
       // Adding new contact - ensure required fields are present
-      const newContactData = {
+      const newContactData: Omit<Contact, 'id' | 'createdOn'> = {
         ...contactData,
         source: 'manual' as const,
         assignedAgent: contactData.assignedAgent || '',
