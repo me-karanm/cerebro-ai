@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Upload, Download } from 'lucide-react';
@@ -9,9 +8,8 @@ import { ContactModal } from '@/components/contacts/ContactModal';
 import { ContactTable } from '@/components/contacts/ContactTable';
 import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
 import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
-import { useContactsStore } from '@/store/contactsStore';
+import { useContactsStore, Contact } from '@/store/contactsStore';
 import { useContacts } from '@/contexts/ContactsContext';
-import type { Contact } from '@/store/contactsStore';
 
 interface Agent {
   id: string;
@@ -94,8 +92,15 @@ const Contacts = () => {
       // Editing existing contact
       contactsStore.updateContact(contactData.id, contactData);
     } else {
-      // Adding new contact
-      contactsStore.addContact(contactData);
+      // Adding new contact - ensure required fields are present
+      const newContactData = {
+        ...contactData,
+        source: 'manual' as const,
+        assignedAgent: contactData.assignedAgent || '',
+        tags: contactData.tags || [],
+        notes: contactData.notes || '',
+      };
+      contactsStore.addContact(newContactData);
     }
   };
 

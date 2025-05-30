@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useEffect } from 'react';
-import { useContactsStore as useContactsStoreHook, Contact } from '@/store/contactsStore';
+import { useContactsStore, Contact } from '@/store/contactsStore';
 
 interface ContactsContextType {
   // Re-export store methods for easy access
@@ -18,7 +18,7 @@ interface ContactsContextType {
 const ContactsContext = createContext<ContactsContextType | undefined>(undefined);
 
 export const ContactsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const store = useContactsStoreHook();
+  const store = useContactsStore();
 
   // Simulate API calls for data persistence
   const refreshContacts = async () => {
@@ -171,9 +171,4 @@ export const useContacts = () => {
     throw new Error('useContacts must be used within a ContactsProvider');
   }
   return context;
-};
-
-// Hook to access the store directly for advanced operations
-export const useContactsStoreHook = () => {
-  return useContactsStoreHook();
 };
