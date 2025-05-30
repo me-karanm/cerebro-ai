@@ -20,6 +20,8 @@ export interface AgentWizardData {
   knowledgeText: string;
   customFunctionCode: string;
   functions: any[];
+  memoryLength: number;
+  enableLongTermMemory: boolean;
 
   // Step 3: Communication Channels
   connections: {
@@ -39,7 +41,33 @@ export interface AgentWizardData {
       enabled: boolean;
       selectedAccountId: string;
     };
+    telegram?: {
+      enabled: boolean;
+      selectedBotId: string;
+    };
+    wechat?: {
+      enabled: boolean;
+      selectedAccountId: string;
+    };
   };
+
+  // Step 4: Integrations & Webhooks
+  integrations: {
+    slack: boolean;
+    teams: boolean;
+    hubspot: boolean;
+    zendesk: boolean;
+  };
+  webhookUrl: string;
+  authHeaders: Array<{ key: string; value: string }>;
+  maxRetries: number;
+  retryDelay: number;
+
+  // Step 5: Widget & Retention
+  enableWidget: boolean;
+  widgetColor: string;
+  widgetPosition: string;
+  dataRetentionDays: number;
 
   // Additional fields
   status: 'draft' | 'active';
@@ -63,6 +91,8 @@ const initialData: AgentWizardData = {
   knowledgeText: '',
   customFunctionCode: '',
   functions: [],
+  memoryLength: 10,
+  enableLongTermMemory: false,
   connections: {
     call: {
       enabled: false,
@@ -80,7 +110,29 @@ const initialData: AgentWizardData = {
       enabled: false,
       selectedAccountId: '',
     },
+    telegram: {
+      enabled: false,
+      selectedBotId: '',
+    },
+    wechat: {
+      enabled: false,
+      selectedAccountId: '',
+    },
   },
+  integrations: {
+    slack: false,
+    teams: false,
+    hubspot: false,
+    zendesk: false,
+  },
+  webhookUrl: '',
+  authHeaders: [],
+  maxRetries: 3,
+  retryDelay: 2,
+  enableWidget: false,
+  widgetColor: '#7C3AED',
+  widgetPosition: 'bottom-right',
+  dataRetentionDays: 30,
   status: 'draft',
 };
 
@@ -110,6 +162,10 @@ export const useAgentWizard = () => {
       case 1: // Knowledge & Functions
         return true; // Optional fields
       case 2: // Communication Channels
+        return true; // All optional
+      case 3: // Integrations & Webhooks
+        return true; // All optional
+      case 4: // Widget & Retention
         return true; // All optional
       default:
         return false;

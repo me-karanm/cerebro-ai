@@ -34,13 +34,15 @@ const loadAgentData = (agentId: string) => {
     temperature: 0.7,
     useRAG: true,
     selectedVoice: 'professional-female',
-    callRouting: 'direct',
+    memoryLength: 10,
+    enableLongTermMemory: true,
     connections: {
       call: { enabled: true, selectedPhoneNumberId: 'phone1' },
       whatsapp: { enabled: true, selectedAccountId: 'wa1' },
       telegram: { enabled: false, selectedBotId: '' },
       email: { enabled: true, selectedAccountId: 'email1' },
       wechat: { enabled: false, selectedAccountId: '' },
+      widget: { enabled: false, selectedAccountId: '' },
     },
     integrations: {
       slack: true,
