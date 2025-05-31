@@ -41,15 +41,15 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gray-950 text-white flex w-full max-w-full overflow-hidden">
       <Sidebar
         activeModule={activeModule}
         setActiveModule={setActiveModule}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
-      <main className={`flex-1 transition-all duration-300 min-w-0 overflow-x-hidden ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <div className="w-full h-full">
+      <main className={`flex-1 transition-all duration-300 min-w-0 max-w-full overflow-hidden ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <div className="w-full h-full max-w-full overflow-hidden">
           {renderActiveModule()}
         </div>
       </main>

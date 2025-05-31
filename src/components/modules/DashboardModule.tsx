@@ -73,10 +73,10 @@ export const DashboardModule = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-950 overflow-x-hidden">
-      <div className="w-full max-w-none p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6 box-border">
+    <div className="w-full min-h-screen bg-gray-950 overflow-x-hidden max-w-full">
+      <div className="w-full max-w-full p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full max-w-full">
           <div className="min-w-0 flex-1">
             <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Dashboard</h1>
             <p className="text-gray-400 text-xs sm:text-sm mt-1">Overview of your AI agent platform</p>
@@ -113,8 +113,8 @@ export const DashboardModule = () => {
         </div>
 
         {/* Summary Stats Bar */}
-        <div className="w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4">
+        <div className="w-full max-w-full">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4 w-full">
             {statsData.map((stat, index) => (
               <StatsCard
                 key={index}
@@ -128,8 +128,8 @@ export const DashboardModule = () => {
         </div>
 
         {/* Main Content Grid */}
-        <div className="w-full">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
+        <div className="w-full max-w-full">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 w-full">
             {/* Agent Carousel */}
             <div className="w-full min-w-0">
               <AgentCarousel onCreateAgent={handleCreateAgent} />
@@ -144,7 +144,7 @@ export const DashboardModule = () => {
         </div>
 
         {/* Conversation Quality */}
-        <div className="w-full">
+        <div className="w-full max-w-full">
           <ConversationQuality />
         </div>
 

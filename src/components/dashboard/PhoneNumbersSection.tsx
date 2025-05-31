@@ -64,29 +64,29 @@ export const PhoneNumbersSection = () => {
   };
 
   return (
-    <Card className="bg-gray-900 border-gray-800 animate-fade-in">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center justify-between">
-          Phone Numbers
-          <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white">
+    <Card className="bg-gray-900 border-gray-800 animate-fade-in w-full max-w-full">
+      <CardHeader className="p-3 sm:p-4 lg:p-6">
+        <CardTitle className="text-white flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+          <span className="text-sm sm:text-base lg:text-lg">Phone Numbers</span>
+          <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white text-xs sm:text-sm w-full sm:w-auto">
             + Purchase New Number
           </Button>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="flex overflow-x-auto gap-4 pb-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800" style={{ scrollSnapType: 'x mandatory' }}>
+      <CardContent className="p-3 sm:p-4 lg:p-6 pt-0">
+        <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-2 w-full" style={{ scrollSnapType: 'x mandatory' }}>
           {phoneNumbers.map((phone) => (
             <div
               key={phone.id}
               onClick={() => handlePhoneNumberClick(phone.id)}
-              className="bg-gray-800 rounded-lg p-4 min-w-[300px] flex-shrink-0 hover:bg-gray-750 transition-colors duration-200 cursor-pointer hover:ring-1 hover:ring-cyan-400"
+              className="bg-gray-800 rounded-lg p-3 sm:p-4 min-w-[280px] sm:min-w-[300px] flex-shrink-0 hover:bg-gray-750 transition-colors duration-200 cursor-pointer hover:ring-1 hover:ring-cyan-400"
               style={{ scrollSnapAlign: 'start' }}
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-2">
-                  <span className="text-white font-medium">{phone.number}</span>
+                  <span className="text-white font-medium text-sm sm:text-base truncate">{phone.number}</span>
                   {phone.tag && (
-                    <Badge variant="secondary" className="text-xs bg-purple-600 text-white">
+                    <Badge variant="secondary" className="text-xs bg-purple-600 text-white flex-shrink-0">
                       {phone.tag}
                     </Badge>
                   )}
@@ -94,7 +94,7 @@ export const PhoneNumbersSection = () => {
               </div>
 
               <div className="flex items-center text-sm mb-3">
-                <div className={`w-2 h-2 rounded-full mr-2 ${
+                <div className={`w-2 h-2 rounded-full mr-2 flex-shrink-0 ${
                   phone.status === 'verified' ? 'bg-green-500' : 
                   phone.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
                 }`}></div>
@@ -106,7 +106,7 @@ export const PhoneNumbersSection = () => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 text-xs mb-3">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 text-xs mb-3">
                 <div>
                   <div className="text-gray-400">Monthly Cost</div>
                   <div className="text-white font-medium">${phone.monthlyCost}</div>
@@ -125,7 +125,7 @@ export const PhoneNumbersSection = () => {
 
               <div className="text-xs">
                 {phone.assignedAgent ? (
-                  <div className="text-cyan-400">Assigned to {phone.assignedAgent}</div>
+                  <div className="text-cyan-400 truncate">Assigned to {phone.assignedAgent}</div>
                 ) : (
                   <div className="text-gray-400">Unassigned</div>
                 )}
