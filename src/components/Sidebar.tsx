@@ -56,7 +56,7 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
 
   return (
     <div className={cn(
-      "fixed left-0 top-0 h-full bg-gray-900 border-r border-gray-800 transition-all duration-300 z-40",
+      "fixed left-0 top-0 h-full bg-gray-900 border-r border-gray-800 transition-all duration-300 z-40 flex-shrink-0",
       collapsed ? "w-16" : "w-64"
     )}>
       {/* Header */}

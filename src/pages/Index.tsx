@@ -48,7 +48,9 @@ const Index = () => {
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
-      <main className={`flex-1 h-full w-0 transition-all duration-300 overflow-hidden`}>
+      <main className={`flex-1 h-full transition-all duration-300 overflow-hidden ${
+        sidebarCollapsed ? 'ml-16' : 'ml-64'
+      }`}>
         <div className="w-full h-full overflow-hidden">
           {renderActiveModule()}
         </div>
