@@ -14,6 +14,7 @@ import AnalyticsOverview from "./pages/AnalyticsOverview";
 import Campaigns from "./pages/Campaigns";
 import CampaignDetail from "./pages/CampaignDetail";
 import Contacts from "./pages/Contacts";
+import VoiceStudio from "./pages/VoiceStudio";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/campaigns/:campaignId" element={<CampaignDetail />} />
             <Route path="/contacts" element={<Contacts />} />
             <Route path="/channels" element={<Integrations />} />
+            <Route path="/voice-studio" element={<VoiceStudio />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
