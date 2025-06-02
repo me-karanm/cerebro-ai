@@ -1,14 +1,17 @@
 
-import { useState } from 'react';
-import { Phone, MessageCircle, Mail, Plus, Monitor, ShoppingCart } from 'lucide-react';
+import { Phone, MessageCircle, Mail, Widget, Plus, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { AddIntegrationModal } from '@/components/modules/AddIntegrationModal';
-import { useIntegrationsStore } from '@/store/integrationsStore';
 import { AgentWizardData } from './useAgentWizard';
 
 interface VoiceCallingStepProps {
@@ -16,266 +19,240 @@ interface VoiceCallingStepProps {
   onUpdate: (updates: Partial<AgentWizardData>) => void;
 }
 
-const availableChannels = [
+// Mock data for available integrations
+const phoneNumbers = [
+  { id: 'phone1', number: '+1 (555) 123-4567', region: 'US' },
+  { id: 'phone2', number: '+1 (555) 987-6543', region: 'US' },
+  { id: 'phone3', number: '+44 20 7946 0958', region: 'UK' },
+];
+
+const whatsappAccounts = [
+  { id: 'wa1', name: 'Business Main', number: '+1 (555) 123-4567' },
+  { id: 'wa2', name: 'Customer Support', number: '+1 (555) 987-6543' },
+];
+
+const emailAccounts = [
+  { id: 'email1', name: 'Support Email', address: 'support@company.com' },
+  { id: 'email2', name: 'Sales Email', address: 'sales@company.com' },
+];
+
+const widgetAccounts = [
+  { id: 'widget1', name: 'Main Website', domain: 'company.com' },
+  { id: 'widget2', name: 'Support Portal', domain: 'support.company.com' },
+];
+
+const channels = [
   {
     id: 'call',
     name: 'Phone Calls',
+    description: 'Enable voice calling capabilities',
     icon: Phone,
-    description: 'Handle voice calls with AI agent',
-    category: 'Voice',
-    color: 'bg-blue-500'
+    color: 'text-green-400',
+    bgColor: 'bg-green-400/10',
+    accounts: phoneNumbers,
+    accountKey: 'selectedPhoneNumberId' as const,
+    accountLabel: 'Phone Number',
   },
   {
     id: 'whatsapp',
-    name: 'WhatsApp Business',
+    name: 'WhatsApp',
+    description: 'Connect via WhatsApp Business',
     icon: MessageCircle,
-    description: 'Connect to WhatsApp Business API',
-    category: 'Messaging',
-    color: 'bg-green-500'
+    color: 'text-green-400',
+    bgColor: 'bg-green-400/10',
+    accounts: whatsappAccounts,
+    accountKey: 'selectedAccountId' as const,
+    accountLabel: 'WhatsApp Account',
   },
   {
     id: 'email',
-    name: 'Email Integration',
-    icon: Mail,
+    name: 'Email',
     description: 'Handle email communications',
-    category: 'Email',
-    color: 'bg-purple-500'
+    icon: Mail,
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-400/10',
+    accounts: emailAccounts,
+    accountKey: 'selectedAccountId' as const,
+    accountLabel: 'Email Account',
   },
   {
     id: 'widget',
-    name: 'Web Widget',
-    icon: Monitor,
-    description: 'Embed chat widget on your website',
-    category: 'Web',
-    color: 'bg-orange-500'
-  }
+    name: 'Website Widget',
+    description: 'Embed chat widget on websites',
+    icon: Widget,
+    color: 'text-purple-400',
+    bgColor: 'bg-purple-400/10',
+    accounts: widgetAccounts,
+    accountKey: 'selectedAccountId' as const,
+    accountLabel: 'Widget Configuration',
+  },
 ];
 
 export const VoiceCallingStep = ({ data, onUpdate }: VoiceCallingStepProps) => {
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
-  const { phoneNumbers, whatsappAccounts, emailAccounts } = useIntegrationsStore();
-
-  const handleConnectionToggle = (channelId: string, enabled: boolean) => {
-    onUpdate({
+  const handleChannelToggle = (channelId: string, enabled: boolean) => {
+    const updates = {
       connections: {
         ...data.connections,
         [channelId]: {
           ...data.connections[channelId as keyof typeof data.connections],
-          enabled
-        }
-      }
-    });
+          enabled,
+        },
+      },
+    };
+    onUpdate(updates);
   };
 
-  const handleAccountSelect = (channelId: string, accountId: string) => {
-    const connectionKey = channelId === 'call' ? 'selectedPhoneNumberId' : 'selectedAccountId';
-    onUpdate({
+  const handleAccountSelection = (channelId: string, accountId: string) => {
+    const channel = channels.find(c => c.id === channelId);
+    if (!channel) return;
+
+    const updates = {
       connections: {
         ...data.connections,
         [channelId]: {
           ...data.connections[channelId as keyof typeof data.connections],
-          [connectionKey]: accountId
-        }
-      }
-    });
+          [channel.accountKey]: accountId,
+        },
+      },
+    };
+    onUpdate(updates);
   };
 
-  const getAvailableAccounts = (channelId: string) => {
-    switch (channelId) {
-      case 'call':
-        return phoneNumbers;
-      case 'whatsapp':
-        return whatsappAccounts;
-      case 'email':
-        return emailAccounts;
-      case 'widget':
-        return []; // Widget doesn't need account selection
-      default:
-        return [];
-    }
+  const getChannelConnection = (channelId: string) => {
+    return data.connections[channelId as keyof typeof data.connections];
   };
 
-  const getAccountDisplayName = (channelId: string, account: any) => {
-    switch (channelId) {
-      case 'call':
-        return account.number;
-      case 'whatsapp':
-        return account.phoneNumber;
-      case 'email':
-        return account.email;
-      default:
-        return account.name || account.id;
-    }
-  };
-
-  const isChannelConfigured = (channelId: string) => {
-    if (channelId === 'widget') return true; // Widget is always available
-    const accounts = getAvailableAccounts(channelId);
-    return accounts.length > 0;
-  };
-
-  const handleWidgetPreview = () => {
-    console.log('Opening widget preview...');
-    // Mock widget preview functionality
-  };
+  const enabledChannelsCount = Object.values(data.connections).filter(conn => conn.enabled).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-semibold text-white mb-4">Communication Channels</h2>
-        <p className="text-gray-400 mb-6">
-          Configure how your agent will communicate with users across different platforms.
+        <h2 className="text-2xl font-semibold text-white mb-2">Communication Channels</h2>
+        <p className="text-gray-400 text-lg">
+          Configure how users will interact with your agent across different platforms.
         </p>
+        {enabledChannelsCount === 0 && (
+          <div className="mt-4 p-3 bg-red-900/20 border border-red-800 rounded-lg">
+            <p className="text-red-400 text-sm">
+              <strong>Required:</strong> At least one communication channel must be enabled.
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Channel Configuration */}
-      <Card className="bg-gray-800 border-gray-700">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-white">Available Channels</CardTitle>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowAddModal(true)}
-            className="border-purple-600 text-purple-400 hover:bg-purple-600 hover:text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Integration
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {availableChannels.map((channel) => {
-              const IconComponent = channel.icon;
-              const isConfigured = isChannelConfigured(channel.id);
-              const connectionData = data.connections[channel.id as keyof typeof data.connections];
-              const isEnabled = connectionData?.enabled || false;
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {channels.map((channel) => {
+          const connection = getChannelConnection(channel.id);
+          const isEnabled = connection?.enabled || false;
+          const Icon = channel.icon;
 
-              return (
-                <Card key={channel.id} className="bg-gray-700 border-gray-600">
-                  <CardContent className="p-4">
-                    <div className="flex items-start space-x-3">
-                      <div className={`w-10 h-10 ${channel.color} rounded-lg flex items-center justify-center`}>
-                        <IconComponent className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="text-white font-medium">{channel.name}</h3>
-                          <div className="flex items-center space-x-2">
-                            <Badge 
-                              variant={isConfigured ? "default" : "secondary"}
-                              className={isConfigured ? "bg-green-600" : ""}
-                            >
-                              {isConfigured ? "Available" : "Not Configured"}
-                            </Badge>
-                            <Switch
-                              checked={isEnabled}
-                              onCheckedChange={(checked) => handleConnectionToggle(channel.id, checked)}
-                              disabled={!isConfigured}
-                            />
-                          </div>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-3">{channel.description}</p>
-                        
-                        {isEnabled && isConfigured && (
-                          <div className="space-y-2">
-                            {channel.id === 'call' && (
-                              <>
-                                <Label className="text-gray-300 text-xs">Select Phone Number:</Label>
-                                <div className="flex space-x-2">
-                                  <Select
-                                    value={(connectionData as any)?.selectedPhoneNumberId || ''}
-                                    onValueChange={(value) => handleAccountSelect(channel.id, value)}
-                                  >
-                                    <SelectTrigger className="bg-gray-600 border-gray-500 text-white text-sm h-8 flex-1">
-                                      <SelectValue placeholder="Choose number" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-gray-600 border-gray-500">
-                                      {getAvailableAccounts(channel.id).map((account: any) => (
-                                        <SelectItem key={account.id} value={account.id}>
-                                          {getAccountDisplayName(channel.id, account)}
-                                        </SelectItem>
-                                      ))}
-                                    </SelectContent>
-                                  </Select>
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => setShowPurchaseModal(true)}
-                                    className="border-gray-500 text-gray-300 hover:bg-gray-600 text-xs h-8 px-2"
-                                  >
-                                    <ShoppingCart className="w-3 h-3 mr-1" />
-                                    Buy
-                                  </Button>
-                                </div>
-                              </>
-                            )}
-                            
-                            {channel.id === 'widget' && (
-                              <div className="flex items-center justify-between">
-                                <div className="text-xs text-green-400">
-                                  Widget will be automatically configured
-                                </div>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={handleWidgetPreview}
-                                  className="border-gray-500 text-gray-300 hover:bg-gray-600 text-xs h-8"
-                                >
-                                  Preview
-                                </Button>
-                              </div>
-                            )}
-                            
-                            {channel.id !== 'call' && channel.id !== 'widget' && (
-                              <>
-                                <Label className="text-gray-300 text-xs">Select Account:</Label>
-                                <Select
-                                  value={(connectionData as any)?.selectedAccountId || ''}
-                                  onValueChange={(value) => handleAccountSelect(channel.id, value)}
-                                >
-                                  <SelectTrigger className="bg-gray-600 border-gray-500 text-white text-sm h-8">
-                                    <SelectValue placeholder="Choose account" />
-                                  </SelectTrigger>
-                                  <SelectContent className="bg-gray-600 border-gray-500">
-                                    {getAvailableAccounts(channel.id).map((account: any) => (
-                                      <SelectItem key={account.id} value={account.id}>
-                                        {getAccountDisplayName(channel.id, account)}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </>
-                            )}
-                          </div>
-                        )}
-                        
-                        {!isConfigured && channel.id !== 'widget' && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowAddModal(true)}
-                            className="border-gray-500 text-gray-300 hover:bg-gray-600 text-xs h-8"
-                          >
-                            Setup {channel.name}
-                          </Button>
-                        )}
-                      </div>
+          return (
+            <Card key={channel.id} className={`bg-gray-800 border-gray-700 transition-all duration-200 ${
+              isEnabled ? 'ring-1 ring-purple-500/30' : ''
+            }`}>
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 rounded-lg ${channel.bgColor}`}>
+                      <Icon className={`w-5 h-5 ${channel.color}`} />
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+                    <div>
+                      <CardTitle className="text-white text-lg">{channel.name}</CardTitle>
+                      <p className="text-gray-400 text-sm">{channel.description}</p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={isEnabled}
+                    onCheckedChange={(checked) => handleChannelToggle(channel.id, checked)}
+                  />
+                </div>
+              </CardHeader>
+              
+              {isEnabled && (
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-white text-sm font-medium">
+                      {channel.accountLabel}
+                    </Label>
+                    <Select
+                      value={connection[channel.accountKey] || ''}
+                      onValueChange={(value) => handleAccountSelection(channel.id, value)}
+                    >
+                      <SelectTrigger className="bg-gray-700 border-gray-600 text-white mt-2">
+                        <SelectValue placeholder={`Select ${channel.accountLabel.toLowerCase()}`} />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-700 border-gray-600">
+                        {channel.accounts.map((account: any) => (
+                          <SelectItem key={account.id} value={account.id} className="text-white">
+                            <div className="flex flex-col py-1">
+                              <span className="font-medium">
+                                {account.name || account.number || account.address || account.domain}
+                              </span>
+                              {(account.number || account.address || account.region) && (
+                                <span className="text-xs text-gray-400">
+                                  {account.address || account.number} 
+                                  {account.region && ` • ${account.region}`}
+                                </span>
+                              )}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
+                    {!connection[channel.accountKey] && (
+                      <p className="text-red-400 text-xs mt-1">
+                        Please select a {channel.accountLabel.toLowerCase()}
+                      </p>
+                    )}
+                  </div>
 
-      <AddIntegrationModal 
-        open={showAddModal}
-        onOpenChange={setShowAddModal}
-      />
+                  <div className="flex space-x-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="border-gray-600 text-gray-300 hover:bg-gray-700 flex-1"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add New Integration
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </div>
+
+                  {channel.id === 'call' && (
+                    <div className="mt-4 p-3 bg-blue-900/20 border border-blue-800 rounded-lg">
+                      <p className="text-blue-400 text-xs">
+                        <strong>Note:</strong> Voice calls require additional setup and may incur charges based on usage.
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              )}
+            </Card>
+          );
+        })}
+      </div>
+
+      {enabledChannelsCount > 0 && (
+        <div className="mt-6 p-4 bg-green-900/20 border border-green-800 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <Badge variant="default" className="bg-green-600">
+              {enabledChannelsCount} Channel{enabledChannelsCount !== 1 ? 's' : ''} Enabled
+            </Badge>
+            <p className="text-green-400 text-sm">
+              Your agent will be available across the selected communication channels.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

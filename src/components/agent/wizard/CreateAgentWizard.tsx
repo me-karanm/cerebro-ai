@@ -133,40 +133,44 @@ export const CreateAgentWizard = () => {
 
       {/* Fixed Progress Indicator */}
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex justify-between items-center mb-4">
           {steps.map((step, index) => (
             <div
               key={index}
               className={`flex items-center ${index < steps.length - 1 ? 'flex-1' : ''}`}
             >
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-all duration-300 ${
                   index <= currentStep
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-700 text-gray-400'
+                    ? 'bg-purple-600 border-purple-600 text-white'
+                    : 'bg-gray-800 border-gray-600 text-gray-400'
                 }`}
               >
                 {index + 1}
               </div>
-              <span className={`ml-2 text-sm ${
+              <span className={`ml-3 text-sm font-medium transition-colors duration-300 ${
                 index <= currentStep ? 'text-white' : 'text-gray-400'
               }`}>
                 {step.title}
               </span>
               {index < steps.length - 1 && (
-                <div className={`flex-1 h-px mx-4 ${
+                <div className={`flex-1 h-0.5 mx-6 transition-colors duration-300 ${
                   index < currentStep ? 'bg-purple-600' : 'bg-gray-700'
                 }`} />
               )}
             </div>
           ))}
         </div>
-        <Progress value={progressPercentage} className="h-2" />
+        <Progress 
+          value={progressPercentage} 
+          className="h-2" 
+          showValue={false}
+        />
       </div>
 
       {/* Step Content */}
-      <Card className="bg-gray-900 border-gray-800 mb-6">
-        <CardContent className="p-6">
+      <Card className="bg-gray-900 border-gray-800 mb-8">
+        <CardContent className="p-8">
           <CurrentStepComponent
             data={agentData}
             onUpdate={updateAgentData}
@@ -175,12 +179,12 @@ export const CreateAgentWizard = () => {
       </Card>
 
       {/* Navigation */}
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <Button
           variant="outline"
           onClick={handleBack}
           disabled={currentStep === 0}
-          className="border-gray-700 text-gray-300 hover:bg-gray-800"
+          className="border-gray-700 text-gray-300 hover:bg-gray-800 disabled:opacity-50"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
@@ -199,7 +203,7 @@ export const CreateAgentWizard = () => {
           {currentStep === steps.length - 1 ? (
             <Button
               onClick={handleCreateAgent}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50"
               disabled={!canProceed()}
             >
               {isEditing ? 'Update Agent' : 'Create Agent'}
@@ -207,7 +211,7 @@ export const CreateAgentWizard = () => {
           ) : (
             <Button
               onClick={handleNext}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50"
               disabled={!canProceed()}
             >
               Next
