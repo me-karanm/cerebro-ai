@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Play, Pause, Download, Settings, Plus, Save, X, Copy } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -368,10 +367,10 @@ export const VoiceStudioModule = () => {
                     <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="Male">Male</SelectItem>
-                      <SelectItem value="Female">Female</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="Male" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Male</SelectItem>
+                      <SelectItem value="Female" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Female</SelectItem>
+                      <SelectItem value="Other" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -385,15 +384,15 @@ export const VoiceStudioModule = () => {
                     <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="American">American</SelectItem>
-                      <SelectItem value="British">British</SelectItem>
-                      <SelectItem value="Australian">Australian</SelectItem>
-                      <SelectItem value="Canadian">Canadian</SelectItem>
-                      <SelectItem value="Spanish">Spanish</SelectItem>
-                      <SelectItem value="French">French</SelectItem>
-                      <SelectItem value="German">German</SelectItem>
-                      <SelectItem value="Neutral">Neutral</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="American" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">American</SelectItem>
+                      <SelectItem value="British" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">British</SelectItem>
+                      <SelectItem value="Australian" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Australian</SelectItem>
+                      <SelectItem value="Canadian" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Canadian</SelectItem>
+                      <SelectItem value="Spanish" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Spanish</SelectItem>
+                      <SelectItem value="French" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">French</SelectItem>
+                      <SelectItem value="German" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">German</SelectItem>
+                      <SelectItem value="Neutral" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Neutral</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -407,10 +406,10 @@ export const VoiceStudioModule = () => {
                     <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="Standard">Standard</SelectItem>
-                      <SelectItem value="Premium">Premium</SelectItem>
-                      <SelectItem value="Custom">Custom</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="Standard" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Standard</SelectItem>
+                      <SelectItem value="Premium" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Premium</SelectItem>
+                      <SelectItem value="Custom" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Custom</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -425,11 +424,11 @@ export const VoiceStudioModule = () => {
                   <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700">
-                    <SelectItem value="Professional">Professional</SelectItem>
-                    <SelectItem value="Conversational">Conversational</SelectItem>
-                    <SelectItem value="Technical">Technical</SelectItem>
-                    <SelectItem value="Custom">Custom</SelectItem>
+                  <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                    <SelectItem value="Professional" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Professional</SelectItem>
+                    <SelectItem value="Conversational" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Conversational</SelectItem>
+                    <SelectItem value="Technical" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Technical</SelectItem>
+                    <SelectItem value="Custom" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Custom</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -442,11 +441,11 @@ export const VoiceStudioModule = () => {
               <CardTitle className="text-white">Emotion Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-300">Calm</label>
-                    <span className="text-sm text-gray-400">{emotionSettings.calm[0].toFixed(1)}</span>
+                    <span className="text-sm text-purple-400 font-semibold bg-gray-900 px-2 py-1 rounded">{emotionSettings.calm[0].toFixed(1)}</span>
                   </div>
                   <Slider
                     value={emotionSettings.calm}
@@ -455,13 +454,13 @@ export const VoiceStudioModule = () => {
                     min={0}
                     step={0.1}
                     disabled={selectedVoice.isDefault}
-                    className={`accent-blue-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
+                    className={`w-full ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-300">Happy</label>
-                    <span className="text-sm text-gray-400">{emotionSettings.happy[0].toFixed(1)}</span>
+                    <span className="text-sm text-green-400 font-semibold bg-gray-900 px-2 py-1 rounded">{emotionSettings.happy[0].toFixed(1)}</span>
                   </div>
                   <Slider
                     value={emotionSettings.happy}
@@ -470,13 +469,13 @@ export const VoiceStudioModule = () => {
                     min={0}
                     step={0.1}
                     disabled={selectedVoice.isDefault}
-                    className={`accent-green-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
+                    className={`w-full ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-300">Urgency</label>
-                    <span className="text-sm text-gray-400">{emotionSettings.urgency[0].toFixed(1)}</span>
+                    <span className="text-sm text-red-400 font-semibold bg-gray-900 px-2 py-1 rounded">{emotionSettings.urgency[0].toFixed(1)}</span>
                   </div>
                   <Slider
                     value={emotionSettings.urgency}
@@ -485,7 +484,7 @@ export const VoiceStudioModule = () => {
                     min={0}
                     step={0.1}
                     disabled={selectedVoice.isDefault}
-                    className={`accent-red-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
+                    className={`w-full ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
               </div>
@@ -498,11 +497,11 @@ export const VoiceStudioModule = () => {
               <CardTitle className="text-white">Voice Parameters</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-300">Pitch</label>
-                    <span className="text-sm text-gray-400">{voiceSettings.pitch[0].toFixed(1)}x</span>
+                    <span className="text-sm text-purple-400 font-semibold bg-gray-900 px-2 py-1 rounded">{voiceSettings.pitch[0].toFixed(1)}x</span>
                   </div>
                   <Slider
                     value={voiceSettings.pitch}
@@ -511,13 +510,13 @@ export const VoiceStudioModule = () => {
                     min={0.5}
                     step={0.1}
                     disabled={selectedVoice.isDefault}
-                    className={`accent-purple-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
+                    className={`w-full ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-300">Rate</label>
-                    <span className="text-sm text-gray-400">{voiceSettings.rate[0].toFixed(1)}x</span>
+                    <span className="text-sm text-blue-400 font-semibold bg-gray-900 px-2 py-1 rounded">{voiceSettings.rate[0].toFixed(1)}x</span>
                   </div>
                   <Slider
                     value={voiceSettings.rate}
@@ -526,13 +525,13 @@ export const VoiceStudioModule = () => {
                     min={0.5}
                     step={0.1}
                     disabled={selectedVoice.isDefault}
-                    className={`accent-blue-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
+                    className={`w-full ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <label className="text-sm font-medium text-gray-300">Volume</label>
-                    <span className="text-sm text-gray-400">{Math.round(voiceSettings.volume[0] * 100)}%</span>
+                    <span className="text-sm text-green-400 font-semibold bg-gray-900 px-2 py-1 rounded">{Math.round(voiceSettings.volume[0] * 100)}%</span>
                   </div>
                   <Slider
                     value={voiceSettings.volume}
@@ -541,7 +540,7 @@ export const VoiceStudioModule = () => {
                     min={0}
                     step={0.1}
                     disabled={selectedVoice.isDefault}
-                    className={`accent-green-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
+                    className={`w-full ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
               </div>
@@ -556,14 +555,14 @@ export const VoiceStudioModule = () => {
                   <Button
                     onClick={handleCancelEdit}
                     variant="outline"
-                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
                   >
                     <X className="w-4 h-4 mr-2" />
                     Cancel
                   </Button>
                   <Button
                     onClick={handleSaveVoice}
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
                   >
                     <Save className="w-4 h-4 mr-2" />
                     Save Changes
@@ -585,10 +584,10 @@ export const VoiceStudioModule = () => {
                   <SelectTrigger className="bg-gray-900 border-gray-700 text-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="mp3">MP3 (Compressed)</SelectItem>
-                    <SelectItem value="wav">WAV (Uncompressed)</SelectItem>
-                    <SelectItem value="ogg">OGG (Web Optimized)</SelectItem>
+                  <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                    <SelectItem value="mp3" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">MP3 (Compressed)</SelectItem>
+                    <SelectItem value="wav" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">WAV (Uncompressed)</SelectItem>
+                    <SelectItem value="ogg" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">OGG (Web Optimized)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -598,11 +597,11 @@ export const VoiceStudioModule = () => {
                   <SelectTrigger className="bg-gray-900 border-gray-700 text-white">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="16000">16 kHz (Phone Quality)</SelectItem>
-                    <SelectItem value="22050">22.05 kHz (Standard)</SelectItem>
-                    <SelectItem value="44100">44.1 kHz (CD Quality)</SelectItem>
-                    <SelectItem value="48000">48 kHz (Professional)</SelectItem>
+                  <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                    <SelectItem value="16000" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">16 kHz (Phone Quality)</SelectItem>
+                    <SelectItem value="22050" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">22.05 kHz (Standard)</SelectItem>
+                    <SelectItem value="44100" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">44.1 kHz (CD Quality)</SelectItem>
+                    <SelectItem value="48000" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">48 kHz (Professional)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -615,81 +614,81 @@ export const VoiceStudioModule = () => {
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
         <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-white">
+            <DialogTitle className="text-white text-xl font-semibold">
               {isCloning ? `Clone Voice: ${cloneSource?.name}` : 'Create Voice'}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
+          <div className="space-y-8 py-4">
             {/* Voice Details Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Voice Details</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="voice-name" className="text-gray-300">Voice Name *</Label>
+                  <Label htmlFor="voice-name" className="text-gray-300 text-sm font-medium">Voice Name *</Label>
                   <Input
                     id="voice-name"
                     value={modalFormData.name}
                     onChange={(e) => updateModalFormData('name', e.target.value)}
                     placeholder="Enter voice profile name"
-                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 mt-2"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 mt-2 focus:border-purple-500 focus:ring-purple-500"
                   />
                 </div>
                 <div>
-                  <Label className="text-gray-300">Gender</Label>
+                  <Label className="text-gray-300 text-sm font-medium">Gender</Label>
                   <Select value={modalFormData.gender} onValueChange={(value) => updateModalFormData('gender', value)}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="Male">Male</SelectItem>
-                      <SelectItem value="Female">Female</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="Male" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Male</SelectItem>
+                      <SelectItem value="Female" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Female</SelectItem>
+                      <SelectItem value="Other" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-gray-300">Accent</Label>
+                  <Label className="text-gray-300 text-sm font-medium">Accent</Label>
                   <Select value={modalFormData.accent} onValueChange={(value) => updateModalFormData('accent', value)}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="American">American</SelectItem>
-                      <SelectItem value="British">British</SelectItem>
-                      <SelectItem value="Australian">Australian</SelectItem>
-                      <SelectItem value="Canadian">Canadian</SelectItem>
-                      <SelectItem value="Spanish">Spanish</SelectItem>
-                      <SelectItem value="French">French</SelectItem>
-                      <SelectItem value="German">German</SelectItem>
-                      <SelectItem value="Neutral">Neutral</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="American" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">American</SelectItem>
+                      <SelectItem value="British" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">British</SelectItem>
+                      <SelectItem value="Australian" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Australian</SelectItem>
+                      <SelectItem value="Canadian" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Canadian</SelectItem>
+                      <SelectItem value="Spanish" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Spanish</SelectItem>
+                      <SelectItem value="French" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">French</SelectItem>
+                      <SelectItem value="German" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">German</SelectItem>
+                      <SelectItem value="Neutral" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Neutral</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-gray-300">Quality</Label>
+                  <Label className="text-gray-300 text-sm font-medium">Quality</Label>
                   <Select value={modalFormData.quality} onValueChange={(value) => updateModalFormData('quality', value)}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="Standard">Standard</SelectItem>
-                      <SelectItem value="Premium">Premium</SelectItem>
-                      <SelectItem value="Custom">Custom</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="Standard" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Standard</SelectItem>
+                      <SelectItem value="Premium" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Premium</SelectItem>
+                      <SelectItem value="Custom" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Custom</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div>
-                <Label className="text-gray-300">Category</Label>
+                <Label className="text-gray-300 text-sm font-medium">Category</Label>
                 <Select value={modalFormData.category} onValueChange={(value) => updateModalFormData('category', value)}>
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2 focus:border-purple-500 focus:ring-purple-500">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-gray-700">
-                    <SelectItem value="Professional">Professional</SelectItem>
-                    <SelectItem value="Conversational">Conversational</SelectItem>
-                    <SelectItem value="Technical">Technical</SelectItem>
-                    <SelectItem value="Custom">Custom</SelectItem>
+                  <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                    <SelectItem value="Professional" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Professional</SelectItem>
+                    <SelectItem value="Conversational" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Conversational</SelectItem>
+                    <SelectItem value="Technical" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Technical</SelectItem>
+                    <SelectItem value="Custom" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">Custom</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -698,11 +697,11 @@ export const VoiceStudioModule = () => {
             {/* Emotion Settings Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Emotion Settings</h3>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label className="text-gray-300">Calm</Label>
-                    <span className="text-sm text-gray-400">{modalFormData.emotions.calm[0].toFixed(1)}</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <Label className="text-gray-300 text-sm font-medium">Calm</Label>
+                    <span className="text-sm text-purple-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.emotions.calm[0].toFixed(1)}</span>
                   </div>
                   <Slider
                     value={modalFormData.emotions.calm}
@@ -710,13 +709,13 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-blue-500"
+                    className="w-full"
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label className="text-gray-300">Happy</Label>
-                    <span className="text-sm text-gray-400">{modalFormData.emotions.happy[0].toFixed(1)}</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <Label className="text-gray-300 text-sm font-medium">Happy</Label>
+                    <span className="text-sm text-green-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.emotions.happy[0].toFixed(1)}</span>
                   </div>
                   <Slider
                     value={modalFormData.emotions.happy}
@@ -724,13 +723,13 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-green-500"
+                    className="w-full"
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label className="text-gray-300">Urgency</Label>
-                    <span className="text-sm text-gray-400">{modalFormData.emotions.urgency[0].toFixed(1)}</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <Label className="text-gray-300 text-sm font-medium">Urgency</Label>
+                    <span className="text-sm text-red-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.emotions.urgency[0].toFixed(1)}</span>
                   </div>
                   <Slider
                     value={modalFormData.emotions.urgency}
@@ -738,7 +737,7 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-red-500"
+                    className="w-full"
                   />
                 </div>
               </div>
@@ -747,11 +746,11 @@ export const VoiceStudioModule = () => {
             {/* Voice Parameters Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Voice Parameters</h3>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label className="text-gray-300">Pitch</Label>
-                    <span className="text-sm text-gray-400">{modalFormData.voiceParams.pitch[0].toFixed(1)}x</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <Label className="text-gray-300 text-sm font-medium">Pitch</Label>
+                    <span className="text-sm text-purple-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.voiceParams.pitch[0].toFixed(1)}x</span>
                   </div>
                   <Slider
                     value={modalFormData.voiceParams.pitch}
@@ -759,13 +758,13 @@ export const VoiceStudioModule = () => {
                     max={2}
                     min={0.5}
                     step={0.1}
-                    className="accent-purple-500"
+                    className="w-full"
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label className="text-gray-300">Rate</Label>
-                    <span className="text-sm text-gray-400">{modalFormData.voiceParams.rate[0].toFixed(1)}x</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <Label className="text-gray-300 text-sm font-medium">Rate</Label>
+                    <span className="text-sm text-blue-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.voiceParams.rate[0].toFixed(1)}x</span>
                   </div>
                   <Slider
                     value={modalFormData.voiceParams.rate}
@@ -773,13 +772,13 @@ export const VoiceStudioModule = () => {
                     max={2}
                     min={0.5}
                     step={0.1}
-                    className="accent-blue-500"
+                    className="w-full"
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <Label className="text-gray-300">Volume</Label>
-                    <span className="text-sm text-gray-400">{Math.round(modalFormData.voiceParams.volume[0] * 100)}%</span>
+                  <div className="flex justify-between items-center mb-3">
+                    <Label className="text-gray-300 text-sm font-medium">Volume</Label>
+                    <span className="text-sm text-green-400 font-semibold bg-gray-800 px-2 py-1 rounded">{Math.round(modalFormData.voiceParams.volume[0] * 100)}%</span>
                   </div>
                   <Slider
                     value={modalFormData.voiceParams.volume}
@@ -787,7 +786,7 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-green-500"
+                    className="w-full"
                   />
                 </div>
               </div>
@@ -796,50 +795,50 @@ export const VoiceStudioModule = () => {
             {/* Output Settings Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Output Settings</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <Label className="text-gray-300">Audio Format</Label>
+                  <Label className="text-gray-300 text-sm font-medium">Audio Format</Label>
                   <Select value={modalFormData.outputSettings.audioFormat} onValueChange={(value) => updateModalOutputSettings('audioFormat', value)}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="mp3">MP3 (Compressed)</SelectItem>
-                      <SelectItem value="wav">WAV (Uncompressed)</SelectItem>
-                      <SelectItem value="ogg">OGG (Web Optimized)</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="mp3" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">MP3 (Compressed)</SelectItem>
+                      <SelectItem value="wav" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">WAV (Uncompressed)</SelectItem>
+                      <SelectItem value="ogg" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">OGG (Web Optimized)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-gray-300">Sample Rate</Label>
+                  <Label className="text-gray-300 text-sm font-medium">Sample Rate</Label>
                   <Select value={modalFormData.outputSettings.sampleRate} onValueChange={(value) => updateModalOutputSettings('sampleRate', value)}>
-                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2 focus:border-purple-500 focus:ring-purple-500">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-900 border-gray-700">
-                      <SelectItem value="22050">22.05 kHz (Standard)</SelectItem>
-                      <SelectItem value="44100">44.1 kHz (High)</SelectItem>
-                      <SelectItem value="48000">48 kHz (Professional)</SelectItem>
+                    <SelectContent className="bg-gray-900 border-gray-700 text-white">
+                      <SelectItem value="22050" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">22.05 kHz (Standard)</SelectItem>
+                      <SelectItem value="44100" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">44.1 kHz (High)</SelectItem>
+                      <SelectItem value="48000" className="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white">48 kHz (Professional)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
             </div>
           </div>
-          <DialogFooter className="space-x-2">
+          <DialogFooter className="space-x-3 pt-6 border-t border-gray-700">
             <Button
               variant="outline"
               onClick={handleCancelCreate}
-              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+              className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
             >
               Cancel
             </Button>
             <Button
               onClick={handleCreateVoice}
               disabled={!modalFormData.name.trim()}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white"
             >
-              Save
+              {isCloning ? 'Clone Voice' : 'Create Voice'}
             </Button>
           </DialogFooter>
         </DialogContent>
