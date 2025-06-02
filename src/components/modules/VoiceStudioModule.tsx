@@ -441,11 +441,13 @@ export const VoiceStudioModule = () => {
               <CardTitle className="text-white">Emotion Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <label className="text-sm font-medium text-gray-300">Calm</label>
-                    <span className="text-sm text-purple-400 font-semibold bg-gray-900 px-2 py-1 rounded">{emotionSettings.calm[0].toFixed(1)}</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {emotionSettings.calm[0].toFixed(1)}
+                    </span>
                   </div>
                   <Slider
                     value={emotionSettings.calm}
@@ -458,9 +460,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <label className="text-sm font-medium text-gray-300">Happy</label>
-                    <span className="text-sm text-green-400 font-semibold bg-gray-900 px-2 py-1 rounded">{emotionSettings.happy[0].toFixed(1)}</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {emotionSettings.happy[0].toFixed(1)}
+                    </span>
                   </div>
                   <Slider
                     value={emotionSettings.happy}
@@ -473,9 +477,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <label className="text-sm font-medium text-gray-300">Urgency</label>
-                    <span className="text-sm text-red-400 font-semibold bg-gray-900 px-2 py-1 rounded">{emotionSettings.urgency[0].toFixed(1)}</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {emotionSettings.urgency[0].toFixed(1)}
+                    </span>
                   </div>
                   <Slider
                     value={emotionSettings.urgency}
@@ -497,11 +503,13 @@ export const VoiceStudioModule = () => {
               <CardTitle className="text-white">Voice Parameters</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <label className="text-sm font-medium text-gray-300">Pitch</label>
-                    <span className="text-sm text-purple-400 font-semibold bg-gray-900 px-2 py-1 rounded">{voiceSettings.pitch[0].toFixed(1)}x</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {voiceSettings.pitch[0].toFixed(1)}x
+                    </span>
                   </div>
                   <Slider
                     value={voiceSettings.pitch}
@@ -514,9 +522,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <label className="text-sm font-medium text-gray-300">Rate</label>
-                    <span className="text-sm text-blue-400 font-semibold bg-gray-900 px-2 py-1 rounded">{voiceSettings.rate[0].toFixed(1)}x</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {voiceSettings.rate[0].toFixed(1)}x
+                    </span>
                   </div>
                   <Slider
                     value={voiceSettings.rate}
@@ -529,9 +539,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <label className="text-sm font-medium text-gray-300">Volume</label>
-                    <span className="text-sm text-green-400 font-semibold bg-gray-900 px-2 py-1 rounded">{Math.round(voiceSettings.volume[0] * 100)}%</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {Math.round(voiceSettings.volume[0] * 100)}%
+                    </span>
                   </div>
                   <Slider
                     value={voiceSettings.volume}
@@ -697,11 +709,13 @@ export const VoiceStudioModule = () => {
             {/* Emotion Settings Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Emotion Settings</h3>
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <Label className="text-gray-300 text-sm font-medium">Calm</Label>
-                    <span className="text-sm text-purple-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.emotions.calm[0].toFixed(1)}</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {modalFormData.emotions.calm[0].toFixed(1)}
+                    </span>
                   </div>
                   <Slider
                     value={modalFormData.emotions.calm}
@@ -713,9 +727,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <Label className="text-gray-300 text-sm font-medium">Happy</Label>
-                    <span className="text-sm text-green-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.emotions.happy[0].toFixed(1)}</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {modalFormData.emotions.happy[0].toFixed(1)}
+                    </span>
                   </div>
                   <Slider
                     value={modalFormData.emotions.happy}
@@ -727,9 +743,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <Label className="text-gray-300 text-sm font-medium">Urgency</Label>
-                    <span className="text-sm text-red-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.emotions.urgency[0].toFixed(1)}</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-red-500 to-red-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {modalFormData.emotions.urgency[0].toFixed(1)}
+                    </span>
                   </div>
                   <Slider
                     value={modalFormData.emotions.urgency}
@@ -746,11 +764,13 @@ export const VoiceStudioModule = () => {
             {/* Voice Parameters Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Voice Parameters</h3>
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <Label className="text-gray-300 text-sm font-medium">Pitch</Label>
-                    <span className="text-sm text-purple-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.voiceParams.pitch[0].toFixed(1)}x</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-purple-500 to-purple-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {modalFormData.voiceParams.pitch[0].toFixed(1)}x
+                    </span>
                   </div>
                   <Slider
                     value={modalFormData.voiceParams.pitch}
@@ -762,9 +782,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <Label className="text-gray-300 text-sm font-medium">Rate</Label>
-                    <span className="text-sm text-blue-400 font-semibold bg-gray-800 px-2 py-1 rounded">{modalFormData.voiceParams.rate[0].toFixed(1)}x</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {modalFormData.voiceParams.rate[0].toFixed(1)}x
+                    </span>
                   </div>
                   <Slider
                     value={modalFormData.voiceParams.rate}
@@ -776,9 +798,11 @@ export const VoiceStudioModule = () => {
                   />
                 </div>
                 <div>
-                  <div className="flex justify-between items-center mb-3">
+                  <div className="flex justify-between items-center mb-4">
                     <Label className="text-gray-300 text-sm font-medium">Volume</Label>
-                    <span className="text-sm text-green-400 font-semibold bg-gray-800 px-2 py-1 rounded">{Math.round(modalFormData.voiceParams.volume[0] * 100)}%</span>
+                    <span className="text-sm font-semibold bg-gradient-to-r from-green-500 to-green-600 text-white px-3 py-1 rounded-full shadow-sm">
+                      {Math.round(modalFormData.voiceParams.volume[0] * 100)}%
+                    </span>
                   </div>
                   <Slider
                     value={modalFormData.voiceParams.volume}
