@@ -1,5 +1,4 @@
-
-import { Phone, MessageCircle, Mail, Widget, Plus, ExternalLink } from 'lucide-react';
+import { Phone, MessageCircle, Mail, Globe, Plus, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -79,7 +78,7 @@ const channels = [
     id: 'widget',
     name: 'Website Widget',
     description: 'Embed chat widget on websites',
-    icon: Widget,
+    icon: Globe,
     color: 'text-purple-400',
     bgColor: 'bg-purple-400/10',
     accounts: widgetAccounts,
