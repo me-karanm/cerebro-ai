@@ -1,27 +1,27 @@
 
 import { useState, useCallback } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export interface AgentWizardData {
   // Step 1: Agent Basics
   name: string;
   description?: string;
   initialMessage: string;
-  systemPrompt: string;
   llmModel: string;
   temperature: number;
   selectedVoice: string;
-  voicePitch?: number;
-  voiceSpeed?: number;
 
   // Step 2: Knowledge & Functions
   useRAG: boolean;
   knowledgeFiles: File[];
   knowledgeUrls: string[];
   knowledgeText: string;
-  customFunctionCode: string;
-  functions: any[];
-  memoryLength: number;
-  enableLongTermMemory: boolean;
+  functions: Array<{
+    id: string;
+    enabled: boolean;
+    name: string;
+    code?: string;
+  }>;
 
   // Step 3: Communication Channels
   connections: {
@@ -41,14 +41,6 @@ export interface AgentWizardData {
       enabled: boolean;
       selectedAccountId: string;
     };
-    telegram?: {
-      enabled: boolean;
-      selectedBotId: string;
-    };
-    wechat?: {
-      enabled: boolean;
-      selectedAccountId: string;
-    };
   };
 
   // Additional fields
@@ -61,20 +53,14 @@ const initialData: AgentWizardData = {
   name: '',
   description: '',
   initialMessage: '',
-  systemPrompt: '',
   llmModel: 'gpt-4',
   temperature: 0.7,
-  selectedVoice: 'alloy',
-  voicePitch: 0,
-  voiceSpeed: 1,
+  selectedVoice: '',
   useRAG: false,
   knowledgeFiles: [],
   knowledgeUrls: [],
   knowledgeText: '',
-  customFunctionCode: '',
   functions: [],
-  memoryLength: 10,
-  enableLongTermMemory: false,
   connections: {
     call: {
       enabled: false,
@@ -92,20 +78,13 @@ const initialData: AgentWizardData = {
       enabled: false,
       selectedAccountId: '',
     },
-    telegram: {
-      enabled: false,
-      selectedBotId: '',
-    },
-    wechat: {
-      enabled: false,
-      selectedAccountId: '',
-    },
   },
   status: 'draft',
 };
 
 export const useAgentWizard = () => {
   const [agentData, setAgentData] = useState<AgentWizardData>(initialData);
+  const { toast } = useToast();
 
   const updateAgentData = (updates: Partial<AgentWizardData>) => {
     setAgentData(prev => ({
@@ -124,35 +103,93 @@ export const useAgentWizard = () => {
   }, []);
 
   const validateStep = async (stepIndex: number): Promise<boolean> => {
+    const errors: string[] = [];
+
     switch (stepIndex) {
       case 0: // Agent Basics
-        return !!(agentData.name && agentData.initialMessage && agentData.systemPrompt);
+        if (!agentData.name.trim()) {
+          errors.push('Agent name is required');
+        }
+        if (!agentData.selectedVoice) {
+          errors.push('Voice selection is required');
+        }
+        if (!agentData.llmModel) {
+          errors.push('LLM model selection is required');
+        }
+        break;
       case 1: // Knowledge & Functions
-        return true; // Optional fields
+        // Optional validations - no required fields
+        break;
       case 2: // Communication Channels
-        return true; // All optional
+        const hasEnabledChannel = Object.values(agentData.connections).some(conn => conn.enabled);
+        if (!hasEnabledChannel) {
+          errors.push('At least one communication channel must be enabled');
+        }
+        break;
       default:
         return false;
     }
+
+    if (errors.length > 0) {
+      toast({
+        title: "Validation Error",
+        description: errors.join(', '),
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
   };
 
   const saveDraft = async () => {
-    // Simulate API call to save draft
-    console.log('Saving draft...', agentData);
-    return new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Simulate API call to save draft
+      console.log('Saving draft...', agentData);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Draft Saved",
+        description: "Your agent has been saved as a draft.",
+      });
+    } catch (error) {
+      toast({
+        title: "Save Failed",
+        description: "Failed to save draft. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const createAgent = async (isEditing: boolean = false): Promise<boolean> => {
     try {
+      // Final validation
+      const isValid = await validateStep(0) && await validateStep(1) && await validateStep(2);
+      if (!isValid) {
+        return false;
+      }
+
       // Simulate API call to create or update agent
       console.log(isEditing ? 'Updating agent...' : 'Creating agent...', {
         ...agentData,
         status: 'active',
         [isEditing ? 'updatedAt' : 'createdAt']: new Date().toISOString(),
       });
-      return new Promise(resolve => setTimeout(() => resolve(true), 2000));
+      
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: isEditing ? "Agent Updated" : "Agent Created",
+        description: `${agentData.name} has been ${isEditing ? 'updated' : 'created'} successfully.`,
+      });
+      
+      return true;
     } catch (error) {
-      console.error(`Failed to ${isEditing ? 'update' : 'create'} agent:`, error);
+      toast({
+        title: "Error",
+        description: `Failed to ${isEditing ? 'update' : 'create'} agent. Please try again.`,
+        variant: "destructive",
+      });
       return false;
     }
   };

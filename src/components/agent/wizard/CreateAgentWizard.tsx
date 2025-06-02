@@ -18,19 +18,20 @@ const steps = [
 
 // Mock function to load agent data for editing
 const loadAgentData = (agentId: string) => {
-  // In a real app, this would fetch data from an API
   console.log('Loading agent data for editing:', agentId);
   return {
     name: 'SalesBot Pro',
     description: 'Professional sales assistant for lead qualification',
     initialMessage: 'Hello! I\'m here to help you with your sales inquiries.',
-    systemPrompt: 'You are a professional sales assistant...',
     llmModel: 'gpt-4',
     temperature: 0.7,
+    selectedVoice: 'voice-1',
     useRAG: true,
-    selectedVoice: 'alloy',
-    voicePitch: 0,
-    voiceSpeed: 1,
+    knowledgeText: 'Product information and sales guidelines...',
+    functions: [
+      { id: 'end-call', enabled: true, name: 'End Sales Call' },
+      { id: 'calendar-integration', enabled: true, name: 'Schedule Follow-up' }
+    ],
     connections: {
       call: { enabled: true, selectedPhoneNumberId: 'phone1' },
       whatsapp: { enabled: true, selectedAccountId: 'wa1' },
@@ -55,7 +56,6 @@ export const CreateAgentWizard = () => {
 
   useEffect(() => {
     if (isEditing && editAgentId) {
-      // Load existing agent data for editing
       const existingData = loadAgentData(editAgentId);
       loadExistingAgent(existingData);
     }
@@ -86,8 +86,16 @@ export const CreateAgentWizard = () => {
   };
 
   const canProceed = () => {
-    // Add validation logic here
-    return true;
+    switch (currentStep) {
+      case 0:
+        return agentData.name.trim() && agentData.selectedVoice && agentData.llmModel;
+      case 1:
+        return true; // Optional fields
+      case 2:
+        return Object.values(agentData.connections).some(conn => conn.enabled);
+      default:
+        return false;
+    }
   };
 
   return (

@@ -4,6 +4,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Play } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   Select,
   SelectContent,
@@ -25,22 +28,26 @@ const llmModels = [
   { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
 ];
 
-const voices = [
-  { value: 'alloy', label: 'Alloy' },
-  { value: 'echo', label: 'Echo' },
-  { value: 'fable', label: 'Fable' },
-  { value: 'onyx', label: 'Onyx' },
-  { value: 'nova', label: 'Nova' },
-  { value: 'shimmer', label: 'Shimmer' },
+// Mock voices from Voice Studio
+const voiceStudioVoices = [
+  { value: 'voice-1', label: 'Sarah (Professional)' },
+  { value: 'voice-2', label: 'Michael (Friendly)' },
+  { value: 'voice-3', label: 'Emma (Energetic)' },
+  { value: 'voice-4', label: 'David (Calm)' },
 ];
 
 export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
+  const handleVoicePreview = (voiceValue: string) => {
+    // Mock function for voice preview
+    console.log('Playing preview for voice:', voiceValue);
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-white mb-4">Agent Basics</h2>
         <p className="text-gray-400 mb-6">
-          Configure the fundamental settings for your AI agent. All required fields must be completed to proceed.
+          Configure the fundamental settings for your AI agent.
         </p>
       </div>
 
@@ -63,9 +70,6 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                   placeholder="Enter a unique and descriptive name"
                   className="bg-gray-700 border-gray-600 text-white mt-1"
                 />
-                <p className="text-xs text-gray-400 mt-1">
-                  This will help you identify the agent in your dashboard and reports.
-                </p>
               </div>
 
               <div>
@@ -80,15 +84,21 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                   className="bg-gray-700 border-gray-600 text-white mt-1"
                   rows={2}
                 />
-                <p className="text-xs text-gray-400 mt-1">
-                  A short description that explains what this agent does.
-                </p>
               </div>
 
               <div>
-                <Label htmlFor="initial-message" className="text-white">
-                  Initial Message <span className="text-red-400">*</span>
-                </Label>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Label htmlFor="initial-message" className="text-white cursor-help">
+                        Initial Message
+                      </Label>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-gray-700 border-gray-600 text-white">
+                      <p>The first message users will see when they start interacting with your agent</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Textarea
                   id="initial-message"
                   value={data.initialMessage}
@@ -97,32 +107,12 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                   className="bg-gray-700 border-gray-600 text-white mt-1"
                   rows={3}
                 />
-                <p className="text-xs text-gray-400 mt-1">
-                  This is the first message users will see when they start interacting with your agent.
-                </p>
-              </div>
-
-              <div>
-                <Label htmlFor="system-prompt" className="text-white">
-                  System Prompt <span className="text-red-400">*</span>
-                </Label>
-                <Textarea
-                  id="system-prompt"
-                  value={data.systemPrompt}
-                  onChange={(e) => onUpdate({ systemPrompt: e.target.value })}
-                  placeholder="You are a helpful AI assistant that..."
-                  className="bg-gray-700 border-gray-600 text-white mt-1"
-                  rows={4}
-                />
-                <p className="text-xs text-gray-400 mt-1">
-                  Define your agent's personality, role, and behavioral guidelines.
-                </p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Right Column - Voice Settings & Model Configuration */}
+        {/* Right Column - Voice & Model Configuration */}
         <div className="space-y-6">
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
@@ -131,64 +121,36 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
             <CardContent className="space-y-4">
               <div>
                 <Label className="text-white">Voice Selection</Label>
-                <Select
-                  value={data.selectedVoice}
-                  onValueChange={(value) => onUpdate({ selectedVoice: value })}
-                >
-                  <SelectTrigger className="bg-gray-700 border-gray-600 text-white mt-1">
-                    <SelectValue placeholder="Select a voice" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-gray-700 border-gray-600">
-                    {voices.map((voice) => (
-                      <SelectItem key={voice.value} value={voice.value} className="text-white">
-                        {voice.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex space-x-2 mt-1">
+                  <Select
+                    value={data.selectedVoice}
+                    onValueChange={(value) => onUpdate({ selectedVoice: value })}
+                  >
+                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white flex-1">
+                      <SelectValue placeholder="Select a voice" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-700 border-gray-600">
+                      {voiceStudioVoices.map((voice) => (
+                        <SelectItem key={voice.value} value={voice.value} className="text-white">
+                          {voice.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleVoicePreview(data.selectedVoice)}
+                    disabled={!data.selectedVoice}
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                  >
+                    <Play className="w-4 h-4" />
+                  </Button>
+                </div>
                 <p className="text-xs text-gray-400 mt-1">
-                  Choose the voice that will represent your agent.
+                  Choose from voices created in Voice Studio
                 </p>
-              </div>
-
-              <div>
-                <Label className="text-white">
-                  Voice Pitch: {data.voicePitch || 0}
-                </Label>
-                <div className="mt-2">
-                  <Slider
-                    value={[data.voicePitch || 0]}
-                    onValueChange={([value]) => onUpdate({ voicePitch: value })}
-                    max={2}
-                    min={-2}
-                    step={0.1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>Lower (-2)</span>
-                    <span>Higher (+2)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-white">
-                  Voice Speed: {data.voiceSpeed || 1}x
-                </Label>
-                <div className="mt-2">
-                  <Slider
-                    value={[data.voiceSpeed || 1]}
-                    onValueChange={([value]) => onUpdate({ voiceSpeed: value })}
-                    max={2}
-                    min={0.5}
-                    step={0.1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>Slower (0.5x)</span>
-                    <span>Faster (2x)</span>
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
@@ -215,9 +177,6 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-gray-400 mt-1">
-                  Choose the Large Language Model powering your agent.
-                </p>
               </div>
 
               <div>
@@ -234,12 +193,12 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                     className="w-full"
                   />
                   <div className="flex justify-between text-xs text-gray-400 mt-1">
-                    <span>Conservative (0)</span>
-                    <span>Creative (1)</span>
+                    <span>Conservative (0.0)</span>
+                    <span>Creative (1.0)</span>
                   </div>
                 </div>
                 <p className="text-xs text-gray-400 mt-1">
-                  Adjust the creativity level of your agent's responses.
+                  Adjust the creativity level of your agent's responses
                 </p>
               </div>
             </CardContent>
