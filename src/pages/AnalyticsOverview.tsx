@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -207,16 +206,18 @@ const AnalyticsOverview = () => {
                 <CardTitle className="text-white">Sentiment Analysis</CardTitle>
                 <CardDescription className="text-gray-400">Customer sentiment distribution</CardDescription>
               </CardHeader>
-              <CardContent>
-                <ChartContainer config={sentimentConfig} className="h-[300px]">
-                  <PieChart>
+              <CardContent className="flex items-center justify-center">
+                <ChartContainer config={sentimentConfig} className="w-full h-[300px] flex items-center justify-center">
+                  <PieChart width={280} height={280}>
                     <Pie
                       data={sentimentData}
                       cx="50%"
                       cy="50%"
-                      outerRadius={80}
+                      outerRadius={90}
+                      innerRadius={0}
                       dataKey="value"
                       label={({ name, value }) => `${name}: ${value}%`}
+                      labelLine={false}
                     >
                       {sentimentData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
