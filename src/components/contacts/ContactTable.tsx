@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Trash2, ExternalLink } from 'lucide-react';
+import { Eye, Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Contact } from '@/types/contact';
 
@@ -29,36 +29,12 @@ interface ContactTableProps {
 export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, onContactClick }: ContactTableProps) => {
   const navigate = useNavigate();
 
-  const getAgentName = (agentId?: string) => {
-    if (!agentId) return 'Unassigned';
-    const agent = agents.find(a => a.id === agentId);
-    return agent ? agent.name : 'Unassigned';
-  };
-
-  const getCampaignName = (campaignId?: string) => {
-    if (!campaignId) return 'No Campaign';
-    const campaign = campaigns.find(c => c.id === campaignId);
-    return campaign ? campaign.name : 'No Campaign';
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
+      day: '2-digit',
       month: 'short',
-      day: 'numeric'
+      year: 'numeric'
     });
-  };
-
-  const handleAgentClick = (agentId?: string) => {
-    if (agentId && agentId !== 'unassigned') {
-      navigate(`/agents/${agentId}`);
-    }
-  };
-
-  const handleCampaignClick = (campaignId?: string) => {
-    if (campaignId) {
-      navigate(`/campaigns/${campaignId}`);
-    }
   };
 
   if (contacts.length === 0) {
@@ -83,8 +59,6 @@ export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, on
             <TableHead className="text-gray-300 font-semibold">Name</TableHead>
             <TableHead className="text-gray-300 font-semibold">Email</TableHead>
             <TableHead className="text-gray-300 font-semibold">Phone</TableHead>
-            <TableHead className="text-gray-300 font-semibold">Assigned Agent</TableHead>
-            <TableHead className="text-gray-300 font-semibold">Campaign</TableHead>
             <TableHead className="text-gray-300 font-semibold">Tags</TableHead>
             <TableHead className="text-gray-300 font-semibold">Created On</TableHead>
             <TableHead className="text-gray-300 font-semibold">Actions</TableHead>
@@ -92,43 +66,16 @@ export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, on
         </TableHeader>
         <TableBody>
           {contacts.map((contact) => (
-            <TableRow key={contact.id} className="border-gray-700 hover:bg-gray-700/50">
-              <TableCell>
-                <button
-                  onClick={() => onContactClick(contact)}
-                  className="text-blue-400 hover:text-blue-300 font-medium transition-colors text-left"
-                >
-                  {contact.name}
-                </button>
+            <TableRow 
+              key={contact.id} 
+              className="border-gray-700 hover:bg-gray-700/50 cursor-pointer"
+              onClick={() => onContactClick(contact)}
+            >
+              <TableCell className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                {contact.name}
               </TableCell>
               <TableCell className="text-gray-300">{contact.email}</TableCell>
               <TableCell className="text-gray-300">{contact.phone}</TableCell>
-              <TableCell>
-                {contact.assignedAgent ? (
-                  <button
-                    onClick={() => handleAgentClick(contact.assignedAgent)}
-                    className="text-blue-400 hover:text-blue-300 flex items-center space-x-1 transition-colors"
-                  >
-                    <span>{getAgentName(contact.assignedAgent)}</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </button>
-                ) : (
-                  <span className="text-gray-500">Unassigned</span>
-                )}
-              </TableCell>
-              <TableCell>
-                {contact.campaign ? (
-                  <button
-                    onClick={() => handleCampaignClick(contact.campaign)}
-                    className="text-purple-400 hover:text-purple-300 flex items-center space-x-1 transition-colors"
-                  >
-                    <span>{getCampaignName(contact.campaign)}</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </button>
-                ) : (
-                  <span className="text-gray-500">No Campaign</span>
-                )}
-              </TableCell>
               <TableCell>
                 <div className="flex flex-wrap gap-1">
                   {contact.tags.map((tag) => (
@@ -144,7 +91,15 @@ export const ContactTable = ({ contacts, agents, campaigns, onEdit, onDelete, on
               </TableCell>
               <TableCell className="text-gray-300">{formatDate(contact.createdOn)}</TableCell>
               <TableCell>
-                <div className="flex space-x-2">
+                <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onContactClick(contact)}
+                    className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
