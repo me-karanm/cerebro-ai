@@ -6,7 +6,7 @@ export interface AgentWizardData {
   // Step 1: Agent Basics
   name: string;
   description?: string;
-  initialMessage: string;
+  initialMessage?: string;
   llmModel: string;
   temperature: number;
   selectedVoice: string;
@@ -86,13 +86,13 @@ export const useAgentWizard = () => {
   const [agentData, setAgentData] = useState<AgentWizardData>(initialData);
   const { toast } = useToast();
 
-  const updateAgentData = (updates: Partial<AgentWizardData>) => {
+  const updateAgentData = useCallback((updates: Partial<AgentWizardData>) => {
     setAgentData(prev => ({
       ...prev,
       ...updates,
       updatedAt: new Date().toISOString(),
     }));
-  };
+  }, []);
 
   const loadExistingAgent = useCallback((existingData: Partial<AgentWizardData>) => {
     setAgentData(prev => ({
@@ -102,11 +102,11 @@ export const useAgentWizard = () => {
     }));
   }, []);
 
-  const validateStep = async (stepIndex: number): Promise<boolean> => {
+  const validateStep = useCallback(async (stepIndex: number): Promise<boolean> => {
     const errors: string[] = [];
 
     switch (stepIndex) {
-      case 0: // Agent Basics
+      case 0: // Agent Basics - Required: name, voice, model
         if (!agentData.name.trim()) {
           errors.push('Agent name is required');
         }
@@ -117,10 +117,9 @@ export const useAgentWizard = () => {
           errors.push('LLM model selection is required');
         }
         break;
-      case 1: // Knowledge & Functions
-        // Optional validations - no required fields
+      case 1: // Knowledge & Functions - No required fields
         break;
-      case 2: // Communication Channels
+      case 2: // Communication Channels - At least one channel required
         const hasEnabledChannel = Object.values(agentData.connections).some(conn => conn.enabled);
         if (!hasEnabledChannel) {
           errors.push('At least one communication channel must be enabled');
@@ -140,11 +139,10 @@ export const useAgentWizard = () => {
     }
 
     return true;
-  };
+  }, [agentData, toast]);
 
-  const saveDraft = async () => {
+  const saveDraft = useCallback(async () => {
     try {
-      // Simulate API call to save draft
       console.log('Saving draft...', agentData);
       await new Promise(resolve => setTimeout(resolve, 1000));
       
@@ -159,17 +157,18 @@ export const useAgentWizard = () => {
         variant: "destructive",
       });
     }
-  };
+  }, [agentData, toast]);
 
-  const createAgent = async (isEditing: boolean = false): Promise<boolean> => {
+  const createAgent = useCallback(async (isEditing: boolean = false): Promise<boolean> => {
     try {
-      // Final validation
-      const isValid = await validateStep(0) && await validateStep(1) && await validateStep(2);
-      if (!isValid) {
-        return false;
+      // Final validation - all steps must pass
+      for (let step = 0; step <= 2; step++) {
+        const isValid = await validateStep(step);
+        if (!isValid) {
+          return false;
+        }
       }
 
-      // Simulate API call to create or update agent
       console.log(isEditing ? 'Updating agent...' : 'Creating agent...', {
         ...agentData,
         status: 'active',
@@ -192,7 +191,7 @@ export const useAgentWizard = () => {
       });
       return false;
     }
-  };
+  }, [agentData, validateStep, toast]);
 
   return {
     agentData,

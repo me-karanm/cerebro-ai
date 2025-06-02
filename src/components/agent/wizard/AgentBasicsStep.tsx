@@ -28,18 +28,20 @@ const llmModels = [
   { value: 'claude-3-haiku', label: 'Claude 3 Haiku' },
 ];
 
-// Mock voices from Voice Studio
+// Voice Studio voices with gender and accent info
 const voiceStudioVoices = [
-  { value: 'voice-1', label: 'Sarah (Professional)' },
-  { value: 'voice-2', label: 'Michael (Friendly)' },
-  { value: 'voice-3', label: 'Emma (Energetic)' },
-  { value: 'voice-4', label: 'David (Calm)' },
+  { value: 'voice-1', label: 'Sarah', gender: 'Female', accent: 'American' },
+  { value: 'voice-2', label: 'Michael', gender: 'Male', accent: 'British' },
+  { value: 'voice-3', label: 'Emma', gender: 'Female', accent: 'Australian' },
+  { value: 'voice-4', label: 'David', gender: 'Male', accent: 'American' },
+  { value: 'voice-5', label: 'Isabella', gender: 'Female', accent: 'Spanish' },
+  { value: 'voice-6', label: 'James', gender: 'Male', accent: 'Canadian' },
 ];
 
 export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
   const handleVoicePreview = (voiceValue: string) => {
-    // Mock function for voice preview
     console.log('Playing preview for voice:', voiceValue);
+    // Mock function for voice preview
   };
 
   return (
@@ -74,7 +76,7 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
 
               <div>
                 <Label htmlFor="agent-description" className="text-white">
-                  Description
+                  Description <span className="text-gray-400">(Optional)</span>
                 </Label>
                 <Textarea
                   id="agent-description"
@@ -91,17 +93,17 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Label htmlFor="initial-message" className="text-white cursor-help">
-                        Initial Message
+                        Initial Message <span className="text-gray-400">(Optional)</span>
                       </Label>
                     </TooltipTrigger>
                     <TooltipContent className="bg-gray-700 border-gray-600 text-white">
-                      <p>The first message users will see when they start interacting with your agent</p>
+                      <p>This is the first message the user will see</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <Textarea
                   id="initial-message"
-                  value={data.initialMessage}
+                  value={data.initialMessage || ''}
                   onChange={(e) => onUpdate({ initialMessage: e.target.value })}
                   placeholder="Hello! I'm here to help you today. How can I assist you?"
                   className="bg-gray-700 border-gray-600 text-white mt-1"
@@ -120,7 +122,9 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-white">Voice Selection</Label>
+                <Label className="text-white">
+                  Voice Selection <span className="text-red-400">*</span>
+                </Label>
                 <div className="flex space-x-2 mt-1">
                   <Select
                     value={data.selectedVoice}
@@ -132,7 +136,12 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                     <SelectContent className="bg-gray-700 border-gray-600">
                       {voiceStudioVoices.map((voice) => (
                         <SelectItem key={voice.value} value={voice.value} className="text-white">
-                          {voice.label}
+                          <div className="flex flex-col">
+                            <span className="font-medium">{voice.label}</span>
+                            <span className="text-xs text-gray-400">
+                              {voice.gender} • {voice.accent}
+                            </span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -161,7 +170,9 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label className="text-white">LLM Model Selection</Label>
+                <Label className="text-white">
+                  LLM Model Selection <span className="text-red-400">*</span>
+                </Label>
                 <Select
                   value={data.llmModel}
                   onValueChange={(value) => onUpdate({ llmModel: value })}
@@ -198,7 +209,7 @@ export const AgentBasicsStep = ({ data, onUpdate }: AgentBasicsStepProps) => {
                   </div>
                 </div>
                 <p className="text-xs text-gray-400 mt-1">
-                  Adjust the creativity level of your agent's responses
+                  Range 0 to 1 - Adjust the creativity level of responses
                 </p>
               </div>
             </CardContent>

@@ -61,6 +61,16 @@ export const CreateAgentWizard = () => {
     }
   }, [isEditing, editAgentId, loadExistingAgent]);
 
+  // Auto-save draft on step change
+  useEffect(() => {
+    if (currentStep > 0 && agentData.name) {
+      const timer = setTimeout(() => {
+        saveDraft();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, agentData.name, saveDraft]);
+
   const handleNext = async () => {
     const isValid = await validateStep(currentStep);
     if (isValid && currentStep < steps.length - 1) {
@@ -87,11 +97,11 @@ export const CreateAgentWizard = () => {
 
   const canProceed = () => {
     switch (currentStep) {
-      case 0:
+      case 0: // Agent Basics - Required: name, voice, model
         return agentData.name.trim() && agentData.selectedVoice && agentData.llmModel;
-      case 1:
-        return true; // Optional fields
-      case 2:
+      case 1: // Knowledge & Functions - No required fields
+        return true;
+      case 2: // Communication Channels - At least one enabled
         return Object.values(agentData.connections).some(conn => conn.enabled);
       default:
         return false;
@@ -121,7 +131,7 @@ export const CreateAgentWizard = () => {
         </div>
       </div>
 
-      {/* Progress Bar */}
+      {/* Fixed Progress Indicator */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-2">
           {steps.map((step, index) => (
