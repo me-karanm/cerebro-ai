@@ -1,12 +1,16 @@
+
 import { useState } from 'react';
-import { Play, Pause, Download, Settings } from 'lucide-react';
+import { Play, Pause, Download, Settings, Plus } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-const sampleVoices = [
+const initialVoices = [
   { id: '1', name: 'Aria', gender: 'Female', accent: 'American', quality: 'Premium', category: 'Professional' },
   { id: '2', name: 'Marcus', gender: 'Male', accent: 'British', quality: 'Premium', category: 'Professional' },
   { id: '3', name: 'Sofia', gender: 'Female', accent: 'Spanish', quality: 'Standard', category: 'Conversational' },
@@ -14,8 +18,11 @@ const sampleVoices = [
 ];
 
 export const VoiceStudioModule = () => {
+  const [sampleVoices, setSampleVoices] = useState(initialVoices);
   const [selectedVoice, setSelectedVoice] = useState(sampleVoices[0]);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newVoiceName, setNewVoiceName] = useState('');
   const [emotionSettings, setEmotionSettings] = useState({
     calm: [0.7],
     happy: [0.5],
@@ -26,6 +33,27 @@ export const VoiceStudioModule = () => {
     rate: [1.0],
     volume: [0.8],
   });
+
+  const handleCreateVoice = () => {
+    if (newVoiceName.trim()) {
+      const newVoice = {
+        id: (sampleVoices.length + 1).toString(),
+        name: newVoiceName.trim(),
+        gender: 'Custom',
+        accent: 'Neutral',
+        quality: 'Premium',
+        category: 'Custom'
+      };
+      setSampleVoices([...sampleVoices, newVoice]);
+      setNewVoiceName('');
+      setShowCreateModal(false);
+    }
+  };
+
+  const handleCancelCreate = () => {
+    setNewVoiceName('');
+    setShowCreateModal(false);
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -40,7 +68,17 @@ export const VoiceStudioModule = () => {
         <div className="lg:col-span-1">
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Voice Library</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-white">Voice Library</CardTitle>
+                <Button
+                  onClick={() => setShowCreateModal(true)}
+                  size="sm"
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Voice
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {sampleVoices.map((voice) => (
@@ -259,6 +297,45 @@ export const VoiceStudioModule = () => {
           </Card>
         </div>
       </div>
+
+      {/* Create Voice Modal */}
+      <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
+        <DialogContent className="bg-gray-900 border-gray-700 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-white">Create Voice</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="voice-name" className="text-gray-300">
+                Agent Name
+              </Label>
+              <Input
+                id="voice-name"
+                value={newVoiceName}
+                onChange={(e) => setNewVoiceName(e.target.value)}
+                placeholder="Enter voice profile name"
+                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 mt-2"
+              />
+            </div>
+          </div>
+          <DialogFooter className="space-x-2">
+            <Button
+              variant="outline"
+              onClick={handleCancelCreate}
+              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCreateVoice}
+              disabled={!newVoiceName.trim()}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
