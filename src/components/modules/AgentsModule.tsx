@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Agent } from '@/types/agent';
@@ -5,6 +6,7 @@ import { AgentsHeader } from '@/components/agents/AgentsHeader';
 import { AgentsStats } from '@/components/agents/AgentsStats';
 import { AgentsFilters } from '@/components/agents/AgentsFilters';
 import { AgentsGrid } from '@/components/agents/AgentsGrid';
+import { AgentDetail } from '@/components/agent/AgentDetail';
 import { DuplicateAgentModal } from '@/components/agent/DuplicateAgentModal';
 
 const sampleAgents: Agent[] = [
@@ -167,22 +169,33 @@ export const AgentsModule = () => {
     setSelectedAgent(agentId);
   };
 
+  const handleBackToAgents = () => {
+    setSelectedAgent(null);
+  };
+
+  const handleDuplicateAgent = (agent: Agent, newName: string) => {
+    const newAgent: Agent = {
+      ...agent,
+      id: Date.now().toString(),
+      name: newName,
+      status: 'draft',
+      conversations: 0,
+      creditsUsed: 0,
+      totalMinutes: 0,
+      averageCallDuration: 0,
+      monthlyCost: 0,
+      phoneNumber: undefined,
+      lastUpdated: 'Just now'
+    };
+    setAgents(prev => [...prev, newAgent]);
+    
+    // Navigate to edit the duplicated agent
+    navigate(`/agents/create?edit=${newAgent.id}`);
+  };
+
   const handleDuplicateConfirm = (newName: string) => {
     if (agentToDuplicate) {
-      const newAgent: Agent = {
-        ...agentToDuplicate,
-        id: Date.now().toString(),
-        name: newName,
-        status: 'draft',
-        conversations: 0,
-        creditsUsed: 0,
-        totalMinutes: 0,
-        averageCallDuration: 0,
-        monthlyCost: 0,
-        phoneNumber: undefined,
-        lastUpdated: 'Just now'
-      };
-      setAgents(prev => [...prev, newAgent]);
+      handleDuplicateAgent(agentToDuplicate, newName);
     }
     setDuplicateModalOpen(false);
     setAgentToDuplicate(null);
@@ -190,9 +203,15 @@ export const AgentsModule = () => {
 
   if (selectedAgent) {
     const agent = agents.find(a => a.id === selectedAgent);
-    return (
-      <div>Agent Detail View</div>
-    );
+    if (agent) {
+      return (
+        <AgentDetail 
+          agent={agent} 
+          onBack={handleBackToAgents}
+          onDuplicate={handleDuplicateAgent}
+        />
+      );
+    }
   }
 
   return (

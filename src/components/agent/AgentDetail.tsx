@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp, Plus, Upload } from 'lucide-react';
+import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp, Plus, Upload, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,6 +12,7 @@ import { ContactModal } from '@/components/contacts/ContactModal';
 import { ContactTable } from '@/components/contacts/ContactTable';
 import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
 import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
+import { DuplicateAgentModal } from '@/components/agent/DuplicateAgentModal';
 import { useContactsStore } from '@/store/contactsStore';
 import { useContacts } from '@/contexts/ContactsContext';
 import { Contact } from '@/types/contact';
@@ -33,6 +34,7 @@ interface Agent {
 interface AgentDetailProps {
   agent: Agent;
   onBack: () => void;
+  onDuplicate?: (agent: Agent, newName: string) => void;
 }
 
 // Mock data for campaigns
@@ -81,13 +83,14 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
+export const AgentDetail = ({ agent, onBack, onDuplicate }: AgentDetailProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | undefined>(undefined);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
@@ -108,7 +111,22 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   };
 
   const handleEditConfiguration = () => {
-    navigate(`/agents/${agent.id}`);
+    navigate(`/agents/${agent.id}?edit=true`);
+  };
+
+  const handleDuplicateAgent = () => {
+    setIsDuplicateModalOpen(true);
+  };
+
+  const handleDuplicateConfirm = (newName: string) => {
+    if (onDuplicate) {
+      onDuplicate(agent, newName);
+    }
+    setIsDuplicateModalOpen(false);
+    toast({
+      title: "Agent Duplicated",
+      description: `${newName} has been created successfully.`,
+    });
   };
 
   const handleArchiveAgent = () => {
@@ -254,7 +272,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         <div className="flex items-center space-x-4">
           <Button variant="ghost" onClick={onBack} className="text-gray-400 hover:text-white">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            Back to Agents
           </Button>
           <div>
             <h1 className="text-3xl font-bold text-white">{agent.name}</h1>
@@ -289,7 +307,15 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
             onClick={handleEditConfiguration}
           >
             <Edit className="w-4 h-4 mr-2" />
-            Edit Configuration
+            Edit Agent
+          </Button>
+          <Button 
+            variant="outline" 
+            className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            onClick={handleDuplicateAgent}
+          >
+            <Copy className="w-4 h-4 mr-2" />
+            Duplicate Agent
           </Button>
           <Button 
             variant="outline" 
@@ -302,19 +328,8 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         </div>
       </div>
 
-      {/* Metrics Cards */}
+      {/* Stats Section - 6 Cards in One Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-        <Card className="bg-gray-800 border-gray-700">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Total Conversations</p>
-                <p className="text-2xl font-bold text-white">{agent.conversations.toLocaleString()}</p>
-              </div>
-              <MessageCircle className="w-8 h-8 text-blue-400" />
-            </div>
-          </CardContent>
-        </Card>
         <Card className="bg-gray-800 border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -330,10 +345,10 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Success Rate</p>
-                <p className="text-2xl font-bold text-green-400">{agent.successRate}%</p>
+                <p className="text-sm text-gray-400">Total Conversations</p>
+                <p className="text-2xl font-bold text-white">{agent.conversations.toLocaleString()}</p>
               </div>
-              <div className="text-green-400">📈</div>
+              <MessageCircle className="w-8 h-8 text-blue-400" />
             </div>
           </CardContent>
         </Card>
@@ -342,9 +357,20 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Avg Duration</p>
-                <p className="text-2xl font-bold text-cyan-400">4m 12s</p>
+                <p className="text-2xl font-bold text-cyan-400">4:12</p>
               </div>
               <Clock className="w-8 h-8 text-cyan-400" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="bg-gray-800 border-gray-700">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Total Cost</p>
+                <p className="text-2xl font-bold text-green-400">$299</p>
+              </div>
+              <CreditCard className="w-8 h-8 text-green-400" />
             </div>
           </CardContent>
         </Card>
@@ -372,91 +398,126 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         </Card>
       </div>
 
+      {/* Agent Information Card */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white">Agent Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <p className="text-sm text-gray-400 mb-1">Description</p>
+            <p className="text-white">{agent.description}</p>
+          </div>
+          
+          <div className="flex items-center justify-between p-4 bg-gray-900 rounded-lg">
+            <div>
+              <p className="text-sm text-gray-400 mb-1">Associated Phone Number</p>
+              <div className="flex items-center space-x-3">
+                <Phone className="w-4 h-4 text-cyan-400" />
+                <span className="text-white">+1(555)123-4567</span>
+              </div>
+            </div>
+            <Button 
+              size="sm" 
+              variant="ghost" 
+              className="text-gray-400 hover:text-cyan-400"
+              onClick={handleEditPhoneNumber}
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <div className="p-4 bg-gray-900 rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm text-gray-400">Active Integrations</p>
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="text-gray-400 hover:text-cyan-400"
+                onClick={handleEditIntegrations}
+              >
+                <Edit className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">Email</span>
+                <Badge variant="default" className="bg-green-600 text-xs">Active</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">WhatsApp</span>
+                <Badge variant="default" className="bg-green-600 text-xs">Active</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">Voice Calls</span>
+                <Badge variant="default" className="bg-green-600 text-xs">Active</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-300">Telegram</span>
+                <Badge variant="secondary" className="text-xs">Inactive</Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-gray-800 border-gray-700">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
           <TabsTrigger value="contacts">Contacts</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          
-          <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">Agent Information</CardTitle>
+                <CardTitle className="text-white">Performance Metrics</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <p className="text-sm text-gray-400 mb-1">Description</p>
-                  <p className="text-white">{agent.description}</p>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Success Rate</span>
+                  <span className="text-green-400 font-bold">{agent.successRate}%</span>
                 </div>
+                <Progress value={agent.successRate} className="h-2" />
                 
-                <div className="flex items-center justify-between p-4 bg-gray-900 rounded-lg">
-                  <div>
-                    <p className="text-sm text-gray-400 mb-1">Associated Phone Number</p>
-                    <div className="flex items-center space-x-3">
-                      <Phone className="w-4 h-4 text-cyan-400" />
-                      <span className="text-white">+1(555)123-4567</span>
-                    </div>
-                  </div>
-                  <Button 
-                    size="sm" 
-                    variant="ghost" 
-                    className="text-gray-400 hover:text-cyan-400"
-                    onClick={handleEditPhoneNumber}
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Button>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Uptime</span>
+                  <span className="text-green-400 font-bold">99.2%</span>
                 </div>
-
-                <div className="p-4 bg-gray-900 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-sm text-gray-400">Active Integrations</p>
-                    <Button 
-                      size="sm" 
-                      variant="ghost" 
-                      className="text-gray-400 hover:text-cyan-400"
-                      onClick={handleEditIntegrations}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">Email</span>
-                      <Badge variant="default" className="bg-green-600">Active</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">WhatsApp</span>
-                      <Badge variant="default" className="bg-green-600">Active</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">Voice Calls</span>
-                      <Badge variant="default" className="bg-green-600">Active</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300">Telegram</span>
-                      <Badge variant="secondary">Inactive</Badge>
-                    </div>
-                  </div>
+                <Progress value={99.2} className="h-2" />
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-300">Satisfaction</span>
+                  <span className="text-blue-400 font-bold">4.8/5</span>
                 </div>
+                <Progress value={96} className="h-2" />
+              </CardContent>
+            </Card>
 
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-700">
-                  <div>
-                    <p className="text-sm text-gray-400">Total Sessions</p>
-                    <p className="text-xl font-bold text-white">{agent.conversations}</p>
+            <Card className="bg-gray-800 border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-white">Agent Persona</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-300">{agent.persona}</p>
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-gray-400">Language:</span>
+                    <Badge variant="secondary" className="text-xs">{agent.language}</Badge>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Credits Used</p>
-                    <p className="text-xl font-bold text-orange-400">600</p>
-                    <Progress value={6} className="mt-2" />
+                  <div className="flex items-center space-x-2">
+                    <span className="text-gray-400">Voice:</span>
+                    <Badge variant="secondary" className="text-xs">{agent.voice}</Badge>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
 
+        <TabsContent value="campaigns" className="space-y-6">
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center justify-between">
@@ -473,10 +534,8 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                   <TableRow className="border-gray-700">
                     <TableHead className="text-gray-400">Campaign Name</TableHead>
                     <TableHead className="text-gray-400">Status</TableHead>
-                    <TableHead className="text-gray-400">Sessions</TableHead>
-                    <TableHead className="text-gray-400">Start Date</TableHead>
-                    <TableHead className="text-gray-400">End Date</TableHead>
-                    <TableHead className="text-gray-400">Phone Number</TableHead>
+                    <TableHead className="text-gray-400">Total Sessions</TableHead>
+                    <TableHead className="text-gray-400">Phone Number Assigned</TableHead>
                     <TableHead className="text-gray-400">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -492,13 +551,11 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                         </button>
                       </TableCell>
                       <TableCell>
-                        <Badge className={`${getStatusColor(campaign.status)} text-white`}>
+                        <Badge className={`${getStatusColor(campaign.status)} text-white text-xs`}>
                           {campaign.status}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-gray-300">{campaign.sessions}</TableCell>
-                      <TableCell className="text-gray-300">{campaign.startDate}</TableCell>
-                      <TableCell className="text-gray-300">{campaign.endDate}</TableCell>
                       <TableCell className="text-cyan-400">{campaign.phoneNumber}</TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
@@ -569,7 +626,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         </TabsContent>
       </Tabs>
 
-      {/* Contact Modals */}
+      {/* Modals */}
       <ContactModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
@@ -589,6 +646,13 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         isOpen={isDetailModalOpen}
         onClose={() => setIsDetailModalOpen(false)}
         contact={selectedContact}
+      />
+
+      <DuplicateAgentModal
+        isOpen={isDuplicateModalOpen}
+        onClose={() => setIsDuplicateModalOpen(false)}
+        onConfirm={handleDuplicateConfirm}
+        originalAgent={agent}
       />
     </div>
   );
