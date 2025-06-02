@@ -48,7 +48,7 @@ const Index = () => {
       <main className={`flex-1 h-full transition-all duration-300 overflow-hidden ${
         sidebarCollapsed ? 'ml-16' : 'ml-64'
       }`}>
-        <div className="w-full h-full overflow-hidden">
+        <div className="w-full h-full overflow-y-auto overflow-x-hidden">
           {renderActiveModule()}
         </div>
       </main>

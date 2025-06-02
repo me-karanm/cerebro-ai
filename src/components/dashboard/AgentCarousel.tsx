@@ -111,8 +111,8 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
   const currentAgent = agents[currentIndex];
 
   return (
-    <Card className="bg-gray-900 border-gray-800 animate-fade-in w-full">
-      <CardContent className="p-4 sm:p-6 w-full box-border">
+    <Card className="bg-gray-900 border-gray-800 animate-fade-in w-full overflow-hidden">
+      <CardContent className="p-4 sm:p-6 w-full">
         <div className="flex items-center justify-between mb-4 w-full">
           <div className="flex items-center space-x-3 min-w-0 flex-1">
             <h3 className="text-white font-semibold text-lg truncate">Agent Setup</h3>
@@ -123,8 +123,8 @@ export const AgentCarousel = ({ onCreateAgent }: AgentCarouselProps) => {
           </div>
         </div>
 
-        <div className="relative w-full">
-          <div className="overflow-hidden w-full">
+        <div className="relative w-full overflow-hidden">
+          <div className="w-full">
             <AgentNavigationControls 
               onPrevious={prevAgent} 
               onNext={nextAgent} 
