@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { DashboardModule } from '@/components/modules/DashboardModule';
@@ -8,6 +7,7 @@ import { VoiceStudioModule } from '@/components/modules/VoiceStudioModule';
 import { AnalyticsModule } from '@/components/modules/AnalyticsModule';
 import { ChannelsModule } from '@/components/modules/ChannelsModule';
 import { SecurityModule } from '@/components/modules/SecurityModule';
+import { DeploymentModule } from '@/components/modules/DeploymentModule';
 import { SettingsModule } from '@/components/modules/SettingsModule';
 
 const Index = () => {
@@ -30,6 +30,8 @@ const Index = () => {
         return <ChannelsModule />;
       case 'security':
         return <SecurityModule />;
+      case 'deployment':
+        return <DeploymentModule />;
       case 'settings':
         return <SettingsModule />;
       default:
@@ -38,19 +40,15 @@ const Index = () => {
   };
 
   return (
-    <div className="flex w-screen h-screen bg-gray-950 text-white overflow-x-clip">
+    <div className="min-h-screen bg-gray-950 text-white flex w-full">
       <Sidebar
         activeModule={activeModule}
         setActiveModule={setActiveModule}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
-      <main className={`flex-1 flex flex-col h-full min-w-0 transition-all duration-300 ${
-        sidebarCollapsed ? 'ml-16' : 'ml-64'
-      }`}>
-        <div className="w-full h-full overflow-y-auto overflow-x-clip">
-          {renderActiveModule()}
-        </div>
+      <main className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        {renderActiveModule()}
       </main>
     </div>
   );

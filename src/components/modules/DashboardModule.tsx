@@ -73,81 +73,74 @@ export const DashboardModule = () => {
   };
 
   return (
-    <div className="w-full h-full bg-gray-950 overflow-auto">
-      <div className="w-full p-4 space-y-6">
-        {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Dashboard</h1>
-            <p className="text-gray-400 text-xs sm:text-sm mt-1">Overview of your AI agent platform</p>
-          </div>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 text-xs sm:text-sm min-w-0 w-full sm:w-auto">
-                  <span className="truncate">{selectedBilling}</span>
-                  <ChevronDown className="ml-2 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700 w-48 sm:w-auto">
-                {billingFilters.map((filter) => (
-                  <DropdownMenuItem
-                    key={filter}
-                    onClick={() => setSelectedBilling(filter)}
-                    className="text-white hover:bg-gray-700 text-xs sm:text-sm"
-                  >
-                    {filter}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-end">
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 cursor-pointer hover:text-cyan-400 transition-colors flex-shrink-0" />
-              <Avatar className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0">
-                <AvatarImage src="" />
-                <AvatarFallback className="bg-gray-700 text-white text-xs sm:text-sm">AD</AvatarFallback>
-              </Avatar>
-              <span className="text-xs sm:text-sm text-gray-400 truncate min-w-0 hidden sm:inline">admin@cerebroai.com</span>
-            </div>
-          </div>
+    <div className="p-6 space-y-6 min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <p className="text-gray-400 text-sm mt-1">Overview of your AI agent platform</p>
         </div>
-
-        {/* Summary Stats Bar */}
-        <div className="w-full">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 w-full">
-            {statsData.map((stat, index) => (
-              <StatsCard
-                key={index}
-                icon={stat.icon}
-                label={stat.label}
-                value={stat.value}
-                tooltip={stat.tooltip}
-              />
-            ))}
+        <div className="flex items-center space-x-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 text-sm">
+                {selectedBilling}
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+              {billingFilters.map((filter) => (
+                <DropdownMenuItem
+                  key={filter}
+                  onClick={() => setSelectedBilling(filter)}
+                  className="text-white hover:bg-gray-700 text-sm"
+                >
+                  {filter}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <div className="flex items-center space-x-3">
+            <Bell className="w-5 h-5 text-gray-400 cursor-pointer hover:text-cyan-400 transition-colors" />
+            <Avatar className="w-8 h-8">
+              <AvatarImage src="" />
+              <AvatarFallback className="bg-gray-700 text-white text-sm">AD</AvatarFallback>
+            </Avatar>
+            <span className="text-sm text-gray-400">admin@cerebroai.com</span>
           </div>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="w-full">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
-            {/* Agent Carousel */}
-            <div className="w-full">
-              <AgentCarousel onCreateAgent={handleCreateAgent} />
-            </div>
-
-            {/* Phone Numbers & Sentiment */}
-            <div className="space-y-6 w-full">
-              <PhoneNumbersSection />
-              <SentimentAnalysis />
-            </div>
-          </div>
-        </div>
-
-        {/* Conversation Quality */}
-        <div className="w-full">
-          <ConversationQuality />
         </div>
       </div>
+
+      {/* Summary Stats Bar */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {statsData.map((stat, index) => (
+          <StatsCard
+            key={index}
+            icon={stat.icon}
+            label={stat.label}
+            value={stat.value}
+            tooltip={stat.tooltip}
+          />
+        ))}
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Agent Carousel */}
+        <AgentCarousel onCreateAgent={handleCreateAgent} />
+
+        {/* Phone Numbers & Sentiment */}
+        <div className="space-y-6">
+          <PhoneNumbersSection />
+          <SentimentAnalysis />
+        </div>
+      </div>
+
+      {/* Conversation Quality */}
+      <ConversationQuality />
+
+      {/* Bottom spacing */}
+      <div className="h-8"></div>
     </div>
   );
 };

@@ -21,30 +21,30 @@ export const ChannelsModule = () => {
   };
 
   return (
-    <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6 w-full max-w-full overflow-x-hidden">
+    <div className="p-6 space-y-6">
       <ChannelsHeader />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-gray-800 border-gray-700">
           <TabsTrigger 
             value="phone-numbers" 
-            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-xs sm:text-sm"
+            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
           >
             Phone Numbers
           </TabsTrigger>
           <TabsTrigger 
             value="other-integrations"
-            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-xs sm:text-sm"
+            className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
           >
             Other Integrations
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="phone-numbers" className="mt-4 lg:mt-6">
+        <TabsContent value="phone-numbers" className="mt-6">
           <PhoneNumbersTab onPurchaseNumber={handlePurchaseNumber} />
         </TabsContent>
 
-        <TabsContent value="other-integrations" className="mt-4 lg:mt-6">
+        <TabsContent value="other-integrations" className="mt-6">
           <OtherIntegrationsTab onAddIntegration={handleAddIntegration} />
         </TabsContent>
       </Tabs>

@@ -1,16 +1,13 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Upload, Download } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
 import { ContactModal } from '@/components/contacts/ContactModal';
 import { ContactTable } from '@/components/contacts/ContactTable';
 import { ImportCSVModal } from '@/components/contacts/ImportCSVModal';
 import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
-import { ContactsFilters } from '@/components/contacts/ContactsFilters';
 import { useContactsStore } from '@/store/contactsStore';
 import { useContacts } from '@/contexts/ContactsContext';
 import { Contact } from '@/types/contact';
@@ -52,7 +49,6 @@ const Contacts = () => {
   const { exportContacts, importContactsFromCSV } = useContacts();
   const contacts = contactsStore.getFilteredContacts();
   const stats = contactsStore.getContactStats();
-  const filters = contactsStore.filters;
 
   const handleModuleChange = (module: string) => {
     switch (module) {
@@ -77,10 +73,6 @@ const Contacts = () => {
     }
   };
 
-  const handleFiltersChange = (newFilters: Partial<typeof filters>) => {
-    contactsStore.setFilters(newFilters);
-  };
-
   const handleAddContact = () => {
     setEditingContact(undefined);
     setIsModalOpen(true);
@@ -97,93 +89,36 @@ const Contacts = () => {
   };
 
   const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
-    try {
-      if ('id' in contactData && contactData.id) {
-        // Editing existing contact
-        contactsStore.updateContact(contactData.id, contactData as Contact);
-        toast({
-          title: "Contact Updated",
-          description: "Contact has been updated successfully.",
-        });
-      } else {
-        // Adding new contact
-        contactsStore.addContact(contactData as Omit<Contact, 'id' | 'createdOn'>);
-        toast({
-          title: "Contact Added",
-          description: "New contact has been added successfully.",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to save contact. Please try again.",
-        variant: "destructive",
-      });
+    if ('id' in contactData && contactData.id) {
+      // Editing existing contact
+      contactsStore.updateContact(contactData.id, contactData as Contact);
+    } else {
+      // Adding new contact
+      contactsStore.addContact(contactData as Omit<Contact, 'id' | 'createdOn'>);
     }
   };
 
   const handleDeleteContact = (contactId: string) => {
     if (confirm('Are you sure you want to delete this contact?')) {
-      try {
-        contactsStore.deleteContact(contactId);
-        toast({
-          title: "Contact Deleted",
-          description: "Contact has been deleted successfully.",
-        });
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to delete contact. Please try again.",
-          variant: "destructive",
-        });
-      }
+      contactsStore.deleteContact(contactId);
     }
   };
 
   const handleImportContacts = async (file: File) => {
-    try {
-      const result = await importContactsFromCSV(file);
-      if (result.success) {
-        toast({
-          title: "Import Successful",
-          description: `Successfully imported ${result.imported} contacts.`,
-        });
-        if (result.errors.length > 0) {
-          console.warn('Import warnings:', result.errors);
-        }
-      } else {
-        toast({
-          title: "Import Failed",
-          description: "Failed to import contacts. Please check your file format.",
-          variant: "destructive",
-        });
-        console.error('Import failed:', result.errors);
+    const result = await importContactsFromCSV(file);
+    if (result.success) {
+      console.log(`Successfully imported ${result.imported} contacts`);
+      if (result.errors.length > 0) {
+        console.warn('Import warnings:', result.errors);
       }
-      return result;
-    } catch (error) {
-      toast({
-        title: "Import Error",
-        description: "An unexpected error occurred during import.",
-        variant: "destructive",
-      });
-      return { success: false, imported: 0, errors: ['Unexpected error'] };
+    } else {
+      console.error('Import failed:', result.errors);
     }
+    return result;
   };
 
   const handleExportContacts = () => {
-    try {
-      exportContacts('csv');
-      toast({
-        title: "Export Started",
-        description: "Your contacts are being exported.",
-      });
-    } catch (error) {
-      toast({
-        title: "Export Failed",
-        description: "Failed to export contacts. Please try again.",
-        variant: "destructive",
-      });
-    }
+    exportContacts('csv');
   };
 
   return (
@@ -276,14 +211,6 @@ const Contacts = () => {
               </CardContent>
             </Card>
           </div>
-
-          {/* Search and Filters */}
-          <ContactsFilters
-            filters={filters}
-            onFiltersChange={handleFiltersChange}
-            agents={mockAgents}
-            campaigns={mockCampaigns}
-          />
 
           {/* Contacts Table */}
           <Card className="bg-gray-800 border-gray-700">
