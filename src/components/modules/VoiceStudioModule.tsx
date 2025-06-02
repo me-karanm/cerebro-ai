@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { Play, Pause, Download, Settings, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Play, Pause, Download, Settings, Plus, Save, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,7 @@ import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 const initialVoices = [
   { id: '1', name: 'Aria', gender: 'Female', accent: 'American', quality: 'Premium', category: 'Professional' },
@@ -18,41 +19,130 @@ const initialVoices = [
 ];
 
 export const VoiceStudioModule = () => {
+  const { toast } = useToast();
   const [sampleVoices, setSampleVoices] = useState(initialVoices);
   const [selectedVoice, setSelectedVoice] = useState(sampleVoices[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newVoiceName, setNewVoiceName] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  
+  // Editable voice settings
+  const [editableVoice, setEditableVoice] = useState(selectedVoice);
+  const [originalVoice, setOriginalVoice] = useState(selectedVoice);
+  
   const [emotionSettings, setEmotionSettings] = useState({
     calm: [0.7],
     happy: [0.5],
     urgency: [0.3],
   });
+  const [originalEmotionSettings, setOriginalEmotionSettings] = useState({
+    calm: [0.7],
+    happy: [0.5],
+    urgency: [0.3],
+  });
+  
   const [voiceSettings, setVoiceSettings] = useState({
     pitch: [1.0],
     rate: [1.0],
     volume: [0.8],
   });
+  const [originalVoiceSettings, setOriginalVoiceSettings] = useState({
+    pitch: [1.0],
+    rate: [1.0],
+    volume: [0.8],
+  });
+
+  // Update editable voice when selected voice changes
+  useEffect(() => {
+    setEditableVoice(selectedVoice);
+    setOriginalVoice(selectedVoice);
+    setIsEditing(false);
+  }, [selectedVoice]);
+
+  const handleVoiceSelect = (voice) => {
+    if (isEditing) {
+      // Ask user if they want to discard changes
+      const shouldDiscard = window.confirm('You have unsaved changes. Do you want to discard them?');
+      if (!shouldDiscard) return;
+    }
+    setSelectedVoice(voice);
+  };
+
+  const handleEditableVoiceChange = (field, value) => {
+    setEditableVoice(prev => ({ ...prev, [field]: value }));
+    setIsEditing(true);
+  };
+
+  const handleSaveVoice = () => {
+    // Validation
+    if (!editableVoice.name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Voice name cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Update the voice in the list
+    const updatedVoices = sampleVoices.map(voice => 
+      voice.id === editableVoice.id ? editableVoice : voice
+    );
+    setSampleVoices(updatedVoices);
+    setSelectedVoice(editableVoice);
+    setOriginalVoice(editableVoice);
+    setOriginalEmotionSettings(emotionSettings);
+    setOriginalVoiceSettings(voiceSettings);
+    setIsEditing(false);
+
+    toast({
+      title: "Success",
+      description: "Voice profile updated successfully.",
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditableVoice(originalVoice);
+    setEmotionSettings(originalEmotionSettings);
+    setVoiceSettings(originalVoiceSettings);
+    setIsEditing(false);
+  };
 
   const handleCreateVoice = () => {
     if (newVoiceName.trim()) {
       const newVoice = {
         id: (sampleVoices.length + 1).toString(),
         name: newVoiceName.trim(),
-        gender: 'Custom',
-        accent: 'Neutral',
+        gender: 'Male',
+        accent: 'American',
         quality: 'Premium',
         category: 'Custom'
       };
       setSampleVoices([...sampleVoices, newVoice]);
       setNewVoiceName('');
       setShowCreateModal(false);
+      
+      toast({
+        title: "Success",
+        description: "New voice profile created successfully.",
+      });
     }
   };
 
   const handleCancelCreate = () => {
     setNewVoiceName('');
     setShowCreateModal(false);
+  };
+
+  const handleEmotionChange = (emotion, value) => {
+    setEmotionSettings(prev => ({ ...prev, [emotion]: value }));
+    setIsEditing(true);
+  };
+
+  const handleVoiceParameterChange = (parameter, value) => {
+    setVoiceSettings(prev => ({ ...prev, [parameter]: value }));
+    setIsEditing(true);
   };
 
   return (
@@ -84,7 +174,7 @@ export const VoiceStudioModule = () => {
               {sampleVoices.map((voice) => (
                 <div
                   key={voice.id}
-                  onClick={() => setSelectedVoice(voice)}
+                  onClick={() => handleVoiceSelect(voice)}
                   className={`p-3 rounded-lg cursor-pointer transition-all ${
                     selectedVoice.id === voice.id
                       ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30'
@@ -109,13 +199,11 @@ export const VoiceStudioModule = () => {
 
         {/* Voice Configuration */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Selected Voice Info */}
+          {/* Voice Details */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white">
-                  {selectedVoice.name} - {selectedVoice.category}
-                </CardTitle>
+                <CardTitle className="text-white">Voice Details</CardTitle>
                 <div className="flex space-x-2">
                   <Button
                     size="sm"
@@ -130,26 +218,74 @@ export const VoiceStudioModule = () => {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 text-sm">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-gray-400">Gender:</span>
-                  <span className="text-white ml-2">{selectedVoice.gender}</span>
+                  <Label className="text-sm font-medium text-gray-300">Voice Name</Label>
+                  <Input
+                    value={editableVoice.name}
+                    onChange={(e) => handleEditableVoiceChange('name', e.target.value)}
+                    className="bg-gray-900 border-gray-700 text-white mt-1"
+                  />
                 </div>
                 <div>
-                  <span className="text-gray-400">Accent:</span>
-                  <span className="text-white ml-2">{selectedVoice.accent}</span>
+                  <Label className="text-sm font-medium text-gray-300">Gender</Label>
+                  <Select value={editableVoice.gender} onValueChange={(value) => handleEditableVoiceChange('gender', value)}>
+                    <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <span className="text-gray-400">Quality:</span>
-                  <Badge variant={selectedVoice.quality === 'Premium' ? 'default' : 'secondary'} className="ml-2">
-                    {selectedVoice.quality}
-                  </Badge>
+                  <Label className="text-sm font-medium text-gray-300">Accent</Label>
+                  <Select value={editableVoice.accent} onValueChange={(value) => handleEditableVoiceChange('accent', value)}>
+                    <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="American">American</SelectItem>
+                      <SelectItem value="British">British</SelectItem>
+                      <SelectItem value="Australian">Australian</SelectItem>
+                      <SelectItem value="Canadian">Canadian</SelectItem>
+                      <SelectItem value="Spanish">Spanish</SelectItem>
+                      <SelectItem value="French">French</SelectItem>
+                      <SelectItem value="German">German</SelectItem>
+                      <SelectItem value="Neutral">Neutral</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <span className="text-gray-400">Category:</span>
-                  <span className="text-purple-400 ml-2">{selectedVoice.category}</span>
+                  <Label className="text-sm font-medium text-gray-300">Quality</Label>
+                  <Select value={editableVoice.quality} onValueChange={(value) => handleEditableVoiceChange('quality', value)}>
+                    <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="Standard">Standard</SelectItem>
+                      <SelectItem value="Premium">Premium</SelectItem>
+                      <SelectItem value="Custom">Custom</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-gray-300">Category</Label>
+                <Select value={editableVoice.category} onValueChange={(value) => handleEditableVoiceChange('category', value)}>
+                  <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border-gray-700">
+                    <SelectItem value="Professional">Professional</SelectItem>
+                    <SelectItem value="Conversational">Conversational</SelectItem>
+                    <SelectItem value="Technical">Technical</SelectItem>
+                    <SelectItem value="Custom">Custom</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
@@ -168,7 +304,7 @@ export const VoiceStudioModule = () => {
                   </div>
                   <Slider
                     value={emotionSettings.calm}
-                    onValueChange={(value) => setEmotionSettings({...emotionSettings, calm: value})}
+                    onValueChange={(value) => handleEmotionChange('calm', value)}
                     max={1}
                     min={0}
                     step={0.1}
@@ -182,7 +318,7 @@ export const VoiceStudioModule = () => {
                   </div>
                   <Slider
                     value={emotionSettings.happy}
-                    onValueChange={(value) => setEmotionSettings({...emotionSettings, happy: value})}
+                    onValueChange={(value) => handleEmotionChange('happy', value)}
                     max={1}
                     min={0}
                     step={0.1}
@@ -196,7 +332,7 @@ export const VoiceStudioModule = () => {
                   </div>
                   <Slider
                     value={emotionSettings.urgency}
-                    onValueChange={(value) => setEmotionSettings({...emotionSettings, urgency: value})}
+                    onValueChange={(value) => handleEmotionChange('urgency', value)}
                     max={1}
                     min={0}
                     step={0.1}
@@ -221,7 +357,7 @@ export const VoiceStudioModule = () => {
                   </div>
                   <Slider
                     value={voiceSettings.pitch}
-                    onValueChange={(value) => setVoiceSettings({...voiceSettings, pitch: value})}
+                    onValueChange={(value) => handleVoiceParameterChange('pitch', value)}
                     max={2}
                     min={0.5}
                     step={0.1}
@@ -235,7 +371,7 @@ export const VoiceStudioModule = () => {
                   </div>
                   <Slider
                     value={voiceSettings.rate}
-                    onValueChange={(value) => setVoiceSettings({...voiceSettings, rate: value})}
+                    onValueChange={(value) => handleVoiceParameterChange('rate', value)}
                     max={2}
                     min={0.5}
                     step={0.1}
@@ -249,7 +385,7 @@ export const VoiceStudioModule = () => {
                   </div>
                   <Slider
                     value={voiceSettings.volume}
-                    onValueChange={(value) => setVoiceSettings({...voiceSettings, volume: value})}
+                    onValueChange={(value) => handleVoiceParameterChange('volume', value)}
                     max={1}
                     min={0}
                     step={0.1}
@@ -260,7 +396,32 @@ export const VoiceStudioModule = () => {
             </CardContent>
           </Card>
 
-          {/* Audio Format */}
+          {/* Save/Cancel Buttons */}
+          {isEditing && (
+            <Card className="bg-gray-800 border-gray-700">
+              <CardContent className="pt-6">
+                <div className="flex justify-end space-x-3">
+                  <Button
+                    onClick={handleCancelEdit}
+                    variant="outline"
+                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSaveVoice}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Output Settings */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
               <CardTitle className="text-white">Output Settings</CardTitle>
