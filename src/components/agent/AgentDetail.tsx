@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp, Plus, Upload, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,7 @@ import { DuplicateAgentModal } from '@/components/agent/DuplicateAgentModal';
 import { useContactsStore } from '@/store/contactsStore';
 import { useContacts } from '@/contexts/ContactsContext';
 import { Contact } from '@/types/contact';
+import { Agent } from '@/types/agent';
 import { useToast } from '@/hooks/use-toast';
 
 interface Agent {
