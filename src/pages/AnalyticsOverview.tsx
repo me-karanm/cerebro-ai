@@ -100,6 +100,29 @@ const AnalyticsOverview = () => {
     { type: 'error', message: 'Tech Support Bot success rate below threshold', time: '6 hours ago' }
   ];
 
+  // Chart configurations
+  const conversationVolumeConfig = {
+    conversations: {
+      label: "Conversations",
+      color: "#8B5CF6",
+    },
+  };
+
+  const sentimentConfig = {
+    positive: {
+      label: "Positive",
+      color: "#10B981",
+    },
+    neutral: {
+      label: "Neutral", 
+      color: "#6B7280",
+    },
+    negative: {
+      label: "Negative",
+      color: "#EF4444",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-gray-950 text-white flex w-full">
       <Sidebar
@@ -166,7 +189,7 @@ const AnalyticsOverview = () => {
                 <CardDescription className="text-gray-400">Monthly conversation volume across all agents</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ChartContainer config={conversationVolumeConfig} className="h-[300px]">
                   <LineChart data={conversationVolumeData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="date" stroke="#9CA3AF" />
@@ -174,7 +197,7 @@ const AnalyticsOverview = () => {
                     <ChartTooltip content={<ChartTooltipContent />} />
                     <Line type="monotone" dataKey="conversations" stroke="#8B5CF6" strokeWidth={2} />
                   </LineChart>
-                </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
 
@@ -185,7 +208,7 @@ const AnalyticsOverview = () => {
                 <CardDescription className="text-gray-400">Customer sentiment distribution</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
+                <ChartContainer config={sentimentConfig} className="h-[300px]">
                   <PieChart>
                     <Pie
                       data={sentimentData}
@@ -201,7 +224,7 @@ const AnalyticsOverview = () => {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                   </PieChart>
-                </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
           </div>
