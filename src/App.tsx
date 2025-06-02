@@ -12,6 +12,9 @@ import Integrations from '@/pages/Integrations';
 import Contacts from '@/pages/Contacts';
 import Analytics from '@/pages/Analytics';
 import CreateAgent from '@/pages/CreateAgent';
+import VoiceStudio from '@/pages/VoiceStudio';
+import Security from '@/pages/Security';
+import Settings from '@/pages/Settings';
 import NotFound from '@/pages/NotFound';
 
 function App() {
@@ -29,6 +32,9 @@ function App() {
               <Route path="/channels" element={<Integrations />} />
               <Route path="/contacts" element={<Contacts />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/voice-studio" element={<VoiceStudio />} />
+              <Route path="/security" element={<Security />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Toaster />

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -43,8 +44,20 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
       case 'contacts':
         navigate('/contacts');
         break;
+      case 'voice-studio':
+        navigate('/voice-studio');
+        break;
+      case 'analytics':
+        navigate('/analytics');
+        break;
       case 'channels':
         navigate('/channels');
+        break;
+      case 'security':
+        navigate('/security');
+        break;
+      case 'settings':
+        navigate('/settings');
         break;
       default:
         console.log(`Navigation to ${moduleId} not implemented yet`);
