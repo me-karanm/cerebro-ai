@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Plus, Search, Filter, Bot, Play, Edit, Copy, ChevronLeft, ChevronRight, Users, MessageCircle, DollarSign, CreditCard, Clock, PhoneCall, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -269,7 +270,20 @@ export const AgentsModule = () => {
         </Button>
       </div>
 
-      {/* Search and Filters */}
+      {/* Stats Cards - Responsive grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
+        {statsData.map((stat, index) => (
+          <StatsCard
+            key={index}
+            icon={stat.icon}
+            label={stat.label}
+            value={stat.value}
+            tooltip={stat.tooltip}
+          />
+        ))}
+      </div>
+
+      {/* Search and Filters - moved after stats */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
         <div className="relative flex-1 max-w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -284,19 +298,6 @@ export const AgentsModule = () => {
           <Filter className="w-4 h-4 mr-2" />
           Filter
         </Button>
-      </div>
-
-      {/* Stats Cards - Responsive grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-        {statsData.map((stat, index) => (
-          <StatsCard
-            key={index}
-            icon={stat.icon}
-            label={stat.label}
-            value={stat.value}
-            tooltip={stat.tooltip}
-          />
-        ))}
       </div>
 
       {/* Agents Grid */}
