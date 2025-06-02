@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Users, Upload, Download, Search, Filter, X } from 'lucide-react';
@@ -50,10 +49,10 @@ const Contacts = () => {
   
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterAgent, setFilterAgent] = useState<string>('');
-  const [filterCampaign, setFilterCampaign] = useState<string>('');
-  const [filterSource, setFilterSource] = useState<string>('');
-  const [filterTag, setFilterTag] = useState<string>('');
+  const [filterAgent, setFilterAgent] = useState<string>('all');
+  const [filterCampaign, setFilterCampaign] = useState<string>('all');
+  const [filterSource, setFilterSource] = useState<string>('all');
+  const [filterTag, setFilterTag] = useState<string>('all');
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -70,10 +69,10 @@ const Contacts = () => {
       contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contact.phone.includes(searchTerm);
     
-    const matchesAgent = !filterAgent || contact.assignedAgent === filterAgent;
-    const matchesCampaign = !filterCampaign || contact.campaign === filterCampaign;
-    const matchesSource = !filterSource || contact.source === filterSource;
-    const matchesTag = !filterTag || contact.tags.includes(filterTag);
+    const matchesAgent = filterAgent === 'all' || contact.assignedAgent === filterAgent;
+    const matchesCampaign = filterCampaign === 'all' || contact.campaign === filterCampaign;
+    const matchesSource = filterSource === 'all' || contact.source === filterSource;
+    const matchesTag = filterTag === 'all' || contact.tags.includes(filterTag);
     
     return matchesSearch && matchesAgent && matchesCampaign && matchesSource && matchesTag;
   });
@@ -86,7 +85,12 @@ const Contacts = () => {
   const uniqueSources = [...new Set(allContacts.map(c => c.source))];
   const uniqueTags = [...new Set(allContacts.flatMap(c => c.tags))];
 
-  const activeFiltersCount = [filterAgent, filterCampaign, filterSource, filterTag].filter(Boolean).length;
+  const activeFiltersCount = [
+    filterAgent !== 'all' ? filterAgent : '',
+    filterCampaign !== 'all' ? filterCampaign : '',
+    filterSource !== 'all' ? filterSource : '',
+    filterTag !== 'all' ? filterTag : ''
+  ].filter(Boolean).length;
 
   const handleModuleChange = (module: string) => {
     switch (module) {
@@ -215,10 +219,10 @@ const Contacts = () => {
 
   const clearAllFilters = () => {
     setSearchTerm('');
-    setFilterAgent('');
-    setFilterCampaign('');
-    setFilterSource('');
-    setFilterTag('');
+    setFilterAgent('all');
+    setFilterCampaign('all');
+    setFilterSource('all');
+    setFilterTag('all');
   };
 
   return (
@@ -334,7 +338,7 @@ const Contacts = () => {
                       <SelectValue placeholder="Filter by Agent" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gray-600">
-                      <SelectItem value="">All Agents</SelectItem>
+                      <SelectItem value="all">All Agents</SelectItem>
                       {uniqueAgents.map((agent) => (
                         <SelectItem key={agent} value={agent}>{agent}</SelectItem>
                       ))}
@@ -346,7 +350,7 @@ const Contacts = () => {
                       <SelectValue placeholder="Filter by Campaign" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gray-600">
-                      <SelectItem value="">All Campaigns</SelectItem>
+                      <SelectItem value="all">All Campaigns</SelectItem>
                       {uniqueCampaigns.map((campaign) => (
                         <SelectItem key={campaign} value={campaign}>{campaign}</SelectItem>
                       ))}
@@ -358,7 +362,7 @@ const Contacts = () => {
                       <SelectValue placeholder="Filter by Source" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gray-600">
-                      <SelectItem value="">All Sources</SelectItem>
+                      <SelectItem value="all">All Sources</SelectItem>
                       {uniqueSources.map((source) => (
                         <SelectItem key={source} value={source}>{source}</SelectItem>
                       ))}
@@ -370,7 +374,7 @@ const Contacts = () => {
                       <SelectValue placeholder="Filter by Tag" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gray-600">
-                      <SelectItem value="">All Tags</SelectItem>
+                      <SelectItem value="all">All Tags</SelectItem>
                       {uniqueTags.map((tag) => (
                         <SelectItem key={tag} value={tag}>{tag}</SelectItem>
                       ))}
@@ -388,22 +392,22 @@ const Contacts = () => {
                           Search: {searchTerm}
                         </Badge>
                       )}
-                      {filterAgent && (
+                      {filterAgent !== 'all' && (
                         <Badge variant="secondary" className="bg-blue-600/20 text-blue-300">
                           Agent: {filterAgent}
                         </Badge>
                       )}
-                      {filterCampaign && (
+                      {filterCampaign !== 'all' && (
                         <Badge variant="secondary" className="bg-green-600/20 text-green-300">
                           Campaign: {filterCampaign}
                         </Badge>
                       )}
-                      {filterSource && (
+                      {filterSource !== 'all' && (
                         <Badge variant="secondary" className="bg-orange-600/20 text-orange-300">
                           Source: {filterSource}
                         </Badge>
                       )}
-                      {filterTag && (
+                      {filterTag !== 'all' && (
                         <Badge variant="secondary" className="bg-pink-600/20 text-pink-300">
                           Tag: {filterTag}
                         </Badge>
