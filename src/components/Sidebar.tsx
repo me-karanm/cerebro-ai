@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Rocket, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
+import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,7 +19,6 @@ const modules = [
   { id: 'analytics', label: 'Analytics', icon: BarChart3, description: 'Performance metrics' },
   { id: 'channels', label: 'Channels & Integrations', icon: Zap, description: 'Connect platforms' },
   { id: 'security', label: 'Security', icon: Shield, description: 'Access & compliance' },
-  { id: 'deployment', label: 'Deployment', icon: Rocket, description: 'Deploy to environments' },
   { id: 'settings', label: 'Settings', icon: Settings, description: 'System configuration' },
 ];
 

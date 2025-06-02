@@ -8,7 +8,6 @@ import { VoiceStudioModule } from '@/components/modules/VoiceStudioModule';
 import { AnalyticsModule } from '@/components/modules/AnalyticsModule';
 import { ChannelsModule } from '@/components/modules/ChannelsModule';
 import { SecurityModule } from '@/components/modules/SecurityModule';
-import { DeploymentModule } from '@/components/modules/DeploymentModule';
 import { SettingsModule } from '@/components/modules/SettingsModule';
 
 const Index = () => {
@@ -31,8 +30,6 @@ const Index = () => {
         return <ChannelsModule />;
       case 'security':
         return <SecurityModule />;
-      case 'deployment':
-        return <DeploymentModule />;
       case 'settings':
         return <SettingsModule />;
       default:
