@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Play, Pause, Download, Settings, Plus, Save, X } from 'lucide-react';
+import { Play, Pause, Download, Settings, Plus, Save, X, Copy } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,20 +11,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
-const initialVoices = [
-  { id: '1', name: 'Aria', gender: 'Female', accent: 'American', quality: 'Premium', category: 'Professional' },
-  { id: '2', name: 'Marcus', gender: 'Male', accent: 'British', quality: 'Premium', category: 'Professional' },
-  { id: '3', name: 'Sofia', gender: 'Female', accent: 'Spanish', quality: 'Standard', category: 'Conversational' },
-  { id: '4', name: 'Chen', gender: 'Male', accent: 'Neutral', quality: 'Premium', category: 'Technical' },
+const defaultVoices = [
+  { id: 'default-1', name: 'Aria', gender: 'Female', accent: 'American', quality: 'Premium', category: 'Professional', isDefault: true },
+  { id: 'default-2', name: 'Marcus', gender: 'Male', accent: 'British', quality: 'Premium', category: 'Professional', isDefault: true },
+  { id: 'default-3', name: 'Sofia', gender: 'Female', accent: 'Spanish', quality: 'Standard', category: 'Conversational', isDefault: true },
+  { id: 'default-4', name: 'Chen', gender: 'Male', accent: 'Neutral', quality: 'Premium', category: 'Technical', isDefault: true },
 ];
 
 export const VoiceStudioModule = () => {
   const { toast } = useToast();
-  const [sampleVoices, setSampleVoices] = useState(initialVoices);
-  const [selectedVoice, setSelectedVoice] = useState(sampleVoices[0]);
+  const [sampleVoices, setSampleVoices] = useState(defaultVoices);
+  const [selectedVoice, setSelectedVoice] = useState(defaultVoices[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newVoiceName, setNewVoiceName] = useState('');
+  const [isCloning, setIsCloning] = useState(false);
+  const [cloneSource, setCloneSource] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   
   // Editable voice settings
@@ -53,6 +54,29 @@ export const VoiceStudioModule = () => {
     volume: [0.8],
   });
 
+  // Modal form state
+  const [modalFormData, setModalFormData] = useState({
+    name: '',
+    gender: 'Male',
+    accent: 'American',
+    quality: 'Premium',
+    category: 'Custom',
+    emotions: {
+      calm: [0.7],
+      happy: [0.5],
+      urgency: [0.3],
+    },
+    voiceParams: {
+      pitch: [1.0],
+      rate: [1.0],
+      volume: [0.8],
+    },
+    outputSettings: {
+      audioFormat: 'mp3',
+      sampleRate: '22050',
+    },
+  });
+
   // Update editable voice when selected voice changes
   useEffect(() => {
     setEditableVoice(selectedVoice);
@@ -61,7 +85,7 @@ export const VoiceStudioModule = () => {
   }, [selectedVoice]);
 
   const handleVoiceSelect = (voice) => {
-    if (isEditing) {
+    if (isEditing && !selectedVoice.isDefault) {
       // Ask user if they want to discard changes
       const shouldDiscard = window.confirm('You have unsaved changes. Do you want to discard them?');
       if (!shouldDiscard) return;
@@ -70,79 +94,160 @@ export const VoiceStudioModule = () => {
   };
 
   const handleEditableVoiceChange = (field, value) => {
+    if (selectedVoice.isDefault) return; // Prevent editing default voices
     setEditableVoice(prev => ({ ...prev, [field]: value }));
     setIsEditing(true);
   };
 
-  const handleSaveVoice = () => {
-    // Validation
-    if (!editableVoice.name.trim()) {
-      toast({
-        title: "Validation Error",
-        description: "Voice name cannot be empty.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Update the voice in the list
-    const updatedVoices = sampleVoices.map(voice => 
-      voice.id === editableVoice.id ? editableVoice : voice
-    );
-    setSampleVoices(updatedVoices);
-    setSelectedVoice(editableVoice);
-    setOriginalVoice(editableVoice);
-    setOriginalEmotionSettings(emotionSettings);
-    setOriginalVoiceSettings(voiceSettings);
-    setIsEditing(false);
-
-    toast({
-      title: "Success",
-      description: "Voice profile updated successfully.",
+  const handleCloneVoice = (voice) => {
+    setIsCloning(true);
+    setCloneSource(voice);
+    setModalFormData({
+      name: `${voice.name} Clone`,
+      gender: voice.gender,
+      accent: voice.accent,
+      quality: voice.quality,
+      category: voice.category,
+      emotions: { ...emotionSettings },
+      voiceParams: { ...voiceSettings },
+      outputSettings: {
+        audioFormat: 'mp3',
+        sampleRate: '22050',
+      },
     });
+    setShowCreateModal(true);
+  };
+
+  const handleCreateVoiceClick = () => {
+    setIsCloning(false);
+    setCloneSource(null);
+    setModalFormData({
+      name: '',
+      gender: 'Male',
+      accent: 'American',
+      quality: 'Premium',
+      category: 'Custom',
+      emotions: {
+        calm: [0.7],
+        happy: [0.5],
+        urgency: [0.3],
+      },
+      voiceParams: {
+        pitch: [1.0],
+        rate: [1.0],
+        volume: [0.8],
+      },
+      outputSettings: {
+        audioFormat: 'mp3',
+        sampleRate: '22050',
+      },
+    });
+    setShowCreateModal(true);
+  };
+
+  const handleSaveVoice = () => {
+    if (!selectedVoice.isDefault) {
+      // Validation
+      if (!editableVoice.name.trim()) {
+        toast({
+          title: "Validation Error",
+          description: "Voice name cannot be empty.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update the voice in the list
+      const updatedVoices = sampleVoices.map(voice => 
+        voice.id === editableVoice.id ? editableVoice : voice
+      );
+      setSampleVoices(updatedVoices);
+      setSelectedVoice(editableVoice);
+      setOriginalVoice(editableVoice);
+      setOriginalEmotionSettings(emotionSettings);
+      setOriginalVoiceSettings(voiceSettings);
+      setIsEditing(false);
+
+      toast({
+        title: "Success",
+        description: "Voice profile updated successfully.",
+      });
+    }
   };
 
   const handleCancelEdit = () => {
-    setEditableVoice(originalVoice);
-    setEmotionSettings(originalEmotionSettings);
-    setVoiceSettings(originalVoiceSettings);
-    setIsEditing(false);
+    if (!selectedVoice.isDefault) {
+      setEditableVoice(originalVoice);
+      setEmotionSettings(originalEmotionSettings);
+      setVoiceSettings(originalVoiceSettings);
+      setIsEditing(false);
+    }
   };
 
   const handleCreateVoice = () => {
-    if (newVoiceName.trim()) {
+    if (modalFormData.name.trim()) {
       const newVoice = {
-        id: (sampleVoices.length + 1).toString(),
-        name: newVoiceName.trim(),
-        gender: 'Male',
-        accent: 'American',
-        quality: 'Premium',
-        category: 'Custom'
+        id: `custom-${Date.now()}`,
+        name: modalFormData.name.trim(),
+        gender: modalFormData.gender,
+        accent: modalFormData.accent,
+        quality: modalFormData.quality,
+        category: modalFormData.category,
+        isDefault: false,
       };
       setSampleVoices([...sampleVoices, newVoice]);
-      setNewVoiceName('');
       setShowCreateModal(false);
       
       toast({
         title: "Success",
-        description: "New voice profile created successfully.",
+        description: isCloning ? "Voice cloned successfully." : "New voice profile created successfully.",
       });
     }
   };
 
   const handleCancelCreate = () => {
-    setNewVoiceName('');
     setShowCreateModal(false);
+    setIsCloning(false);
+    setCloneSource(null);
   };
 
   const handleEmotionChange = (emotion, value) => {
-    setEmotionSettings(prev => ({ ...prev, [emotion]: value }));
-    setIsEditing(true);
+    if (!selectedVoice.isDefault) {
+      setEmotionSettings(prev => ({ ...prev, [emotion]: value }));
+      setIsEditing(true);
+    }
   };
 
   const handleVoiceParameterChange = (parameter, value) => {
-    setVoiceSettings(prev => ({ ...prev, [parameter]: value }));
-    setIsEditing(true);
+    if (!selectedVoice.isDefault) {
+      setVoiceSettings(prev => ({ ...prev, [parameter]: value }));
+      setIsEditing(true);
+    }
+  };
+
+  const updateModalFormData = (field, value) => {
+    setModalFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const updateModalEmotions = (emotion, value) => {
+    setModalFormData(prev => ({
+      ...prev,
+      emotions: { ...prev.emotions, [emotion]: value }
+    }));
+  };
+
+  const updateModalVoiceParams = (param, value) => {
+    setModalFormData(prev => ({
+      ...prev,
+      voiceParams: { ...prev.voiceParams, [param]: value }
+    }));
+  };
+
+  const updateModalOutputSettings = (setting, value) => {
+    setModalFormData(prev => ({
+      ...prev,
+      outputSettings: { ...prev.outputSettings, [setting]: value }
+    }));
   };
 
   return (
@@ -161,7 +266,7 @@ export const VoiceStudioModule = () => {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-white">Voice Library</CardTitle>
                 <Button
-                  onClick={() => setShowCreateModal(true)}
+                  onClick={handleCreateVoiceClick}
                   size="sm"
                   className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
                 >
@@ -174,23 +279,47 @@ export const VoiceStudioModule = () => {
               {sampleVoices.map((voice) => (
                 <div
                   key={voice.id}
-                  onClick={() => handleVoiceSelect(voice)}
-                  className={`p-3 rounded-lg cursor-pointer transition-all ${
+                  className={`p-3 rounded-lg transition-all ${
                     selectedVoice.id === voice.id
                       ? 'bg-gradient-to-r from-purple-600/20 to-blue-600/20 border border-purple-500/30'
                       : 'bg-gray-700 hover:bg-gray-600'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-white">{voice.name}</h4>
-                    <Badge variant={voice.quality === 'Premium' ? 'default' : 'secondary'}>
-                      {voice.quality}
-                    </Badge>
+                  <div
+                    onClick={() => handleVoiceSelect(voice)}
+                    className="cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-white">{voice.name}</h4>
+                      <div className="flex space-x-1">
+                        {voice.isDefault && (
+                          <Badge variant="secondary" className="bg-gray-600 text-gray-200">
+                            Default
+                          </Badge>
+                        )}
+                        <Badge variant={voice.quality === 'Premium' ? 'default' : 'secondary'}>
+                          {voice.quality}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="text-sm text-gray-400 space-y-1">
+                      <div>{voice.gender} • {voice.accent}</div>
+                      <div className="text-purple-400">{voice.category}</div>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-400 space-y-1">
-                    <div>{voice.gender} • {voice.accent}</div>
-                    <div className="text-purple-400">{voice.category}</div>
-                  </div>
+                  {voice.isDefault && (
+                    <div className="mt-2 pt-2 border-t border-gray-600">
+                      <Button
+                        onClick={() => handleCloneVoice(voice)}
+                        size="sm"
+                        variant="outline"
+                        className="w-full border-gray-600 text-gray-300 hover:bg-gray-700"
+                      >
+                        <Copy className="w-3 h-3 mr-2" />
+                        Clone
+                      </Button>
+                    </div>
+                  )}
                 </div>
               ))}
             </CardContent>
@@ -225,13 +354,18 @@ export const VoiceStudioModule = () => {
                   <Input
                     value={editableVoice.name}
                     onChange={(e) => handleEditableVoiceChange('name', e.target.value)}
-                    className="bg-gray-900 border-gray-700 text-white mt-1"
+                    disabled={selectedVoice.isDefault}
+                    className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}
                   />
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-300">Gender</Label>
-                  <Select value={editableVoice.gender} onValueChange={(value) => handleEditableVoiceChange('gender', value)}>
-                    <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                  <Select 
+                    value={editableVoice.gender} 
+                    onValueChange={(value) => handleEditableVoiceChange('gender', value)}
+                    disabled={selectedVoice.isDefault}
+                  >
+                    <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gray-700">
@@ -243,8 +377,12 @@ export const VoiceStudioModule = () => {
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-300">Accent</Label>
-                  <Select value={editableVoice.accent} onValueChange={(value) => handleEditableVoiceChange('accent', value)}>
-                    <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                  <Select 
+                    value={editableVoice.accent} 
+                    onValueChange={(value) => handleEditableVoiceChange('accent', value)}
+                    disabled={selectedVoice.isDefault}
+                  >
+                    <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gray-700">
@@ -261,8 +399,12 @@ export const VoiceStudioModule = () => {
                 </div>
                 <div>
                   <Label className="text-sm font-medium text-gray-300">Quality</Label>
-                  <Select value={editableVoice.quality} onValueChange={(value) => handleEditableVoiceChange('quality', value)}>
-                    <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                  <Select 
+                    value={editableVoice.quality} 
+                    onValueChange={(value) => handleEditableVoiceChange('quality', value)}
+                    disabled={selectedVoice.isDefault}
+                  >
+                    <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-900 border-gray-700">
@@ -275,8 +417,12 @@ export const VoiceStudioModule = () => {
               </div>
               <div>
                 <Label className="text-sm font-medium text-gray-300">Category</Label>
-                <Select value={editableVoice.category} onValueChange={(value) => handleEditableVoiceChange('category', value)}>
-                  <SelectTrigger className="bg-gray-900 border-gray-700 text-white mt-1">
+                <Select 
+                  value={editableVoice.category} 
+                  onValueChange={(value) => handleEditableVoiceChange('category', value)}
+                  disabled={selectedVoice.isDefault}
+                >
+                  <SelectTrigger className={`bg-gray-900 border-gray-700 text-white mt-1 ${selectedVoice.isDefault ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-900 border-gray-700">
@@ -308,7 +454,8 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-blue-500"
+                    disabled={selectedVoice.isDefault}
+                    className={`accent-blue-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
@@ -322,7 +469,8 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-green-500"
+                    disabled={selectedVoice.isDefault}
+                    className={`accent-green-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
@@ -336,7 +484,8 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-red-500"
+                    disabled={selectedVoice.isDefault}
+                    className={`accent-red-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
               </div>
@@ -361,7 +510,8 @@ export const VoiceStudioModule = () => {
                     max={2}
                     min={0.5}
                     step={0.1}
-                    className="accent-purple-500"
+                    disabled={selectedVoice.isDefault}
+                    className={`accent-purple-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
@@ -375,7 +525,8 @@ export const VoiceStudioModule = () => {
                     max={2}
                     min={0.5}
                     step={0.1}
-                    className="accent-blue-500"
+                    disabled={selectedVoice.isDefault}
+                    className={`accent-blue-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
                 <div>
@@ -389,7 +540,8 @@ export const VoiceStudioModule = () => {
                     max={1}
                     min={0}
                     step={0.1}
-                    className="accent-green-500"
+                    disabled={selectedVoice.isDefault}
+                    className={`accent-green-500 ${selectedVoice.isDefault ? 'opacity-60' : ''}`}
                   />
                 </div>
               </div>
@@ -397,7 +549,7 @@ export const VoiceStudioModule = () => {
           </Card>
 
           {/* Save/Cancel Buttons */}
-          {isEditing && (
+          {isEditing && !selectedVoice.isDefault && (
             <Card className="bg-gray-800 border-gray-700">
               <CardContent className="pt-6">
                 <div className="flex justify-end space-x-3">
@@ -461,22 +613,217 @@ export const VoiceStudioModule = () => {
 
       {/* Create Voice Modal */}
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
-        <DialogContent className="bg-gray-900 border-gray-700 text-white">
+        <DialogContent className="bg-gray-900 border-gray-700 text-white max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-white">Create Voice</DialogTitle>
+            <DialogTitle className="text-white">
+              {isCloning ? `Clone Voice: ${cloneSource?.name}` : 'Create Voice'}
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="voice-name" className="text-gray-300">
-                Agent Name
-              </Label>
-              <Input
-                id="voice-name"
-                value={newVoiceName}
-                onChange={(e) => setNewVoiceName(e.target.value)}
-                placeholder="Enter voice profile name"
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 mt-2"
-              />
+          <div className="space-y-6">
+            {/* Voice Details Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Voice Details</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="voice-name" className="text-gray-300">Voice Name *</Label>
+                  <Input
+                    id="voice-name"
+                    value={modalFormData.name}
+                    onChange={(e) => updateModalFormData('name', e.target.value)}
+                    placeholder="Enter voice profile name"
+                    className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 mt-2"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gray-300">Gender</Label>
+                  <Select value={modalFormData.gender} onValueChange={(value) => updateModalFormData('gender', value)}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-gray-300">Accent</Label>
+                  <Select value={modalFormData.accent} onValueChange={(value) => updateModalFormData('accent', value)}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="American">American</SelectItem>
+                      <SelectItem value="British">British</SelectItem>
+                      <SelectItem value="Australian">Australian</SelectItem>
+                      <SelectItem value="Canadian">Canadian</SelectItem>
+                      <SelectItem value="Spanish">Spanish</SelectItem>
+                      <SelectItem value="French">French</SelectItem>
+                      <SelectItem value="German">German</SelectItem>
+                      <SelectItem value="Neutral">Neutral</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-gray-300">Quality</Label>
+                  <Select value={modalFormData.quality} onValueChange={(value) => updateModalFormData('quality', value)}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="Standard">Standard</SelectItem>
+                      <SelectItem value="Premium">Premium</SelectItem>
+                      <SelectItem value="Custom">Custom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Label className="text-gray-300">Category</Label>
+                <Select value={modalFormData.category} onValueChange={(value) => updateModalFormData('category', value)}>
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border-gray-700">
+                    <SelectItem value="Professional">Professional</SelectItem>
+                    <SelectItem value="Conversational">Conversational</SelectItem>
+                    <SelectItem value="Technical">Technical</SelectItem>
+                    <SelectItem value="Custom">Custom</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Emotion Settings Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Emotion Settings</h3>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="text-gray-300">Calm</Label>
+                    <span className="text-sm text-gray-400">{modalFormData.emotions.calm[0].toFixed(1)}</span>
+                  </div>
+                  <Slider
+                    value={modalFormData.emotions.calm}
+                    onValueChange={(value) => updateModalEmotions('calm', value)}
+                    max={1}
+                    min={0}
+                    step={0.1}
+                    className="accent-blue-500"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="text-gray-300">Happy</Label>
+                    <span className="text-sm text-gray-400">{modalFormData.emotions.happy[0].toFixed(1)}</span>
+                  </div>
+                  <Slider
+                    value={modalFormData.emotions.happy}
+                    onValueChange={(value) => updateModalEmotions('happy', value)}
+                    max={1}
+                    min={0}
+                    step={0.1}
+                    className="accent-green-500"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="text-gray-300">Urgency</Label>
+                    <span className="text-sm text-gray-400">{modalFormData.emotions.urgency[0].toFixed(1)}</span>
+                  </div>
+                  <Slider
+                    value={modalFormData.emotions.urgency}
+                    onValueChange={(value) => updateModalEmotions('urgency', value)}
+                    max={1}
+                    min={0}
+                    step={0.1}
+                    className="accent-red-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Voice Parameters Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Voice Parameters</h3>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="text-gray-300">Pitch</Label>
+                    <span className="text-sm text-gray-400">{modalFormData.voiceParams.pitch[0].toFixed(1)}x</span>
+                  </div>
+                  <Slider
+                    value={modalFormData.voiceParams.pitch}
+                    onValueChange={(value) => updateModalVoiceParams('pitch', value)}
+                    max={2}
+                    min={0.5}
+                    step={0.1}
+                    className="accent-purple-500"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="text-gray-300">Rate</Label>
+                    <span className="text-sm text-gray-400">{modalFormData.voiceParams.rate[0].toFixed(1)}x</span>
+                  </div>
+                  <Slider
+                    value={modalFormData.voiceParams.rate}
+                    onValueChange={(value) => updateModalVoiceParams('rate', value)}
+                    max={2}
+                    min={0.5}
+                    step={0.1}
+                    className="accent-blue-500"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Label className="text-gray-300">Volume</Label>
+                    <span className="text-sm text-gray-400">{Math.round(modalFormData.voiceParams.volume[0] * 100)}%</span>
+                  </div>
+                  <Slider
+                    value={modalFormData.voiceParams.volume}
+                    onValueChange={(value) => updateModalVoiceParams('volume', value)}
+                    max={1}
+                    min={0}
+                    step={0.1}
+                    className="accent-green-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Output Settings Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">Output Settings</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gray-300">Audio Format</Label>
+                  <Select value={modalFormData.outputSettings.audioFormat} onValueChange={(value) => updateModalOutputSettings('audioFormat', value)}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="mp3">MP3 (Compressed)</SelectItem>
+                      <SelectItem value="wav">WAV (Uncompressed)</SelectItem>
+                      <SelectItem value="ogg">OGG (Web Optimized)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-gray-300">Sample Rate</Label>
+                  <Select value={modalFormData.outputSettings.sampleRate} onValueChange={(value) => updateModalOutputSettings('sampleRate', value)}>
+                    <SelectTrigger className="bg-gray-800 border-gray-700 text-white mt-2">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border-gray-700">
+                      <SelectItem value="22050">22.05 kHz (Standard)</SelectItem>
+                      <SelectItem value="44100">44.1 kHz (High)</SelectItem>
+                      <SelectItem value="48000">48 kHz (Professional)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
           </div>
           <DialogFooter className="space-x-2">
@@ -489,7 +836,7 @@ export const VoiceStudioModule = () => {
             </Button>
             <Button
               onClick={handleCreateVoice}
-              disabled={!newVoiceName.trim()}
+              disabled={!modalFormData.name.trim()}
               className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Save
