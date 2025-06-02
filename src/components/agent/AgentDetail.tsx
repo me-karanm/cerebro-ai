@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp, Plus, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,8 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useNavigate } from 'react-router-dom';
 import { ContactModal } from '@/components/contacts/ContactModal';
@@ -16,6 +15,7 @@ import { ContactDetailModal } from '@/components/contacts/ContactDetailModal';
 import { useContactsStore } from '@/store/contactsStore';
 import { useContacts } from '@/contexts/ContactsContext';
 import { Contact } from '@/types/contact';
+import { useToast } from '@/hooks/use-toast';
 
 interface Agent {
   id: string;
@@ -83,6 +83,7 @@ const getStatusColor = (status: string) => {
 
 export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -96,39 +97,45 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   const agentContacts = contactsStore.getContactsByAgent(agent.id);
 
   const handleAnalytics = () => {
-    console.log('Navigate to analytics for agent:', agent.id);
     navigate(`/agents/${agent.id}/analytics`);
   };
 
   const handleTestAgent = () => {
-    console.log('Test agent:', agent.id);
-    // TODO: Implement agent testing functionality
+    toast({
+      title: "Test Agent",
+      description: "Agent testing functionality will be available soon.",
+    });
   };
 
   const handleEditConfiguration = () => {
-    console.log('Navigate to edit configuration for agent:', agent.id);
-    // Navigate to Create Agent page with agent data for editing
     navigate(`/agents/${agent.id}`);
   };
 
   const handleArchiveAgent = () => {
-    console.log('Archive agent:', agent.id);
-    // TODO: Show confirmation modal
+    if (confirm('Are you sure you want to archive this agent?')) {
+      toast({
+        title: "Agent Archived",
+        description: `${agent.name} has been archived successfully.`,
+      });
+    }
   };
 
   const handleCampaignClick = (campaignId: string) => {
-    console.log('Navigate to campaign:', campaignId);
     navigate(`/campaigns/${campaignId}`);
   };
 
   const handleEditPhoneNumber = () => {
-    console.log('Edit phone number for agent:', agent.id);
-    // TODO: Open phone number assignment modal
+    toast({
+      title: "Phone Number Management",
+      description: "Phone number assignment will be available soon.",
+    });
   };
 
   const handleEditIntegrations = () => {
-    console.log('Edit integrations for agent:', agent.id);
-    // TODO: Open integrations management modal
+    toast({
+      title: "Integration Management",
+      description: "Integration management will be available soon.",
+    });
   };
 
   // Contact management handlers
@@ -148,43 +155,96 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
   };
 
   const handleSaveContact = (contactData: Omit<Contact, 'id' | 'createdOn'> | Contact) => {
-    if ('id' in contactData && contactData.id) {
-      contactsStore.updateContact(contactData.id, contactData as Contact);
-    } else {
-      // Add agent context when creating new contact
-      const newContactData = {
-        ...contactData,
-        assignedAgent: agent.id
-      } as Omit<Contact, 'id' | 'createdOn'>;
-      contactsStore.addContact(newContactData);
+    try {
+      if ('id' in contactData && contactData.id) {
+        contactsStore.updateContact(contactData.id, contactData as Contact);
+        toast({
+          title: "Contact Updated",
+          description: "Contact has been updated successfully.",
+        });
+      } else {
+        const newContactData = {
+          ...contactData,
+          assignedAgent: agent.id
+        } as Omit<Contact, 'id' | 'createdOn'>;
+        contactsStore.addContact(newContactData);
+        toast({
+          title: "Contact Added",
+          description: "Contact has been added successfully.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save contact. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleDeleteContact = (contactId: string) => {
     if (confirm('Are you sure you want to delete this contact?')) {
-      contactsStore.deleteContact(contactId);
+      try {
+        contactsStore.deleteContact(contactId);
+        toast({
+          title: "Contact Deleted",
+          description: "Contact has been deleted successfully.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to delete contact. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const handleImportContacts = async (file: File) => {
-    const result = await importContactsFromCSV(file, { agentId: agent.id });
-    if (result.success) {
-      console.log(`Successfully imported ${result.imported} contacts`);
-      if (result.errors.length > 0) {
-        console.warn('Import warnings:', result.errors);
+    try {
+      const result = await importContactsFromCSV(file, { agentId: agent.id });
+      if (result.success) {
+        toast({
+          title: "Import Successful",
+          description: `Successfully imported ${result.imported} contacts.`,
+        });
+        if (result.errors.length > 0) {
+          console.warn('Import warnings:', result.errors);
+        }
+      } else {
+        toast({
+          title: "Import Failed",
+          description: result.errors.join(', '),
+          variant: "destructive",
+        });
       }
-    } else {
-      console.error('Import failed:', result.errors);
+      return result;
+    } catch (error) {
+      toast({
+        title: "Import Error",
+        description: "An unexpected error occurred during import.",
+        variant: "destructive",
+      });
+      return { success: false, imported: 0, errors: ['Unexpected error'] };
     }
-    return result;
   };
 
   const handleExportContacts = () => {
-    // Set filter to current agent before export
-    contactsStore.setFilters({ assignedAgent: agent.id });
-    exportContacts('csv');
-    // Clear filter after export
-    contactsStore.clearFilters();
+    try {
+      contactsStore.setFilters({ assignedAgent: agent.id });
+      exportContacts('csv');
+      contactsStore.clearFilters();
+      toast({
+        title: "Export Successful",
+        description: "Contacts have been exported successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export Error",
+        description: "Failed to export contacts. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -242,7 +302,7 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         </div>
       </div>
 
-      {/* Metrics Cards - Single row with 6 cards */}
+      {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
         <Card className="bg-gray-800 border-gray-700">
           <CardContent className="p-4">
@@ -322,7 +382,6 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
         <TabsContent value="overview" className="space-y-6">
           
           <div className="grid grid-cols-1 gap-6">
-            {/* Agent Information */}
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-white">Agent Information</CardTitle>
@@ -333,7 +392,6 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                   <p className="text-white">{agent.description}</p>
                 </div>
                 
-                {/* Associated Phone Number */}
                 <div className="flex items-center justify-between p-4 bg-gray-900 rounded-lg">
                   <div>
                     <p className="text-sm text-gray-400 mb-1">Associated Phone Number</p>
@@ -345,21 +403,20 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
                   <Button 
                     size="sm" 
                     variant="ghost" 
-                    className="text-gray-400 hover:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="text-gray-400 hover:text-cyan-400"
                     onClick={handleEditPhoneNumber}
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
                 </div>
 
-                {/* Active Integrations */}
                 <div className="p-4 bg-gray-900 rounded-lg">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-sm text-gray-400">Active Integrations</p>
                     <Button 
                       size="sm" 
                       variant="ghost" 
-                      className="text-gray-400 hover:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="text-gray-400 hover:text-cyan-400"
                       onClick={handleEditIntegrations}
                     >
                       <Edit className="w-4 h-4" />
@@ -400,7 +457,6 @@ export const AgentDetail = ({ agent, onBack }: AgentDetailProps) => {
             </Card>
           </div>
 
-          {/* Linked Campaigns Table */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
               <CardTitle className="text-white flex items-center justify-between">

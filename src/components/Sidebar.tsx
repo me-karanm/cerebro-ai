@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Rocket, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
+import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,7 +20,6 @@ const modules = [
   { id: 'analytics', label: 'Analytics', icon: BarChart3, description: 'Performance metrics' },
   { id: 'channels', label: 'Channels & Integrations', icon: Zap, description: 'Connect platforms' },
   { id: 'security', label: 'Security', icon: Shield, description: 'Access & compliance' },
-  { id: 'deployment', label: 'Deployment', icon: Rocket, description: 'Deploy to environments' },
   { id: 'settings', label: 'Settings', icon: Settings, description: 'System configuration' },
 ];
 
@@ -28,10 +27,8 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
   const navigate = useNavigate();
 
   const handleModuleClick = (moduleId: string) => {
-    console.log('Module clicked:', moduleId);
     setActiveModule(moduleId);
     
-    // Navigate to the appropriate route
     switch (moduleId) {
       case 'dashboard':
         navigate('/');
@@ -47,6 +44,18 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
         break;
       case 'channels':
         navigate('/channels');
+        break;
+      case 'voice-studio':
+        navigate('/voice-studio');
+        break;
+      case 'analytics':
+        navigate('/analytics');
+        break;
+      case 'security':
+        navigate('/security');
+        break;
+      case 'settings':
+        navigate('/settings');
         break;
       default:
         console.log(`Navigation to ${moduleId} not implemented yet`);
