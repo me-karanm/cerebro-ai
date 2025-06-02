@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { TrendingUp, TrendingDown, Users, MessageCircle, Clock, ThumbsUp, Filter, Download } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,10 +33,10 @@ export const AnalyticsModule = () => {
   const [selectedAgent, setSelectedAgent] = useState('all');
 
   return (
-    <div className="w-full h-full overflow-y-auto overflow-x-hidden">
-      <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6 w-full max-w-full">
+    <div className="w-full h-full overflow-y-auto overflow-x-clip">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-4 lg:space-y-6 w-full max-w-full min-w-0">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 w-full max-w-full min-w-0">
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-white truncate">Analytics</h1>
             <p className="text-gray-400 text-sm">Track performance metrics and insights</p>
@@ -73,7 +72,7 @@ export const AnalyticsModule = () => {
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 w-full">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 w-full max-w-full">
           <Card className="bg-gray-800 border-gray-700">
             <CardContent className="p-3 lg:p-4">
               <div className="flex items-center justify-between">
@@ -140,14 +139,14 @@ export const AnalyticsModule = () => {
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6 w-full max-w-full min-w-0">
           {/* Conversation Trends */}
-          <Card className="bg-gray-800 border-gray-700 w-full">
+          <Card className="bg-gray-800 border-gray-700 w-full min-w-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-white text-sm sm:text-base">Conversation Trends</CardTitle>
             </CardHeader>
             <CardContent className="p-2 sm:p-4">
-              <div className="h-64 sm:h-80 w-full">
+              <div className="h-64 sm:h-80 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={conversationData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -176,12 +175,12 @@ export const AnalyticsModule = () => {
           </Card>
 
           {/* Success Rate */}
-          <Card className="bg-gray-800 border-gray-700 w-full">
+          <Card className="bg-gray-800 border-gray-700 w-full min-w-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-white text-sm sm:text-base">Success Rate Over Time</CardTitle>
             </CardHeader>
             <CardContent className="p-2 sm:p-4">
-              <div className="h-64 sm:h-80 w-full">
+              <div className="h-64 sm:h-80 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={conversationData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -204,12 +203,12 @@ export const AnalyticsModule = () => {
           </Card>
 
           {/* Channel Distribution */}
-          <Card className="bg-gray-800 border-gray-700 w-full">
+          <Card className="bg-gray-800 border-gray-700 w-full min-w-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-white text-sm sm:text-base">Channel Distribution</CardTitle>
             </CardHeader>
             <CardContent className="p-2 sm:p-4">
-              <div className="h-64 sm:h-80 w-full">
+              <div className="h-64 sm:h-80 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -240,12 +239,12 @@ export const AnalyticsModule = () => {
           </Card>
 
           {/* Sentiment Analysis */}
-          <Card className="bg-gray-800 border-gray-700 w-full">
+          <Card className="bg-gray-800 border-gray-700 w-full min-w-0">
             <CardHeader className="pb-2">
               <CardTitle className="text-white text-sm sm:text-base">Sentiment Analysis</CardTitle>
             </CardHeader>
             <CardContent className="p-2 sm:p-4">
-              <div className="h-64 sm:h-80 w-full">
+              <div className="h-64 sm:h-80 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -277,7 +276,7 @@ export const AnalyticsModule = () => {
         </div>
 
         {/* Recent Activity */}
-        <Card className="bg-gray-800 border-gray-700 w-full">
+        <Card className="bg-gray-800 border-gray-700 w-full max-w-full">
           <CardHeader className="pb-2">
             <CardTitle className="text-white text-sm sm:text-base">Recent Activity</CardTitle>
           </CardHeader>
@@ -290,7 +289,7 @@ export const AnalyticsModule = () => {
                 { time: '18 min ago', agent: 'Customer Support Agent', action: 'Resolved billing question', status: 'success' },
                 { time: '25 min ago', agent: 'Sales Assistant', action: 'Scheduled demo call', status: 'success' },
               ].map((activity, index) => (
-                <div key={index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded-lg w-full min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                     <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
                       activity.status === 'success' ? 'bg-green-400' :

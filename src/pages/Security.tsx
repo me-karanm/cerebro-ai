@@ -7,15 +7,17 @@ const Security = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
-    <div className="h-screen w-screen bg-gray-950 text-white flex overflow-hidden">
+    <div className="flex w-screen h-screen bg-gray-950 text-white overflow-x-clip">
       <Sidebar
         activeModule="security"
         setActiveModule={() => {}}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
-      <main className={`flex-1 h-full transition-all duration-300 overflow-hidden ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <div className="w-full h-full overflow-y-auto overflow-x-hidden">
+      <main className={`flex-1 flex flex-col h-full min-w-0 transition-all duration-300 ${
+        sidebarCollapsed ? 'ml-16' : 'ml-64'
+      }`}>
+        <div className="w-full h-full overflow-y-auto overflow-x-clip">
           <SecurityModule />
         </div>
       </main>
