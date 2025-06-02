@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Play, Pause, Download, Upload, Settings } from 'lucide-react';
+import { Play, Pause, Download, Settings } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,15 +30,9 @@ export const VoiceStudioModule = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Voice Studio</h1>
-          <p className="text-gray-400">Configure voice properties and emotion settings</p>
-        </div>
-        <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
-          <Upload className="w-4 h-4 mr-2" />
-          Upload Custom Voice
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold text-white">Voice Studio</h1>
+        <p className="text-gray-400">Configure voice properties and emotion settings</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
