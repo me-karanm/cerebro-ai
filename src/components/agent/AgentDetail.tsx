@@ -18,19 +18,6 @@ import { Contact } from '@/types/contact';
 import { Agent } from '@/types/agent';
 import { useToast } from '@/hooks/use-toast';
 
-interface Agent {
-  id: string;
-  name: string;
-  description: string;
-  status: string;
-  language: string;
-  voice: string;
-  conversations: number;
-  successRate: number;
-  lastUpdated: string;
-  persona: string;
-}
-
 interface AgentDetailProps {
   agent: Agent;
   onBack: () => void;
