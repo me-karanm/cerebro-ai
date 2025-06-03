@@ -22,19 +22,17 @@ export const AgentCard = ({ agent, onAgentClick, onUpdateSlider }: AgentCardProp
           <p className="text-gray-400 text-sm">Last updated: {agent.lastUpdated}</p>
         </div>
 
-        {/* Phone Numbers */}
+        {/* Phone Number */}
         <div className="mb-4">
           <div className="flex items-center space-x-2 mb-2">
             <Phone className="w-4 h-4 text-gray-400" />
-            <span className="text-gray-400 text-sm">Phone Numbers</span>
+            <span className="text-gray-400 text-sm">Phone Number</span>
           </div>
           <div className="text-sm">
-            {agent.phoneNumbers.length > 0 ? (
-              agent.phoneNumbers.map((phone, index) => (
-                <div key={index} className="text-cyan-400">{phone}</div>
-              ))
+            {agent.phoneNumber ? (
+              <div className="text-cyan-400">{agent.phoneNumber}</div>
             ) : (
-              <div className="text-gray-500">No phone numbers assigned</div>
+              <div className="text-gray-500">No phone number assigned</div>
             )}
           </div>
         </div>
