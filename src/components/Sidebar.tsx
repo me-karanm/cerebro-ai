@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Bot, Megaphone, Mic, BarChart3, Zap, Shield, Settings, ChevronLeft, ChevronRight, Crown, LayoutDashboard, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { ProfileCard } from '@/components/sidebar/ProfileCard';
 
 interface SidebarProps {
   activeModule: string;
@@ -92,7 +93,7 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
       </div>
 
       {/* Navigation */}
-      <nav className="p-2 space-y-1">
+      <nav className="p-2 space-y-1 flex-1 overflow-y-auto">
         {modules.map((module) => (
           <button
             key={module.id}
@@ -119,14 +120,10 @@ export const Sidebar = ({ activeModule, setActiveModule, collapsed, setCollapsed
         ))}
       </nav>
 
-      {/* Footer */}
+      {/* Profile Card */}
       {!collapsed && (
         <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-gradient-to-r from-purple-600/10 to-blue-600/10 border border-purple-500/20 rounded-lg p-3">
-            <div className="text-xs text-gray-400 mb-1">Pro Plan</div>
-            <div className="text-sm font-medium text-purple-300">Unlimited Agents</div>
-            <div className="text-xs text-gray-500">∞ conversations</div>
-          </div>
+          <ProfileCard />
         </div>
       )}
     </div>
