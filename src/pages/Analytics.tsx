@@ -331,8 +331,10 @@ const Analytics = () => {
                 {/* Performance Overview */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {Object.entries(mockAnalyticsData.performance).filter(([key]) => key !== 'previousPeriod').map(([key, value]) => {
+                    if (typeof value !== 'number') return null;
+                    
                     const previous = mockAnalyticsData.performance.previousPeriod[key as keyof typeof mockAnalyticsData.performance.previousPeriod];
-                    const change = getPerformanceChange(value as number, previous);
+                    const change = getPerformanceChange(value, previous);
                     
                     const metricLabels: Record<string, string> = {
                       averageResponseTime: 'Avg Response Time',
@@ -365,7 +367,7 @@ const Analytics = () => {
                               {value}{metricUnits[key]}
                             </div>
                             <Progress 
-                              value={key === 'satisfactionScore' ? (value as number / 5) * 100 : value as number} 
+                              value={key === 'satisfactionScore' ? (value / 5) * 100 : value} 
                               className="h-2"
                               showValue={false}
                             />
@@ -390,8 +392,10 @@ const Analytics = () => {
                   <CardContent>
                     <div className="space-y-6">
                       {Object.entries(mockAnalyticsData.performance).filter(([key]) => key !== 'previousPeriod').map(([key, value]) => {
+                        if (typeof value !== 'number') return null;
+                        
                         const previous = mockAnalyticsData.performance.previousPeriod[key as keyof typeof mockAnalyticsData.performance.previousPeriod];
-                        const change = getPerformanceChange(value as number, previous);
+                        const change = getPerformanceChange(value, previous);
                         
                         const metricLabels: Record<string, string> = {
                           averageResponseTime: 'Avg Response Time',
@@ -415,7 +419,7 @@ const Analytics = () => {
                                 </div>
                               </div>
                               <Progress 
-                                value={key === 'satisfactionScore' ? (value as number / 5) * 100 : value as number} 
+                                value={key === 'satisfactionScore' ? (value / 5) * 100 : value} 
                                 className="h-2"
                                 showValue={false}
                               />
