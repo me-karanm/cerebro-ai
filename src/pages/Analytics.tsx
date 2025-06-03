@@ -173,10 +173,30 @@ const Analytics = () => {
               <p className="text-gray-400">Performance insights and metrics</p>
             </div>
             <div className="flex space-x-2">
-              <Button variant="outline" className="border-gray-700 text-gray-300">
-                <Calendar className="w-4 h-4 mr-2" />
-                Date Range
-              </Button>
+              <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-white">
+                  <SelectValue placeholder="Select Campaign" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectItem value="all">All Campaigns</SelectItem>
+                  {mockAnalyticsData.campaigns.map((campaign) => (
+                    <SelectItem key={campaign.id} value={campaign.id}>
+                      {campaign.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={selectedDateRange} onValueChange={setSelectedDateRange}>
+                <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  <SelectItem value="1d">24h</SelectItem>
+                  <SelectItem value="7d">7 days</SelectItem>
+                  <SelectItem value="30d">30 days</SelectItem>
+                  <SelectItem value="90d">90 days</SelectItem>
+                </SelectContent>
+              </Select>
               <Button variant="outline" className="border-gray-700 text-gray-300">
                 <Download className="w-4 h-4 mr-2" />
                 Export Report
