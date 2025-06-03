@@ -22,7 +22,7 @@ export const StatsCard = ({ icon: Icon, label, value, tooltip }: StatsCardProps)
                 <p className="text-3xl font-bold text-white">{value}</p>
               </div>
               <div className="ml-4">
-                <Icon className="w-6 h-6 text-cyan-400" />
+                <Icon className="w-6 h-6 text-purple-400" />
               </div>
             </div>
           </CardContent>
