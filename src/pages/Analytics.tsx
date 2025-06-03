@@ -466,59 +466,6 @@ const Analytics = () => {
 
             <TabsContent value="performance" className="transition-all duration-200">
               <div className="space-y-6">
-                {/* Performance Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Object.entries(mockAnalyticsData.performance).filter(([key]) => key !== 'previousPeriod').map(([key, value]) => {
-                    if (typeof value !== 'number') return null;
-                    
-                    const previous = mockAnalyticsData.performance.previousPeriod[key as keyof typeof mockAnalyticsData.performance.previousPeriod];
-                    const change = getPerformanceChange(value, previous);
-                    
-                    const metricLabels: Record<string, string> = {
-                      averageResponseTime: 'Avg Response Time',
-                      successRate: 'Success Rate',
-                      satisfactionScore: 'Satisfaction Score',
-                      intelligence: 'Agent Intelligence',
-                      voiceNaturalness: 'Voice Naturalness',
-                      responseRate: 'Response Rate'
-                    };
-
-                    const metricUnits: Record<string, string> = {
-                      averageResponseTime: 's',
-                      successRate: '%',
-                      satisfactionScore: '/5',
-                      intelligence: '%',
-                      voiceNaturalness: '%',
-                      responseRate: '%'
-                    };
-
-                    return (
-                      <Card key={key} className="bg-gray-900 border-gray-800">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm font-medium text-gray-400">
-                            {metricLabels[key]}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            <div className="text-2xl font-bold text-white">
-                              {value}{metricUnits[key]}
-                            </div>
-                            <Progress 
-                              value={key === 'satisfactionScore' ? (value / 5) * 100 : value} 
-                              className="h-2"
-                              showValue={false}
-                            />
-                            <p className={`text-xs mt-1 ${change.isPositive ? 'text-green-400' : 'text-red-400'}`}>
-                              {change.isPositive ? '+' : ''}{change.percentage}% from last month
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-
                 {/* Performance Comparison Chart */}
                 <Card className="bg-gray-900 border-gray-800">
                   <CardHeader>
