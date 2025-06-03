@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { StatsCard } from '@/components/dashboard/StatsCard';
 import { AgentCarousel } from '@/components/dashboard/AgentCarousel';
 import { PhoneNumbersSection } from '@/components/dashboard/PhoneNumbersSection';
@@ -107,7 +106,7 @@ export const DashboardModule = () => {
       </div>
 
       {/* Summary Stats Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {statsData.map((stat, index) => (
           <StatsCard
             key={index}
