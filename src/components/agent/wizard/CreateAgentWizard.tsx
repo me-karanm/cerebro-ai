@@ -8,12 +8,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { AgentBasicsStep } from './AgentBasicsStep';
 import { KnowledgeFunctionsStep } from './KnowledgeFunctionsStep';
 import { VoiceCallingStep } from './VoiceCallingStep';
+import { ReviewStep } from './ReviewStep';
 import { useAgentWizard } from './useAgentWizard';
 
 const steps = [
   { title: 'Agent Basics', component: AgentBasicsStep },
   { title: 'Knowledge & Functions', component: KnowledgeFunctionsStep },
   { title: 'Communication Channels', component: VoiceCallingStep },
+  { title: 'Review', component: ReviewStep },
 ];
 
 // Mock function to load agent data for editing
@@ -103,6 +105,11 @@ export const CreateAgentWizard = () => {
         return true;
       case 2: // Communication Channels - At least one enabled
         return Object.values(agentData.connections).some(conn => conn.enabled);
+      case 3: // Review - All previous validations must pass
+        return agentData.name.trim() && 
+               agentData.selectedVoice && 
+               agentData.llmModel && 
+               Object.values(agentData.connections).some(conn => conn.enabled);
       default:
         return false;
     }
@@ -191,14 +198,16 @@ export const CreateAgentWizard = () => {
         </Button>
 
         <div className="flex space-x-3">
-          <Button
-            variant="outline"
-            onClick={handleSaveDraft}
-            className="border-gray-700 text-gray-300 hover:bg-gray-800"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            Save Draft
-          </Button>
+          {currentStep < steps.length - 1 && (
+            <Button
+              variant="outline"
+              onClick={handleSaveDraft}
+              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save Draft
+            </Button>
+          )}
 
           {currentStep === steps.length - 1 ? (
             <Button
