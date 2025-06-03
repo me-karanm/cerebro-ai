@@ -1,14 +1,20 @@
+
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, TrendingUp, Users, Clock, Star, Download, Calendar } from 'lucide-react';
+import { ArrowLeft, TrendingUp, Users, Clock, Star, Download, Calendar, Filter } from 'lucide-react';
 import { Sidebar } from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 const Analytics = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState('7d');
+  const [selectedCampaign, setSelectedCampaign] = useState('all');
   const navigate = useNavigate();
   const { agentId } = useParams();
 
@@ -49,7 +55,47 @@ const Analytics = () => {
       { date: '2024-01-13', count: 52, successRate: 91 },
       { date: '2024-01-12', count: 41, successRate: 86 },
       { date: '2024-01-11', count: 48, successRate: 88 }
-    ]
+    ],
+    conversions: [
+      { date: '2024-01-15', conversions: 23, rate: 51.1, calls: 45 },
+      { date: '2024-01-14', conversions: 19, rate: 50.0, calls: 38 },
+      { date: '2024-01-13', conversions: 28, rate: 53.8, calls: 52 },
+      { date: '2024-01-12', conversions: 20, rate: 48.8, calls: 41 },
+      { date: '2024-01-11', conversions: 25, rate: 52.1, calls: 48 }
+    ],
+    performance: {
+      averageResponseTime: 2.3,
+      successRate: 87.5,
+      satisfactionScore: 4.6,
+      intelligence: 92,
+      voiceNaturalness: 88,
+      responseRate: 94,
+      previousPeriod: {
+        averageResponseTime: 2.8,
+        successRate: 84.2,
+        satisfactionScore: 4.4,
+        intelligence: 89,
+        voiceNaturalness: 85,
+        responseRate: 91
+      }
+    }
+  };
+
+  const chartConfig = {
+    conversions: {
+      label: "Conversions",
+      color: "hsl(var(--primary))",
+    },
+    rate: {
+      label: "Conversion Rate",
+      color: "hsl(var(--destructive))",
+    },
+  };
+
+  const getPerformanceChange = (current: number, previous: number) => {
+    const change = current - previous;
+    const percentage = ((change / previous) * 100).toFixed(1);
+    return { change, percentage, isPositive: change >= 0 };
   };
 
   return (
@@ -151,13 +197,13 @@ const Analytics = () => {
           {/* Analytics Tabs */}
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="bg-gray-900 border-gray-800">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-purple-600">Overview</TabsTrigger>
-              <TabsTrigger value="conversations" className="data-[state=active]:bg-purple-600">Conversations</TabsTrigger>
-              <TabsTrigger value="performance" className="data-[state=active]:bg-purple-600">Performance</TabsTrigger>
-              <TabsTrigger value="usage" className="data-[state=active]:bg-purple-600">Usage</TabsTrigger>
+              <TabsTrigger value="overview" className="data-[state=active]:bg-purple-600 transition-all duration-200">Overview</TabsTrigger>
+              <TabsTrigger value="conversations" className="data-[state=active]:bg-purple-600 transition-all duration-200">Conversions</TabsTrigger>
+              <TabsTrigger value="performance" className="data-[state=active]:bg-purple-600 transition-all duration-200">Performance</TabsTrigger>
+              <TabsTrigger value="usage" className="data-[state=active]:bg-purple-600 transition-all duration-200">Usage</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="overview">
+            <TabsContent value="overview" className="transition-all duration-200">
               <Card className="bg-gray-900 border-gray-800">
                 <CardHeader>
                   <CardTitle className="text-white">Conversation Trends</CardTitle>
@@ -183,39 +229,207 @@ const Analytics = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="conversations">
-              <Card className="bg-gray-900 border-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Conversation Details</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Detailed breakdown of conversation metrics and outcomes
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8 text-gray-400">
-                    Detailed conversation analytics coming soon...
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="conversations" className="transition-all duration-200">
+              <div className="space-y-6">
+                {/* Filters */}
+                <div className="flex space-x-4">
+                  <Button variant="outline" className="border-gray-700 text-gray-300">
+                    <Filter className="w-4 h-4 mr-2" />
+                    Filter by Campaign
+                  </Button>
+                  <Button variant="outline" className="border-gray-700 text-gray-300">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Last 7 days
+                  </Button>
+                  <Button variant="outline" className="border-gray-700 text-gray-300">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export Data
+                  </Button>
+                </div>
+
+                {/* Conversion Metrics */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="bg-gray-900 border-gray-800">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-400">Total Conversions</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold text-white">115</div>
+                      <p className="text-xs text-green-400 mt-1">+8.7% from last week</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gray-900 border-gray-800">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-400">Conversion Rate</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold text-white">51.1%</div>
+                      <p className="text-xs text-green-400 mt-1">+2.3% from last week</p>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="bg-gray-900 border-gray-800">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium text-gray-400">Trend</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center space-x-2">
+                        <TrendingUp className="w-6 h-6 text-green-400" />
+                        <span className="text-xl font-bold text-green-400">↗ Improving</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Conversion Chart */}
+                <Card className="bg-gray-900 border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Conversion Trends</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Daily conversion rates and volume over time
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={chartConfig} className="h-80">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={mockAnalyticsData.conversions}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <XAxis 
+                            dataKey="date" 
+                            stroke="#9CA3AF"
+                            fontSize={12}
+                            tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          />
+                          <YAxis stroke="#9CA3AF" fontSize={12} />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Area
+                            type="monotone"
+                            dataKey="conversions"
+                            stroke="#8B5CF6"
+                            fill="#8B5CF6"
+                            fillOpacity={0.2}
+                            strokeWidth={2}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="rate"
+                            stroke="#10B981"
+                            strokeWidth={2}
+                            dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
-            <TabsContent value="performance">
-              <Card className="bg-gray-900 border-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Performance Metrics</CardTitle>
-                  <CardDescription className="text-gray-400">
-                    Response times, accuracy, and efficiency metrics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8 text-gray-400">
-                    Performance analytics coming soon...
-                  </div>
-                </CardContent>
-              </Card>
+            <TabsContent value="performance" className="transition-all duration-200">
+              <div className="space-y-6">
+                {/* Performance Overview */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Object.entries(mockAnalyticsData.performance).filter(([key]) => key !== 'previousPeriod').map(([key, value]) => {
+                    const previous = mockAnalyticsData.performance.previousPeriod[key as keyof typeof mockAnalyticsData.performance.previousPeriod];
+                    const change = getPerformanceChange(value as number, previous);
+                    
+                    const metricLabels: Record<string, string> = {
+                      averageResponseTime: 'Avg Response Time',
+                      successRate: 'Success Rate',
+                      satisfactionScore: 'Satisfaction Score',
+                      intelligence: 'Agent Intelligence',
+                      voiceNaturalness: 'Voice Naturalness',
+                      responseRate: 'Response Rate'
+                    };
+
+                    const metricUnits: Record<string, string> = {
+                      averageResponseTime: 's',
+                      successRate: '%',
+                      satisfactionScore: '/5',
+                      intelligence: '%',
+                      voiceNaturalness: '%',
+                      responseRate: '%'
+                    };
+
+                    return (
+                      <Card key={key} className="bg-gray-900 border-gray-800">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm font-medium text-gray-400">
+                            {metricLabels[key]}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-3">
+                            <div className="text-2xl font-bold text-white">
+                              {value}{metricUnits[key]}
+                            </div>
+                            <Progress 
+                              value={key === 'satisfactionScore' ? (value as number / 5) * 100 : value as number} 
+                              className="h-2"
+                              showValue={false}
+                            />
+                            <p className={`text-xs mt-1 ${change.isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                              {change.isPositive ? '+' : ''}{change.percentage}% from last month
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+
+                {/* Performance Comparison Chart */}
+                <Card className="bg-gray-900 border-gray-800">
+                  <CardHeader>
+                    <CardTitle className="text-white">Performance Comparison</CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Current performance vs. previous period
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      {Object.entries(mockAnalyticsData.performance).filter(([key]) => key !== 'previousPeriod').map(([key, value]) => {
+                        const previous = mockAnalyticsData.performance.previousPeriod[key as keyof typeof mockAnalyticsData.performance.previousPeriod];
+                        const change = getPerformanceChange(value as number, previous);
+                        
+                        const metricLabels: Record<string, string> = {
+                          averageResponseTime: 'Avg Response Time',
+                          successRate: 'Success Rate',
+                          satisfactionScore: 'Satisfaction Score',
+                          intelligence: 'Agent Intelligence',
+                          voiceNaturalness: 'Voice Naturalness',
+                          responseRate: 'Response Rate'
+                        };
+
+                        return (
+                          <div key={key} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="text-gray-300 font-medium">{metricLabels[key]}</span>
+                                <div className="flex items-center space-x-4">
+                                  <span className="text-white font-bold">{value}</span>
+                                  <span className={`text-sm ${change.isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                                    {change.isPositive ? '↗' : '↘'} {Math.abs(parseFloat(change.percentage))}%
+                                  </span>
+                                </div>
+                              </div>
+                              <Progress 
+                                value={key === 'satisfactionScore' ? (value as number / 5) * 100 : value as number} 
+                                className="h-2"
+                                showValue={false}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
-            <TabsContent value="usage">
+            <TabsContent value="usage" className="transition-all duration-200">
               <Card className="bg-gray-900 border-gray-800">
                 <CardHeader>
                   <CardTitle className="text-white">Credit Usage</CardTitle>
