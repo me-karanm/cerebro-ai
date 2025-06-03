@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ContactsProvider } from "@/contexts/ContactsContext";
 import Index from "./pages/Index";
 import Agents from "./pages/Agents";
-import CreateAgent from "./pages/CreateAgent";
+import { CreateAgentWizard } from "./components/agent/wizard/CreateAgentWizard";
 import Integrations from "./pages/Integrations";
 import Analytics from "./pages/Analytics";
 import AnalyticsOverview from "./pages/AnalyticsOverview";
@@ -29,8 +29,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/agents" element={<Agents />} />
-            <Route path="/agents/create" element={<CreateAgent />} />
-            <Route path="/agents/:agentId" element={<CreateAgent />} />
+            <Route path="/agents/create" element={<CreateAgentWizard />} />
+            <Route path="/agents/:agentId" element={<CreateAgentWizard />} />
             <Route path="/agents/:agentId/analytics" element={<Analytics />} />
             <Route path="/analytics" element={<AnalyticsOverview />} />
             <Route path="/campaigns" element={<Campaigns />} />
