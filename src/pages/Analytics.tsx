@@ -269,7 +269,6 @@ const Analytics = () => {
           <Tabs defaultValue="overview" className="space-y-6">
             <TabsList className="bg-gray-900 border-gray-800">
               <TabsTrigger value="overview" className="data-[state=active]:bg-purple-600 transition-all duration-200">Overview</TabsTrigger>
-              <TabsTrigger value="conversations" className="data-[state=active]:bg-purple-600 transition-all duration-200">Conversions</TabsTrigger>
               <TabsTrigger value="performance" className="data-[state=active]:bg-purple-600 transition-all duration-200">Performance</TabsTrigger>
               <TabsTrigger value="channels" className="data-[state=active]:bg-purple-600 transition-all duration-200">Channels</TabsTrigger>
               <TabsTrigger value="sentiment" className="data-[state=active]:bg-purple-600 transition-all duration-200">Sentiment</TabsTrigger>
@@ -381,84 +380,6 @@ const Analytics = () => {
                         </div>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="conversations" className="transition-all duration-200">
-              <div className="space-y-6">
-                {/* Filters */}
-                <div className="flex space-x-4">
-                  <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
-                    <SelectTrigger className="w-64 bg-gray-800 border-gray-700 text-white">
-                      <SelectValue placeholder="Select Campaigns" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Campaigns</SelectItem>
-                      {mockAnalyticsData.campaigns.map((campaign) => (
-                        <SelectItem key={campaign.id} value={campaign.id}>
-                          {campaign.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={selectedDateRange} onValueChange={setSelectedDateRange}>
-                    <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1d">24h</SelectItem>
-                      <SelectItem value="7d">7 days</SelectItem>
-                      <SelectItem value="30d">30 days</SelectItem>
-                      <SelectItem value="90d">90 days</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" className="border-gray-700 text-gray-300">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Data
-                  </Button>
-                </div>
-
-                {/* Conversion Chart */}
-                <Card className="bg-gray-900 border-gray-800">
-                  <CardHeader>
-                    <CardTitle className="text-white">Conversion Trends</CardTitle>
-                    <CardDescription className="text-gray-400">
-                      Daily conversion rates and volume over time
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ChartContainer config={chartConfig} className="h-80">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={mockAnalyticsData.conversions}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                          <XAxis 
-                            dataKey="date" 
-                            stroke="#9CA3AF"
-                            fontSize={12}
-                            tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                          />
-                          <YAxis stroke="#9CA3AF" fontSize={12} />
-                          <ChartTooltip content={<ChartTooltipContent />} />
-                          <Area
-                            type="monotone"
-                            dataKey="conversions"
-                            stroke="#8B5CF6"
-                            fill="#8B5CF6"
-                            fillOpacity={0.2}
-                            strokeWidth={2}
-                          />
-                          <Line
-                            type="monotone"
-                            dataKey="rate"
-                            stroke="#10B981"
-                            strokeWidth={2}
-                            dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
                   </CardContent>
                 </Card>
               </div>
