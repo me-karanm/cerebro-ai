@@ -11,7 +11,7 @@ const Slider = React.forwardRef<
     valuePrefix?: string;
     valueSuffix?: string;
   }
->(({ className, showValue = true, valuePrefix = "", valueSuffix = "", ...props }, ref) => {
+>(({ className, showValue = false, valuePrefix = "", valueSuffix = "", ...props }, ref) => {
   const value = props.value?.[0] ?? props.defaultValue?.[0] ?? 0;
   const max = props.max ?? 100;
   const min = props.min ?? 0;
