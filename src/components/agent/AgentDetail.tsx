@@ -256,20 +256,14 @@ export const AgentDetail = ({ agent, onBack, onDuplicate }: AgentDetailProps) =>
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" onClick={onBack} className="text-gray-400 hover:text-white">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Agents
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-white">{agent.name}</h1>
-            <div className="flex items-center space-x-2 mt-1">
-              <Badge variant={agent.status === 'active' ? 'default' : 'secondary'}>
-                {agent.status}
-              </Badge>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-400">ID: {agent.id}</span>
-            </div>
+        <div>
+          <h1 className="text-3xl font-bold text-white">{agent.name}</h1>
+          <div className="flex items-center space-x-2 mt-1">
+            <Badge variant={agent.status === 'active' ? 'default' : 'secondary'}>
+              {agent.status}
+            </Badge>
+            <span className="text-gray-400">•</span>
+            <span className="text-gray-400">ID: {agent.id}</span>
           </div>
         </div>
         <div className="flex space-x-2">
