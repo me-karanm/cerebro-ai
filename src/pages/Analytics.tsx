@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, Users, Clock, Star, Download, Calendar, Filter, DollarSign, Zap, Phone, MessageSquare, AlertTriangle, Target } from 'lucide-react';
@@ -138,22 +137,11 @@ const Analytics = () => {
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate(`/agents/${agentId}`)}
-                className="text-gray-400 hover:text-white"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Agent
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-white">
-                  {mockAnalyticsData.agent.name} Analytics
-                </h1>
-                <p className="text-gray-400">Performance insights and metrics</p>
-              </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">
+                {mockAnalyticsData.agent.name} Analytics
+              </h1>
+              <p className="text-gray-400">Performance insights and metrics</p>
             </div>
             <div className="flex space-x-2">
               <Button variant="outline" className="border-gray-700 text-gray-300">
