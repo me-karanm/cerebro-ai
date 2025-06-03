@@ -61,8 +61,8 @@ export const DashboardModule = () => {
     },
     {
       icon: CreditCard,
-      label: 'Credits Used',
-      value: '200 / 1000',
+      label: 'Total Credits Used',
+      value: '200',
       tooltip: 'Credits consumed vs. total allocated'
     }
   ];
