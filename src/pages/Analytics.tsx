@@ -29,6 +29,27 @@ const Analytics = () => {
       case 'channels':
         navigate('/channels');
         break;
+      case 'analytics':
+        navigate('/analytics');
+        break;
+      case 'campaigns':
+        navigate('/campaigns');
+        break;
+      case 'contacts':
+        navigate('/contacts');
+        break;
+      case 'voice-studio':
+        navigate('/voice-studio');
+        break;
+      case 'security':
+        navigate('/security');
+        break;
+      case 'settings':
+        navigate('/settings');
+        break;
+      case 'profile':
+        navigate('/profile');
+        break;
       default:
         console.log(`Navigation to ${module} not implemented yet`);
         break;
