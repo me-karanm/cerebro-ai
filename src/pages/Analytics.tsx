@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, Users, Clock, Star, Download, Calendar } from 'lucide-react';
@@ -125,7 +124,7 @@ const Analytics = () => {
             <Card className="bg-gray-900 border-gray-800">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-gray-400">Avg Response Time</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-400">Avg Duration</CardTitle>
                   <Clock className="w-4 h-4 text-blue-400" />
                 </div>
               </CardHeader>
