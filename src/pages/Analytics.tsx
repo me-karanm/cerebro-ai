@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 
@@ -66,6 +67,13 @@ const Analytics = () => {
       { date: '2024-01-13', conversions: 28, rate: 53.8, calls: 52, leads: 11 },
       { date: '2024-01-12', conversions: 20, rate: 48.8, calls: 41, leads: 7 },
       { date: '2024-01-11', conversions: 25, rate: 52.1, calls: 48, leads: 9 }
+    ],
+    campaigns: [
+      { id: '1', name: 'Q1 Sales Outreach', status: 'Active' },
+      { id: '2', name: 'Product Demo Campaign', status: 'Active' },
+      { id: '3', name: 'Customer Retention', status: 'Paused' },
+      { id: '4', name: 'Lead Qualification', status: 'Active' },
+      { id: '5', name: 'Holiday Promotion', status: 'Completed' }
     ],
     performance: {
       averageResponseTime: 2.3,
@@ -361,63 +369,34 @@ const Analytics = () => {
               <div className="space-y-6">
                 {/* Filters */}
                 <div className="flex space-x-4">
-                  <Button variant="outline" className="border-gray-700 text-gray-300">
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filter by Campaign
-                  </Button>
-                  <Button variant="outline" className="border-gray-700 text-gray-300">
-                    <Calendar className="w-4 h-4 mr-2" />
-                    Last 7 days
-                  </Button>
+                  <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                    <SelectTrigger className="w-64 bg-gray-800 border-gray-700 text-white">
+                      <SelectValue placeholder="Select Campaigns" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Campaigns</SelectItem>
+                      {mockAnalyticsData.campaigns.map((campaign) => (
+                        <SelectItem key={campaign.id} value={campaign.id}>
+                          {campaign.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={selectedDateRange} onValueChange={setSelectedDateRange}>
+                    <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1d">24h</SelectItem>
+                      <SelectItem value="7d">7 days</SelectItem>
+                      <SelectItem value="30d">30 days</SelectItem>
+                      <SelectItem value="90d">90 days</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Button variant="outline" className="border-gray-700 text-gray-300">
                     <Download className="w-4 h-4 mr-2" />
                     Export Data
                   </Button>
-                </div>
-
-                {/* Conversion Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <Card className="bg-gray-900 border-gray-800">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-400">Total Conversions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-white">115</div>
-                      <p className="text-xs text-green-400 mt-1">+8.7% from last week</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-gray-900 border-gray-800">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-400">Conversion Rate</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-white">51.1%</div>
-                      <p className="text-xs text-green-400 mt-1">+2.3% from last week</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-gray-900 border-gray-800">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-400">Leads Generated</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-3xl font-bold text-white">41</div>
-                      <p className="text-xs text-green-400 mt-1">+12% from last week</p>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-gray-900 border-gray-800">
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-400">Trend</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center space-x-2">
-                        <TrendingUp className="w-6 h-6 text-green-400" />
-                        <span className="text-xl font-bold text-green-400">↗ Improving</span>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </div>
 
                 {/* Conversion Chart */}
