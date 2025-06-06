@@ -159,7 +159,7 @@ export const CampaignFilters = ({ onFiltersChange }: CampaignFiltersProps) => {
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
                     <SelectItem value="all">All Goals</SelectItem>
-                    <SelectItem value="high-conversion">High Conversion (>40%)</SelectItem>
+                    <SelectItem value="high-conversion">High Conversion (&gt;40%)</SelectItem>
                     <SelectItem value="medium-conversion">Medium Conversion (20-40%)</SelectItem>
                     <SelectItem value="lead-volume">High Lead Volume</SelectItem>
                     <SelectItem value="cost-effective">Cost Effective</SelectItem>
