@@ -97,19 +97,13 @@ const Analytics = () => {
       { id: '5', name: 'Holiday Promotion', status: 'Completed' }
     ],
     performance: {
-      averageResponseTime: 2.3,
-      successRate: 87.5,
-      satisfactionScore: 4.6,
-      intelligence: 92,
-      voiceNaturalness: 88,
-      responseRate: 94,
+      conversationsHandled: 12340,
+      averageResponseTime: 1.2,
+      automationRate: 88,
       previousPeriod: {
-        averageResponseTime: 2.8,
-        successRate: 84.2,
-        satisfactionScore: 4.4,
-        intelligence: 89,
-        voiceNaturalness: 85,
-        responseRate: 91
+        conversationsHandled: 11850,
+        averageResponseTime: 1.5,
+        automationRate: 84
       }
     },
     channelDistribution: [
@@ -407,52 +401,75 @@ const Analytics = () => {
 
             <TabsContent value="performance" className="transition-all duration-200">
               <div className="space-y-6">
-                {/* Performance Comparison Chart */}
+                {/* Performance Metrics */}
                 <Card className="bg-gray-900 border-gray-800">
                   <CardHeader>
-                    <CardTitle className="text-white">Performance Comparison</CardTitle>
+                    <CardTitle className="text-white">Performance Metrics</CardTitle>
                     <CardDescription className="text-gray-400">
-                      Current performance vs. previous period
+                      Key performance indicators for AI automation
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
-                      {Object.entries(mockAnalyticsData.performance).filter(([key]) => key !== 'previousPeriod').map(([key, value]) => {
-                        if (typeof value !== 'number') return null;
-                        
-                        const previous = mockAnalyticsData.performance.previousPeriod[key as keyof typeof mockAnalyticsData.performance.previousPeriod];
-                        const change = getPerformanceChange(value, previous);
-                        
-                        const metricLabels: Record<string, string> = {
-                          averageResponseTime: 'Avg Response Time',
-                          successRate: 'Success Rate',
-                          satisfactionScore: 'Satisfaction Score',
-                          intelligence: 'Agent Intelligence',
-                          voiceNaturalness: 'Voice Naturalness',
-                          responseRate: 'Response Rate'
-                        };
-
-                        return (
-                          <div key={key} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
-                            <div className="flex-1">
-                              <div className="flex items-center justify-between mb-2">
-                                <span className="text-gray-300 font-medium">{metricLabels[key]}</span>
-                                <div className="flex items-center space-x-4">
-                                  <span className="text-white font-bold">{value}</span>
-                                  <span className={`text-sm ${change.isPositive ? 'text-green-400' : 'text-red-400'}`}>
-                                    {change.isPositive ? '↗' : '↘'} {Math.abs(parseFloat(change.percentage))}%
-                                  </span>
-                                </div>
-                              </div>
-                              <Progress 
-                                value={key === 'satisfactionScore' ? (value / 5) * 100 : value} 
-                                className="h-2"
-                                showValue={false}
-                              />
+                      {/* Conversations Handled */}
+                      <div className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-gray-300 font-medium">Conversations Handled</span>
+                            <div className="flex items-center space-x-4">
+                              <span className="text-white font-bold">{mockAnalyticsData.performance.conversationsHandled.toLocaleString()}</span>
+                              <span className="text-green-400 text-sm">
+                                ↗ {(((mockAnalyticsData.performance.conversationsHandled - mockAnalyticsData.performance.previousPeriod.conversationsHandled) / mockAnalyticsData.performance.previousPeriod.conversationsHandled) * 100).toFixed(1)}%
+                              </span>
                             </div>
                           </div>
-                        );
-                      })}
+                          <Progress 
+                            value={85} 
+                            className="h-2"
+                            showValue={false}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Average Response Time */}
+                      <div className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-gray-300 font-medium">Average Response Time</span>
+                            <div className="flex items-center space-x-4">
+                              <span className="text-white font-bold">{mockAnalyticsData.performance.averageResponseTime}s</span>
+                              <span className="text-green-400 text-sm">
+                                ↘ {(((mockAnalyticsData.performance.previousPeriod.averageResponseTime - mockAnalyticsData.performance.averageResponseTime) / mockAnalyticsData.performance.previousPeriod.averageResponseTime) * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          </div>
+                          <Progress 
+                            value={92} 
+                            className="h-2"
+                            showValue={false}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Automation Rate */}
+                      <div className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-gray-300 font-medium">Automation Rate</span>
+                            <div className="flex items-center space-x-4">
+                              <span className="text-white font-bold">{mockAnalyticsData.performance.automationRate}%</span>
+                              <span className="text-green-400 text-sm">
+                                ↗ {(((mockAnalyticsData.performance.automationRate - mockAnalyticsData.performance.previousPeriod.automationRate) / mockAnalyticsData.performance.previousPeriod.automationRate) * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                          </div>
+                          <Progress 
+                            value={mockAnalyticsData.performance.automationRate} 
+                            className="h-2"
+                            showValue={false}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

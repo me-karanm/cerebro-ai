@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Settings, User, LogOut, ChevronUp } from 'lucide-react';
+import { User, LogOut, ChevronUp } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -9,14 +9,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router-dom';
 
 export const ProfileCard = () => {
-  const handleProfileClick = () => {
-    console.log('Navigate to profile');
-  };
+  const navigate = useNavigate();
 
-  const handleSettingsClick = () => {
-    console.log('Navigate to settings');
+  const handleProfileClick = () => {
+    navigate('/profile');
   };
 
   const handleLogoutClick = () => {
@@ -52,13 +51,6 @@ export const ProfileCard = () => {
           >
             <User className="w-4 h-4 mr-2" />
             View Profile
-          </DropdownMenuItem>
-          <DropdownMenuItem 
-            onClick={handleSettingsClick}
-            className="text-white hover:bg-gray-700 cursor-pointer"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Account Settings
           </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-gray-700" />
           <DropdownMenuItem 

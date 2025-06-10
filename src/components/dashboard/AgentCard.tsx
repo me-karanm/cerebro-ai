@@ -1,7 +1,6 @@
 
 import { Phone, Megaphone } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { Slider } from '@/components/ui/slider';
 import { Agent } from '@/types/agent';
 
 interface AgentCardProps {
@@ -76,14 +75,7 @@ export const AgentCard = ({ agent, onAgentClick, onUpdateSlider }: AgentCardProp
               <span className="text-gray-400 text-sm">Agent Intelligence</span>
               <span className="text-cyan-400 text-sm">{agent.intelligence}%</span>
             </div>
-            <Slider
-              value={[agent.intelligence]}
-              onValueChange={([value]) => onUpdateSlider('intelligence', value)}
-              max={100}
-              step={1}
-              className="w-full"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <Progress value={agent.intelligence} className="h-2" />
           </div>
 
           <div className="space-y-2">
@@ -91,14 +83,7 @@ export const AgentCard = ({ agent, onAgentClick, onUpdateSlider }: AgentCardProp
               <span className="text-gray-400 text-sm">Voice Naturalness</span>
               <span className="text-cyan-400 text-sm">{agent.voiceNaturalness}%</span>
             </div>
-            <Slider
-              value={[agent.voiceNaturalness]}
-              onValueChange={([value]) => onUpdateSlider('voiceNaturalness', value)}
-              max={100}
-              step={1}
-              className="w-full"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <Progress value={agent.voiceNaturalness} className="h-2" />
           </div>
 
           <div className="space-y-2">
@@ -106,14 +91,7 @@ export const AgentCard = ({ agent, onAgentClick, onUpdateSlider }: AgentCardProp
               <span className="text-gray-400 text-sm">Response Rate</span>
               <span className="text-cyan-400 text-sm">{agent.responseRate}%</span>
             </div>
-            <Slider
-              value={[agent.responseRate]}
-              onValueChange={([value]) => onUpdateSlider('responseRate', value)}
-              max={100}
-              step={1}
-              className="w-full"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <Progress value={agent.responseRate} className="h-2" />
           </div>
         </div>
       </div>
