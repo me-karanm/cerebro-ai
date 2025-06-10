@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { ArrowLeft, BarChart3, Edit, Archive, MessageCircle, Target, Clock, CreditCard, Play, Download, Filter, Phone, Settings, TrendingUp, Plus, Upload, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -458,22 +459,27 @@ export const AgentDetail = ({ agent, onBack, onDuplicate }: AgentDetailProps) =>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Success Rate</span>
-                  <span className="text-green-400 font-bold">{agent.successRate}%</span>
+                  <span className="text-gray-300">Conversations Handled</span>
+                  <span className="text-green-400 font-bold">12,340</span>
                 </div>
-                <Progress value={agent.successRate} className="h-2" />
+                <Progress value={85} className="h-2" />
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Uptime</span>
-                  <span className="text-green-400 font-bold">99.2%</span>
+                  <span className="text-gray-300">Average Response Time</span>
+                  <span className="text-blue-400 font-bold">1.2s</span>
                 </div>
-                <Progress value={99.2} className="h-2" />
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+                    style={{ width: '75%' }}
+                  />
+                </div>
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-300">Satisfaction</span>
-                  <span className="text-blue-400 font-bold">4.8/5</span>
+                  <span className="text-gray-300">Automation Rate</span>
+                  <span className="text-purple-400 font-bold">88%</span>
                 </div>
-                <Progress value={96} className="h-2" />
+                <Progress value={88} className="h-2" />
               </CardContent>
             </Card>
 
