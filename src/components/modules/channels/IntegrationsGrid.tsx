@@ -22,14 +22,8 @@ interface IntegrationsGridProps {
 const getCategoryColor = (category: string) => {
   const colors = {
     'Messaging': 'bg-green-600 text-white border-green-500',
-    'Voice': 'bg-blue-600 text-white border-blue-500',
-    'Web': 'bg-purple-600 text-white border-purple-500',
     'Email': 'bg-orange-600 text-white border-orange-500',
-    'CRM': 'bg-indigo-600 text-white border-indigo-500',
-    'Productivity': 'bg-yellow-600 text-white border-yellow-500',
-    'Phone': 'bg-cyan-600 text-white border-cyan-500',
-    'Collaboration': 'bg-pink-600 text-white border-pink-500',
-    'Custom': 'bg-gray-600 text-white border-gray-500',
+    'Web': 'bg-purple-600 text-white border-purple-500',
   };
   return colors[category as keyof typeof colors] || 'bg-gray-600 text-white border-gray-500';
 };
@@ -78,6 +72,18 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
             </div>
           </div>
         )}
+        {integration.id === 'sms' && (
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Phone:</span>
+              <span className="text-white">{integration.config.phone}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-400">Provider:</span>
+              <span className="text-green-400">{integration.config.provider}</span>
+            </div>
+          </div>
+        )}
         {integration.id === 'webchat' && (
           <div className="space-y-1">
             <div className="flex justify-between">
@@ -87,18 +93,6 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
             <div className="flex justify-between">
               <span className="text-gray-400">Status:</span>
               <span className="text-green-400">Active</span>
-            </div>
-          </div>
-        )}
-        {integration.id === 'hubspot' && (
-          <div className="space-y-1">
-            <div className="flex justify-between">
-              <span className="text-gray-400">API Key:</span>
-              <span className="text-white">{integration.config.apiKey}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-400">Syncing:</span>
-              <span className="text-green-400">✓ Active</span>
             </div>
           </div>
         )}
@@ -117,7 +111,7 @@ export const IntegrationsGrid = ({ integrations, onConfigureIntegration }: Integ
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {integrations.map((integration) => (
-        <Card key={integration.id} className="bg-gray-800 border-gray-700 hover:border-purple-500/50 transition-all duration-200">
+        <Card key={integration.id} className="bg-gray-900 border-gray-700 hover:border-purple-500/50 transition-all duration-200">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-3">

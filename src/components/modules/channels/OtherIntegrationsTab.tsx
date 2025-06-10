@@ -15,13 +15,13 @@ const integrations = [
     config: { phone: '+1234567890', verified: true }
   },
   {
-    id: 'webchat',
-    name: 'Web Chat Widget',
-    description: 'Embed chat widget on your website',
-    icon: '💻',
-    category: 'Web',
+    id: 'sms',
+    name: 'SMS',
+    description: 'Send and receive SMS messages',
+    icon: '📱',
+    category: 'Messaging',
     status: 'connected' as const,
-    config: { domain: 'example.com', embedded: true }
+    config: { phone: '+1555-123-4567', provider: 'Twilio' }
   },
   {
     id: 'email',
@@ -33,49 +33,13 @@ const integrations = [
     config: { email: 'support@example.com' }
   },
   {
-    id: 'telegram',
-    name: 'Telegram Bot',
-    description: 'Create automated bot for Telegram',
-    icon: '📱',
-    category: 'Messaging',
-    status: 'disconnected' as const,
-    config: {}
-  },
-  {
-    id: 'salesforce',
-    name: 'Salesforce CRM',
-    description: 'Sync leads and contacts with Salesforce',
-    icon: '☁️',
-    category: 'CRM',
-    status: 'disconnected' as const,
-    config: {}
-  },
-  {
-    id: 'hubspot',
-    name: 'HubSpot CRM',
-    description: 'Integrate with HubSpot for lead management',
-    icon: '🧡',
-    category: 'CRM',
+    id: 'webchat',
+    name: 'Website Widget',
+    description: 'Embed chat widget on your website',
+    icon: '💻',
+    category: 'Web',
     status: 'connected' as const,
-    config: { apiKey: '***-***-***', syncing: true }
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    description: 'Connect to Slack workspace for notifications',
-    icon: '📢',
-    category: 'Productivity',
-    status: 'disconnected' as const,
-    config: {}
-  },
-  {
-    id: 'facebook',
-    name: 'Facebook Messenger',
-    description: 'Integrate with Facebook Messenger',
-    icon: '📘',
-    category: 'Messaging',
-    status: 'disconnected' as const,
-    config: {}
+    config: { domain: 'example.com', embedded: true }
   },
 ];
 
