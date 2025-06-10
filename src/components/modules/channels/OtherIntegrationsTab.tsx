@@ -65,6 +65,11 @@ export const OtherIntegrationsTab = ({ onAddIntegration }: OtherIntegrationsTabP
     setSelectedIntegration(id);
   };
 
+  // Calculate stats based on actual integration statuses
+  const connectedCount = integrations.filter(i => i.status === 'connected').length;
+  const configuredCount = integrations.filter(i => i.status === 'configured').length;
+  const disconnectedCount = integrations.length - connectedCount - configuredCount;
+
   return (
     <div className="space-y-6">
       {/* Header Actions */}
@@ -109,15 +114,15 @@ export const OtherIntegrationsTab = ({ onAddIntegration }: OtherIntegrationsTabP
         </div>
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
           <div className="text-sm text-gray-400">Connected</div>
-          <div className="text-2xl font-bold text-green-400">{integrations.filter(i => i.status === 'connected').length}</div>
+          <div className="text-2xl font-bold text-green-400">{connectedCount}</div>
         </div>
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
           <div className="text-sm text-gray-400">Configured</div>
-          <div className="text-2xl font-bold text-blue-400">{integrations.filter(i => i.status === 'configured').length}</div>
+          <div className="text-2xl font-bold text-blue-400">{configuredCount}</div>
         </div>
         <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
           <div className="text-sm text-gray-400">Disconnected</div>
-          <div className="text-2xl font-bold text-gray-400">{integrations.filter(i => i.status === 'disconnected').length}</div>
+          <div className="text-2xl font-bold text-gray-400">{disconnectedCount}</div>
         </div>
       </div>
 
